@@ -23,6 +23,8 @@
 			<TextBlock TextWrapping="Wrap" Margin="5" Grid.ColumnSpan="1">
 				Меню просмотра файловой системы
 			</TextBlock>
+			<TreeView HorizontalAlignment="Left" Height="469" Margin="10,30,0,0" VerticalAlignment="Top" Width="222"/>
+			<DocumentViewer Grid.Column="1" HorizontalAlignment="Left" Margin="10,10,0,10" Width="530"/>
 		</Grid>
 		<!--Конец-->
 	</Grid>

@@ -12,3 +12,4 @@ C:\Users\admin\source\repos\contact_center_application\contact_center_applicatio
 C:\Users\admin\source\repos\contact_center_application\contact_center_application\obj\Debug\contact_center_application.csproj.CoreCompileInputs.cache
 C:\Users\admin\source\repos\contact_center_application\contact_center_application\obj\Debug\contact_center_application.exe
 C:\Users\admin\source\repos\contact_center_application\contact_center_application\obj\Debug\contact_center_application.pdb
+C:\Users\admin\source\repos\contact_center_application\contact_center_application\obj\Debug\contact_center_application.csprojResolveAssemblyReference.cache
