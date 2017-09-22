@@ -13,7 +13,7 @@
 			   Margin="534,-48,0,0" VerticalAlignment="Top" Width="246" Height="28"/>
 		<Label Content="Файловая система" Margin="5,-46,0,0" VerticalAlignment="Top" 
 			   HorizontalAlignment="Left" Width="111"/>
-		<!--Начало нового файла>
+		<!--Начало нового файла-->
 		<Grid Height="509" VerticalAlignment="Bottom">
 
 			<Grid.ColumnDefinitions>
