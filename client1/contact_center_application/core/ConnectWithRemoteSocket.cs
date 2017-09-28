@@ -23,9 +23,9 @@ namespace contact_center_application.core
 			realization = true;
 		}
 
-		public static void sendMessage(String message)
+		private static byte[] sendMessage(String message, int expectedSize)
 		{
-			byte[] answerFromServer = new byte[1024];
+			byte[] answerFromServer = new byte[expectedSize];
 			if (realization)
 			{
 				byte[] msg = Encoding.UTF8.GetBytes(message);
@@ -36,6 +36,7 @@ namespace contact_center_application.core
 				int bytesRec = sender.Receive(answerFromServer);
 				Console.WriteLine("\nОтвет от сервера: {0}\n\n", Encoding.UTF8.GetString(answerFromServer, 0, bytesRec));
 			}
+			return answerFromServer;
 		}
 
 		public static void releaseSocket()

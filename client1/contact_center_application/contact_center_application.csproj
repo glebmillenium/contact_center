@@ -68,7 +68,6 @@
     </Compile>
     <Compile Include="core\ConnectWithRemoteSocket.cs" />
     <Compile Include="core\RequestDataFromServer.cs" />
-    <Compile Include="json\command\GetAliance.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -101,8 +100,6 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="json\data\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

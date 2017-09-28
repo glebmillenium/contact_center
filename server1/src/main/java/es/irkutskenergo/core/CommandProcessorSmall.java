@@ -161,7 +161,7 @@ public class CommandProcessorSmall extends Thread {
     {
         String path = obj.param1;
         return this.mapper.writeValueAsString(
-                new ObjectForSerialization("content_file", getFileInString(path)));
+                new ObjectForSerialization("content_file", getFileInString(path), "0"));
     }
 
     private String getFileInString(String way)
