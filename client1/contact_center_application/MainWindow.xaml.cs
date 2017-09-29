@@ -26,8 +26,11 @@ namespace contact_center_application
 		public MainWindow()
 		{
 			InitializeComponent();
-			RequestDataFromServer.primaryExchangeWithSocket();
-
+			string[] aliance = RequestDataFromServer.primaryExchangeWithSocket();
+			for (int i = 0; i < aliance.Length; i++)
+			{
+				ComboboxFileSystem.Items.Add(aliance[i]);
+			}
 		}
 
 		private void ComboboxFileSystem_SelectionChanged(object sender, SelectionChangedEventArgs e)

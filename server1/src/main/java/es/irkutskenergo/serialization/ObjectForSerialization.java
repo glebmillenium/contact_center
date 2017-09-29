@@ -16,6 +16,14 @@ public class ObjectForSerialization {
     public String param2 = null;
     public String param3 = null;
 
+    public ObjectForSerialization()
+    {
+        this.command = null;
+        this.param1  = null;
+        this.param2  = null;
+        this.param3  = null;
+    }
+    
     public ObjectForSerialization(String command)
     {
         this.command = command;

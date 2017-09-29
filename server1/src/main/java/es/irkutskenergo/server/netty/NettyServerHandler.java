@@ -41,6 +41,7 @@ public class NettyServerHandler extends SimpleChannelUpstreamHandler {
     @Override
     public void messageReceived(ChannelHandlerContext ctx, MessageEvent e)
     {
+        System.out.println("get message");
         try
         {
             new CommandProcessorSmall(e.getChannel(), e.getMessage().toString())

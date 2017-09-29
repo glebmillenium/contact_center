@@ -4,17 +4,17 @@
 winexe
 C#
 .cs
-C:\contact_center\client\contact_center_application\obj\Debug\
+C:\contact_center\client1\contact_center_application\obj\Debug\
 contact_center_application
 none
 false
 DEBUG;TRACE
-C:\contact_center\client\contact_center_application\App.xaml
+C:\contact_center\client1\contact_center_application\App.xaml
 11151548125
 
-795565440
-131569487696
+81015425892
+151596757229
 MainWindow.xaml;
 
-True
+False
 

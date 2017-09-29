@@ -7,8 +7,11 @@ import org.codehaus.jackson.map.ObjectMapper;
 import es.irkutskenergo.serialization.CatalogForSerialization;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -18,6 +21,7 @@ public class CommandProcessorSmall extends Thread {
     private Channel channel;
     private String commandFromClient;
     ObjectMapper mapper;
+    Map<String, String> aliance;
 
     public CommandProcessorSmall(Channel channel, String commandFromClient)
     {
@@ -26,6 +30,15 @@ public class CommandProcessorSmall extends Thread {
         this.channel = channel;
         this.commandFromClient = commandFromClient;
         this.mapper = new ObjectMapper();
+        this.aliance = new HashMap<String, String>();
+        try
+        {
+            aliance.put(new String("Обычный каталог для тестирования").getBytes("CP1251").toString(),
+                    "C:\\Users\\admin\\Desktop\\catalog");
+        } catch (UnsupportedEncodingException ex)
+        {
+            Logger.getLogger(CommandProcessorSmall.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     @Override
@@ -83,6 +96,7 @@ public class CommandProcessorSmall extends Thread {
      */
     private String getResponse() throws IOException
     {
+        //this.commandFromClient = "{\"command\":\"get_aliance\",\"param1\":\"\",\"param2\":\"\",\"param3\":null}";
         ObjectForSerialization obj = getObjectFromJson(
                 this.commandFromClient);
         String result = null;
@@ -104,16 +118,20 @@ public class CommandProcessorSmall extends Thread {
         return result;
     }
 
-    String[] aliance = new String[]
-    {
-        "C:\\Users\\admin\\Desktop\\catalog"
-    };
-
     private String getAliance(ObjectForSerialization obj) throws IOException
     {
+        String[] getAlianceForSend = new String[this.aliance.size()];
+        int i = 0;
+        for (String key : this.aliance.keySet())
+        {
+            getAlianceForSend[i] = key;
+            i++;
+        }
+
         return this.mapper.writeValueAsString(
                 new ObjectForSerialization("aliance",
-                        this.mapper.writeValueAsString(aliance))
+                        this.mapper.writeValueAsString(getAlianceForSend)
+                )
         );
     }
 
@@ -124,7 +142,7 @@ public class CommandProcessorSmall extends Thread {
         return this.mapper.writeValueAsString(
                 new ObjectForSerialization("catalog",
                         result)
-                );
+        );
     }
 
     public String getAllFolder(String s) throws IOException
@@ -161,7 +179,8 @@ public class CommandProcessorSmall extends Thread {
     {
         String path = obj.param1;
         return this.mapper.writeValueAsString(
-                new ObjectForSerialization("content_file", getFileInString(path), "0"));
+                new ObjectForSerialization("content_file",
+                        getFileInString(path), "0"));
     }
 
     private String getFileInString(String way)

@@ -10,7 +10,7 @@ namespace contact_center_application.core
 {
     class ConnectWithRemoteSocket
     {
-		public static Socket sender;
+		private static Socket sender;
 		private static bool realization = false;
 		public static void createSocket(String ip, int port)
 		{
@@ -23,8 +23,9 @@ namespace contact_center_application.core
 			realization = true;
 		}
 
-		private static byte[] sendMessage(String message, int expectedSize)
+		public static string sendMessage(String message, int expectedSize)
 		{
+			message += "\0";
 			byte[] answerFromServer = new byte[expectedSize];
 			if (realization)
 			{
@@ -35,8 +36,9 @@ namespace contact_center_application.core
 				// Получаем ответ от сервера
 				int bytesRec = sender.Receive(answerFromServer);
 				Console.WriteLine("\nОтвет от сервера: {0}\n\n", Encoding.UTF8.GetString(answerFromServer, 0, bytesRec));
+
 			}
-			return answerFromServer;
+			return System.Text.Encoding.UTF8.GetString(answerFromServer);
 		}
 
 		public static void releaseSocket()
