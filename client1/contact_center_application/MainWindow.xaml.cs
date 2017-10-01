@@ -1,20 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using System.Net;
-using System.Net.Sockets;
 using contact_center_application.core;
+using Newtonsoft.Json;
+using contact_center_application.serialization;
 
 namespace contact_center_application
 {
@@ -31,6 +20,55 @@ namespace contact_center_application
 			{
 				ComboboxFileSystem.Items.Add(aliance[i]);
 			}
+			ComboboxFileSystem.SelectedItem = aliance[0];
+
+			string answer = 
+				RequestDataFromServer.getCatalogFileSystem(ComboboxFileSystem.SelectedItem.ToString());
+
+			fullingTreeView(answer);
+
+		}
+
+		private void fullingTreeView(string json)
+		{
+			List<TreeViewItem> listItems = getItemsCatalogsFromJson(json);
+
+			if (listItems.Count != 0)
+			{
+				foreach (var category in listItems)
+				{
+					this.treeViewCatalog.Items.Add(category);
+				}
+			}
+		}
+
+		private List<TreeViewItem> getItemsCatalogsFromJson(string json)
+		{
+				List<TreeViewItem> result = new List<TreeViewItem>();
+			List<string> listCatalog =
+				   JsonConvert.DeserializeObject<List<string>>(json);
+			foreach (var catalog in listCatalog)
+			{
+				CatalogForSerialization element =
+					JsonConvert.DeserializeObject<CatalogForSerialization>(catalog);
+				TreeViewItem item = new TreeViewItem();
+				item.Header = element.name;
+				if (!element.file)
+				{
+					List<TreeViewItem> listChildren = 
+						getItemsCatalogsFromJson(element.content);
+					if (listChildren.Count != 0)
+					{
+						foreach (var children in listChildren)
+						{
+							item.Items.Add(children);
+						}
+					}
+
+				}
+				result.Add(item);
+			}
+			return result;
 		}
 
 		private void ComboboxFileSystem_SelectionChanged(object sender, SelectionChangedEventArgs e)

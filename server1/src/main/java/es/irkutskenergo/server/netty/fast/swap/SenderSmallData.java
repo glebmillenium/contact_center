@@ -1,10 +1,11 @@
-package es.irkutskenergo.core;
+package es.irkutskenergo.server.netty.fast.swap;
 
 import org.jboss.netty.channel.Channel;
 import es.irkutskenergo.serialization.ObjectForSerialization;
 import java.io.IOException;
 import org.codehaus.jackson.map.ObjectMapper;
 import es.irkutskenergo.serialization.CatalogForSerialization;
+import es.irkutskenergo.server.netty.ftp.FtpServerHandler;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.UnsupportedEncodingException;
@@ -16,14 +17,15 @@ import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class CommandProcessorSmall extends Thread {
+public class SenderSmallData extends Thread {
 
+    private static int i = 0;
     private Channel channel;
     private String commandFromClient;
     ObjectMapper mapper;
     Map<String, String> aliance;
 
-    public CommandProcessorSmall(Channel channel, String commandFromClient)
+    public SenderSmallData(Channel channel, String commandFromClient)
     {
         super();
         setName("cmdProcessor");
@@ -31,14 +33,8 @@ public class CommandProcessorSmall extends Thread {
         this.commandFromClient = commandFromClient;
         this.mapper = new ObjectMapper();
         this.aliance = new HashMap<String, String>();
-        try
-        {
-            aliance.put(new String("Обычный каталог для тестирования").getBytes("CP1251").toString(),
-                    "C:\\Users\\admin\\Desktop\\catalog");
-        } catch (UnsupportedEncodingException ex)
-        {
-            Logger.getLogger(CommandProcessorSmall.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        aliance.put("Simple Catalog for Testing",
+                "C:\\Users\\Глеб\\Desktop\\das");
     }
 
     @Override
@@ -58,6 +54,8 @@ public class CommandProcessorSmall extends Thread {
 
     private void sendToClient(String response)
     {
+        System.out.println("Размер отправляемого пакета данных: " + 
+                response.toCharArray().length);
         this.channel.write(response + "\0");
     }
 
@@ -96,10 +94,10 @@ public class CommandProcessorSmall extends Thread {
      */
     private String getResponse() throws IOException
     {
-        //this.commandFromClient = "{\"command\":\"get_aliance\",\"param1\":\"\",\"param2\":\"\",\"param3\":null}";
         ObjectForSerialization obj = getObjectFromJson(
                 this.commandFromClient);
         String result = null;
+        System.out.println("Команда: " + obj.command);
         if (obj.command.equals("error"))
         {
             //debug
@@ -127,24 +125,45 @@ public class CommandProcessorSmall extends Thread {
             getAlianceForSend[i] = key;
             i++;
         }
-
-        return this.mapper.writeValueAsString(
+        String resultInFtp = this.mapper.writeValueAsString(
                 new ObjectForSerialization("aliance",
                         this.mapper.writeValueAsString(getAlianceForSend)
-                )
-        );
+                ));
+        
+        String expectedSize = Integer.toString(resultInFtp.toCharArray().length);
+        return this.mapper.writeValueAsString(
+                    new ObjectForSerialization("aliance",
+                            expectedSize, sendToStorage(resultInFtp)));
     }
 
+
+    
     private String getCatalog(ObjectForSerialization obj) throws IOException
     {
-        String aliance = obj.param2;
-        String result = getAllFolder(aliance);
-        return this.mapper.writeValueAsString(
-                new ObjectForSerialization("catalog",
+        String result = getAllFolder(this.aliance.get(obj.param1));
+        String resultInFtp = this.mapper.writeValueAsString(
+                    new ObjectForSerialization("catalog",
                         result)
-        );
+                );
+        String expectedSize = Integer.toString(resultInFtp.toCharArray().length);
+        sendToStorage(resultInFtp);
+        return this.mapper.writeValueAsString(
+                    new ObjectForSerialization("catalog",
+                        expectedSize, sendToStorage(resultInFtp)));
     }
 
+    
+    /**
+     * getAllFolder
+     * 
+     * Возвращает строку, содержащую рекурсивную информацию о всей внутренней
+     * структуре по заданному пути к интересующему каталогу (папке)
+     * 
+     * @param s
+     * @param mapper
+     * @return
+     * @throws IOException 
+     */
     public String getAllFolder(String s) throws IOException
     {
         File f = new File(s);
@@ -171,16 +190,19 @@ public class CommandProcessorSmall extends Thread {
                 );
             }
         }
-        return this.mapper.writeValueAsString(result)
-                .replaceAll("[\\\\]+", "\\\\");
+        return this.mapper.writeValueAsString(result);
     }
 
     private String getContentFile(ObjectForSerialization obj) throws IOException
     {
         String path = obj.param1;
+        String resultInFtp = this.mapper.writeValueAsString(
+                new ObjectForSerialization("content_file",
+                        getFileInString(path)));
+        String expectedSize = Integer.toString(resultInFtp.toCharArray().length);
         return this.mapper.writeValueAsString(
                 new ObjectForSerialization("content_file",
-                        getFileInString(path), "0"));
+                        expectedSize, sendToStorage(resultInFtp)));
     }
 
     private String getFileInString(String way)
@@ -197,8 +219,18 @@ public class CommandProcessorSmall extends Thread {
 
         } catch (FileNotFoundException ex)
         {
-            Logger.getLogger(CommandProcessorSmall.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(SenderSmallData.class.getName()).log(Level.SEVERE, null, ex);
         }
         return s;
+    }
+    
+    private static String sendToStorage(String resultInFtp)
+    {
+        while(!FtpServerHandler.addHashKeyIdentificator(Integer.toString(i), resultInFtp))
+        {
+            i++;
+            if(i > 1024) i = 0;
+        }
+        return Integer.toString(i);
     }
 }

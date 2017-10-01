@@ -32,11 +32,8 @@ namespace contact_center_application.core
 				byte[] msg = Encoding.UTF8.GetBytes(message);
 				// Отправляем данные через сокет
 				int bytesSent = sender.Send(msg);
-				Console.WriteLine("Wait...");
 				// Получаем ответ от сервера
 				int bytesRec = sender.Receive(answerFromServer);
-				Console.WriteLine("\nОтвет от сервера: {0}\n\n", Encoding.UTF8.GetString(answerFromServer, 0, bytesRec));
-
 			}
 			return System.Text.Encoding.UTF8.GetString(answerFromServer);
 		}

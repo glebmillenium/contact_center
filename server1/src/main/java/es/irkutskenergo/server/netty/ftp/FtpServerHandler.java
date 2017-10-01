@@ -3,9 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package es.irkutskenergo.server.netty;
+package es.irkutskenergo.server.netty.ftp;
 
-import es.irkutskenergo.core.CommandProcessorSmall;
+import java.util.HashMap;
+import java.util.Map;
 import org.jboss.netty.channel.ChannelEvent;
 import org.jboss.netty.channel.ChannelHandlerContext;
 import org.jboss.netty.channel.ChannelStateEvent;
@@ -13,9 +14,24 @@ import org.jboss.netty.channel.ExceptionEvent;
 import org.jboss.netty.channel.MessageEvent;
 import org.jboss.netty.channel.SimpleChannelUpstreamHandler;
 
-public class NettyServerHandler extends SimpleChannelUpstreamHandler {
+public class FtpServerHandler extends SimpleChannelUpstreamHandler {
 
-    public NettyServerHandler()
+    private static Map<String, String> storage = new HashMap<String, String>();
+    
+    public static boolean addHashKeyIdentificator(String key, String message)
+    {
+        if (storage.containsKey(key)) 
+        {
+            return false;
+        }
+        else
+        {
+            storage.put(key, message);
+            return true;
+        }
+    }
+    
+    public FtpServerHandler()
     {
     }
 
@@ -41,12 +57,21 @@ public class NettyServerHandler extends SimpleChannelUpstreamHandler {
     @Override
     public void messageReceived(ChannelHandlerContext ctx, MessageEvent e)
     {
-        System.out.println("get message");
         try
         {
-            new CommandProcessorSmall(e.getChannel(), e.getMessage().toString())
-                    .start();
-            System.out.println(e.getRemoteAddress());
+            String key = e.getMessage().toString();
+            if (storage.containsKey(key)) 
+            {
+                new SenderBigData(e.getChannel(), 
+                        storage.get(key)).start();
+                storage.remove(key);
+            }
+            else
+            {
+                new SenderBigData(e.getChannel(), 
+                        storage.get(key), false).start();
+            }
+            
         } catch (Exception ex)
         {
             ex.printStackTrace();

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package es.irkutskenergo.server.netty;
+package es.irkutskenergo.server.netty.fast.swap;
 
 import static org.jboss.netty.channel.Channels.*;
 
@@ -17,17 +17,11 @@ import org.jboss.netty.handler.codec.string.StringEncoder;
 public class NettyServerPipeLineFactory implements ChannelPipelineFactory {
 
     public ChannelPipeline getPipeline() throws Exception {
-// Create a default pipeline implementation.
         ChannelPipeline pipeline = pipeline();
-
-// Здесь указываем размер буфера (8192 байта) и символ-признак конца пакета.
-//Свои пакеты мы обычно терминируем символом с кодом 0, что соответствует nulDelimiter() в терминологии нетти
         pipeline.addLast("framer", new DelimiterBasedFrameDecoder(8192, Delimiters.nulDelimiter()));
-        pipeline.addLast("decoder", new StringDecoder()); //Стандартный строковый декодер. Когда пакеты идут в текстовом, XML, JSON или подобном виде. Для бинарных пакетов - другие кодеки.
+        pipeline.addLast("decoder", new StringDecoder()); 
         pipeline.addLast("encoder", new StringEncoder());
-
-        pipeline.addLast("handler", new NettyServerHandler()); //И наконец, указываем, какой класс у нас будет уведомляться о входящих соединениях и пришедших данных
-
+        pipeline.addLast("handler", new NettyServerHandler()); 
         return pipeline;
     }
 }

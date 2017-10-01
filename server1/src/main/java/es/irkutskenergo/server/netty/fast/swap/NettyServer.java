@@ -1,4 +1,4 @@
-package es.irkutskenergo.server.netty;
+package es.irkutskenergo.server.netty.fast.swap;
 
 import java.net.InetAddress;
 import java.net.InetSocketAddress;

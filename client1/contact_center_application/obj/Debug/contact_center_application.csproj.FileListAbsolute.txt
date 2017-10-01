@@ -72,6 +72,5 @@ C:\contact_center\client1\contact_center_application\obj\Debug\MainWindow.baml
 C:\contact_center\client1\contact_center_application\obj\Debug\contact_center_application.g.resources
 C:\contact_center\client1\contact_center_application\obj\Debug\contact_center_application.Properties.Resources.resources
 C:\contact_center\client1\contact_center_application\obj\Debug\contact_center_application.csproj.GenerateResource.Cache
-C:\contact_center\client1\contact_center_application\obj\Debug\contact_center_application.csproj.CoreCompileInputs.cache
 C:\contact_center\client1\contact_center_application\obj\Debug\contact_center_application.exe
 C:\contact_center\client1\contact_center_application\obj\Debug\contact_center_application.pdb
