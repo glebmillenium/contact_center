@@ -26,7 +26,7 @@ namespace contact_center_application.core
 		public static string sendMessage(String message, int expectedSize)
 		{
 			message += "\0";
-			byte[] answerFromServer = new byte[expectedSize+1];
+			byte[] answerFromServer = new byte[expectedSize];
 			if (realization)
 			{
 				byte[] msg = Encoding.UTF8.GetBytes(message);
@@ -35,7 +35,9 @@ namespace contact_center_application.core
 				// Получаем ответ от сервера
 				int bytesRec = sender.Receive(answerFromServer);
 			}
-			return System.Text.Encoding.UTF8.GetString(answerFromServer);
+			string result = System.Text.Encoding.UTF8.GetString(answerFromServer);
+			int size = answerFromServer.Length;
+			return result;
 		}
 
 		public static void releaseSocket()

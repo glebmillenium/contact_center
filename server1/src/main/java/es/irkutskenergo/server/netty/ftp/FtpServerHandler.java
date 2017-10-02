@@ -19,10 +19,10 @@ import org.codehaus.jackson.map.ObjectMapper;
 
 public class FtpServerHandler extends SimpleChannelUpstreamHandler {
 
-    private static Map<String, String> storage = new HashMap<String, String>();
+    private static Map<String, byte[]> storage = new HashMap<String, byte[]>();
     private static ObjectMapper mapper = new ObjectMapper();
     
-    public static boolean addHashKeyIdentificator(String key, String message)
+    public static boolean addHashKeyIdentificator(String key, byte[] message)
     {
         if (storage.containsKey(key))
         {

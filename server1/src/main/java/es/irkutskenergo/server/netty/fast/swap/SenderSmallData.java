@@ -1,5 +1,6 @@
 package es.irkutskenergo.server.netty.fast.swap;
 
+import es.irkutskenergo.other.Tuple;
 import org.jboss.netty.channel.Channel;
 import es.irkutskenergo.serialization.ObjectForSerialization;
 import java.io.IOException;
@@ -23,7 +24,7 @@ public class SenderSmallData extends Thread {
     private Channel channel;
     private String commandFromClient;
     ObjectMapper mapper;
-    Map<String, String> aliance;
+    Map<String, Tuple<String, String>> aliance;
 
     public SenderSmallData(Channel channel, String commandFromClient)
     {
@@ -32,9 +33,9 @@ public class SenderSmallData extends Thread {
         this.channel = channel;
         this.commandFromClient = commandFromClient;
         this.mapper = new ObjectMapper();
-        this.aliance = new HashMap<String, String>();
-        aliance.put("Simple Catalog for Testing",
-                "C:\\Users\\admin\\Desktop\\cat");
+        this.aliance = new HashMap<String, Tuple<String, String>>();
+        aliance.put("0", new Tuple<String, String>("Обычный каталог для тестирования",
+                "C:\\Users\\Глеб\\Desktop\\2 симестр"));
     }
 
     @Override
@@ -117,18 +118,22 @@ public class SenderSmallData extends Thread {
     {
         String[] getAlianceForSend = new String[this.aliance.size()];
         int i = 0;
-        for (String key : this.aliance.keySet())
+        for (Map.Entry<String, Tuple<String, String>> value : 
+                this.aliance.entrySet())
         {
-            getAlianceForSend[i] = key;
+            getAlianceForSend[i] = this.mapper.writeValueAsString(
+                    new String[]{value.getKey(), value.getValue().x});
             i++;
         }
-        String resultInFtp = 
-                this.mapper.writeValueAsString(getAlianceForSend);
+        byte[] resultInFtp = 
+                (this.mapper.writeValueAsString(getAlianceForSend)
+                        + "\0").getBytes("UTF-8");
         
-        String expectedSize = Integer.toString(resultInFtp.toCharArray().length);
+        String expectedSize = Integer.toString(resultInFtp.length);
+        //TODO param3 = 0 - отладка!
         return this.mapper.writeValueAsString(
                     new ObjectForSerialization("aliance",
-                            expectedSize, sendToStorage(resultInFtp)));
+                            expectedSize, sendToStorage(resultInFtp), "0"));
     }
 
 
@@ -136,10 +141,12 @@ public class SenderSmallData extends Thread {
     private String getCatalog(ObjectForSerialization obj) 
             throws IOException
     {
-        String resultInFtp = 
-                        getAllFolder(this.aliance.get(obj.param1));;
+        byte[] resultInFtp = 
+                        (getAllFolder(this.aliance.get(obj.param1).y)
+                                + "\0").getBytes("UTF-8");
+
         String expectedSize = Integer.toString(
-                resultInFtp.toCharArray().length);
+                resultInFtp.length);
         System.out.println("Ожидаемый объем данных для отправки: "
                 + expectedSize);
         String result = this.mapper.writeValueAsString(
@@ -193,8 +200,8 @@ public class SenderSmallData extends Thread {
     {
         String path = this.aliance.get(obj.param1) + obj.param2;
         
-        String resultInFtp = getFileInString(path);
-        String expectedSize = Integer.toString(resultInFtp.toCharArray().length);
+        byte[] resultInFtp = (getFileInString(path) + "\0").getBytes("UTF-8");
+        String expectedSize = Integer.toString(resultInFtp.length);
         return this.mapper.writeValueAsString(
                 new ObjectForSerialization("content_file",
                         expectedSize, sendToStorage(resultInFtp)));
@@ -219,9 +226,10 @@ public class SenderSmallData extends Thread {
         return s;
     }
     
-    private static String sendToStorage(String resultInFtp)
+    private static String sendToStorage(byte[] resultInFtp)
     {
-        while(!FtpServerHandler.addHashKeyIdentificator(Integer.toString(i), resultInFtp))
+        while(!FtpServerHandler
+                .addHashKeyIdentificator(Integer.toString(i), resultInFtp))
         {
             i++;
             if(i > 1024) i = 0;

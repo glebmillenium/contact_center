@@ -5,26 +5,43 @@
  */
 package es.irkutskenergo.server.netty.ftp;
 
+import org.jboss.netty.buffer.ChannelBuffer;
+import org.jboss.netty.buffer.ChannelBuffers;
+import org.jboss.netty.channel.Channel;
+import org.jboss.netty.channel.ChannelHandlerContext;
 import static org.jboss.netty.channel.Channels.*;
 
 import org.jboss.netty.channel.ChannelPipeline;
 import org.jboss.netty.channel.ChannelPipelineFactory;
 import org.jboss.netty.handler.codec.frame.DelimiterBasedFrameDecoder;
 import org.jboss.netty.handler.codec.frame.Delimiters;
+import org.jboss.netty.handler.codec.oneone.OneToOneEncoder;
 import org.jboss.netty.handler.codec.string.StringDecoder;
 import org.jboss.netty.handler.codec.string.StringEncoder;
 
 public class FtpServerPipeLineFactory implements ChannelPipelineFactory {
 
     public ChannelPipeline getPipeline() throws Exception {
-// Create a default pipeline implementation.
         ChannelPipeline pipeline = pipeline();
 
 // Здесь указываем размер буфера (8192 байта) и символ-признак конца пакета.
 //Свои пакеты мы обычно терминируем символом с кодом 0, что соответствует nulDelimiter() в терминологии нетти
         pipeline.addLast("framer", new DelimiterBasedFrameDecoder(8192, Delimiters.nulDelimiter()));
         pipeline.addLast("decoder", new StringDecoder()); //Стандартный строковый декодер. Когда пакеты идут в текстовом, XML, JSON или подобном виде. Для бинарных пакетов - другие кодеки.
-        pipeline.addLast("encoder", new StringEncoder());
+        pipeline.addLast("encoder", new OneToOneEncoder() {
+            @Override
+            protected Object encode(ChannelHandlerContext channelHandlerContext, Channel channel, Object o) throws Exception {
+
+                if (!(o instanceof byte[])) {
+                    return o;
+                }
+
+                ChannelBuffer buffer = ChannelBuffers.dynamicBuffer();
+                //buffer.writeInt(((byte[]) o).length);
+                buffer.writeBytes((byte[]) o);
+                return buffer;
+            }
+        });
 
         pipeline.addLast("handler", new FtpServerHandler()); //И наконец, указываем, какой класс у нас будет уведомляться о входящих соединениях и пришедших данных
 

@@ -51,7 +51,8 @@ namespace contact_center_application.core
 			ObjectForSerialization objForSendToFastSocket = new ObjectForSerialization
 			{
 				command = "get_catalog",
-				param1 = aliance
+				//TODO
+				param1 = "0"
 			};
 			string resultJson = JsonConvert.SerializeObject(objForSendToFastSocket);
 			string answer = ConnectWithFastSocket.sendMessage(resultJson, 1024);

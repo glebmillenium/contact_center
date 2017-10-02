@@ -74,4 +74,7 @@ C:\contact_center\client1\contact_center_application\obj\Debug\contact_center_ap
 C:\contact_center\client1\contact_center_application\obj\Debug\contact_center_application.csproj.GenerateResource.Cache
 C:\contact_center\client1\contact_center_application\obj\Debug\contact_center_application.exe
 C:\contact_center\client1\contact_center_application\obj\Debug\contact_center_application.pdb
-C:\contact_center\client1\contact_center_application\obj\Debug\contact_center_application.csproj.CoreCompileInputs.cache
+C:\contact_center\client1\contact_center_application\obj\Debug\Authorization.g.cs
+C:\contact_center\client1\contact_center_application\obj\Debug\CommonWindow.g.cs
+C:\contact_center\client1\contact_center_application\obj\Debug\Authorization.baml
+C:\contact_center\client1\contact_center_application\obj\Debug\CommonWindow.baml

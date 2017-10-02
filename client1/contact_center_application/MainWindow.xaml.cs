@@ -19,18 +19,27 @@ namespace contact_center_application
 	public partial class MainWindow : Window
 	{
 		private Dictionary<TreeViewItem, string> listTreeView = new Dictionary<TreeViewItem, string>();
+		private Dictionary<string, string> alianceAndId= new Dictionary<string, string>();
 		public MainWindow()
 		{
 			InitializeComponent();
 			string[] aliance = RequestDataFromServer.primaryExchangeWithSocket();
+			alianceAndId.Clear();
 			for (int i = 0; i < aliance.Length; i++)
 			{
-				ComboboxFileSystem.Items.Add(aliance[i]);
+				string[] item = JsonConvert.DeserializeObject<string[]>(aliance[i]);
+				if (item.Length == 2)
+				{
+					this.alianceAndId.Add(item[1], item[0]);
+					ComboboxFileSystem.Items.Add(item[1]);
+				}
 			}
-			ComboboxFileSystem.SelectedItem = aliance[0];
+			ComboboxFileSystem.SelectedItem = JsonConvert.DeserializeObject<string[]>(aliance[0])[1];
+			string selected = ComboboxFileSystem.SelectedItem.ToString();
+			int index = Int32.Parse(this.alianceAndId[ComboboxFileSystem.SelectedItem.ToString()]);
 
 			string answer = 
-				RequestDataFromServer.getCatalogFileSystem(ComboboxFileSystem.SelectedItem.ToString());
+				RequestDataFromServer.getCatalogFileSystem(index.ToString());
 			fullingTreeView(answer);
 		}
 
