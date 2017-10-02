@@ -58,6 +58,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="core\ConnectWithFtpSocket.cs" />
     <Compile Include="serialization\CatalogForSerialization.cs" />
     <Compile Include="serialization\ObjectForSerialization.cs" />
     <Page Include="MainWindow.xaml">
@@ -68,7 +69,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="core\ConnectWithRemoteSocket.cs" />
+    <Compile Include="core\ConnectWithFastSocket.cs" />
     <Compile Include="core\RequestDataFromServer.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>

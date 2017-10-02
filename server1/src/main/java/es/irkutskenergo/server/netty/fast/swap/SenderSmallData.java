@@ -28,13 +28,13 @@ public class SenderSmallData extends Thread {
     public SenderSmallData(Channel channel, String commandFromClient)
     {
         super();
-        setName("cmdProcessor");
+        setName("Fast Swap Server");
         this.channel = channel;
         this.commandFromClient = commandFromClient;
         this.mapper = new ObjectMapper();
         this.aliance = new HashMap<String, String>();
         aliance.put("Simple Catalog for Testing",
-                "C:\\Users\\Глеб\\Desktop\\das");
+                "C:\\Users\\admin\\Desktop\\cat");
     }
 
     @Override
@@ -54,8 +54,6 @@ public class SenderSmallData extends Thread {
 
     private void sendToClient(String response)
     {
-        System.out.println("Размер отправляемого пакета данных: " + 
-                response.toCharArray().length);
         this.channel.write(response + "\0");
     }
 
@@ -97,7 +95,6 @@ public class SenderSmallData extends Thread {
         ObjectForSerialization obj = getObjectFromJson(
                 this.commandFromClient);
         String result = null;
-        System.out.println("Команда: " + obj.command);
         if (obj.command.equals("error"))
         {
             //debug
@@ -125,10 +122,8 @@ public class SenderSmallData extends Thread {
             getAlianceForSend[i] = key;
             i++;
         }
-        String resultInFtp = this.mapper.writeValueAsString(
-                new ObjectForSerialization("aliance",
-                        this.mapper.writeValueAsString(getAlianceForSend)
-                ));
+        String resultInFtp = 
+                this.mapper.writeValueAsString(getAlianceForSend);
         
         String expectedSize = Integer.toString(resultInFtp.toCharArray().length);
         return this.mapper.writeValueAsString(
@@ -138,18 +133,19 @@ public class SenderSmallData extends Thread {
 
 
     
-    private String getCatalog(ObjectForSerialization obj) throws IOException
+    private String getCatalog(ObjectForSerialization obj) 
+            throws IOException
     {
-        String result = getAllFolder(this.aliance.get(obj.param1));
-        String resultInFtp = this.mapper.writeValueAsString(
-                    new ObjectForSerialization("catalog",
-                        result)
-                );
-        String expectedSize = Integer.toString(resultInFtp.toCharArray().length);
-        sendToStorage(resultInFtp);
-        return this.mapper.writeValueAsString(
+        String resultInFtp = 
+                        getAllFolder(this.aliance.get(obj.param1));;
+        String expectedSize = Integer.toString(
+                resultInFtp.toCharArray().length);
+        System.out.println("Ожидаемый объем данных для отправки: "
+                + expectedSize);
+        String result = this.mapper.writeValueAsString(
                     new ObjectForSerialization("catalog",
                         expectedSize, sendToStorage(resultInFtp)));
+        return result;
     }
 
     

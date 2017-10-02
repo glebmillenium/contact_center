@@ -8,8 +8,8 @@ using System.Net.Sockets;
 
 namespace contact_center_application.core
 {
-    class ConnectWithRemoteSocket
-    {
+	class ConnectWithFtpSocket
+	{
 		private static Socket sender;
 		private static bool realization = false;
 		public static void createSocket(String ip, int port)
@@ -26,7 +26,7 @@ namespace contact_center_application.core
 		public static string sendMessage(String message, int expectedSize)
 		{
 			message += "\0";
-			byte[] answerFromServer = new byte[expectedSize];
+			byte[] answerFromServer = new byte[expectedSize+1];
 			if (realization)
 			{
 				byte[] msg = Encoding.UTF8.GetBytes(message);

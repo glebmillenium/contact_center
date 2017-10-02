@@ -5,9 +5,12 @@
  */
 package es.irkutskenergo.server.netty.ftp;
 
+import es.irkutskenergo.serialization.ObjectForSerialization;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.jboss.netty.channel.Channel;
 
@@ -20,33 +23,45 @@ public class SenderBigData extends Thread {
     private Channel channel;
     private String responseToClient;
     private boolean successfull;
+    private static ObjectMapper mapper = new ObjectMapper();
 
-    public SenderBigData(Channel channel, String message) {
+    public SenderBigData(Channel channel, String responseToClient)
+    {
         super();
-        setName("cmdProcessor");
+        setName("Ftp Server");
         this.channel = channel;
         this.responseToClient = responseToClient;
         this.successfull = true;
     }
 
-    public SenderBigData(Channel channel, String message, boolean successfull) {
+    public SenderBigData(Channel channel, String responseToClient, boolean successfull)
+    {
         super();
-        setName("cmdProcessor");
+        setName("Ftp Server");
         this.channel = channel;
-        this.responseToClient = responseToClient;
         this.successfull = successfull;
+        this.responseToClient = responseToClient;
     }
 
     @Override
-    public void run() {
-        if (this.successfull) {
-            sendToClient(responseToClient);
-        } else {
+    public void run()
+    {
+        if (this.successfull)
+        {
+            String response = this.responseToClient;
+                    //.replaceAll("[\\\\]+\\\\0", "\\0") + "\0";
+            System.out.println("Реальный размер данных:"
+                    + response.getBytes().length);
+            sendToClient(response);
+        } else
+        {
             sendToClient("ERROR_404");
         }
     }
 
-    private void sendToClient(String response) {
+    private void sendToClient(String response)
+    {
         this.channel.write(response + "\0");
     }
+
 }

@@ -5,6 +5,8 @@
  */
 package es.irkutskenergo.server.netty.ftp;
 
+import es.irkutskenergo.serialization.ObjectForSerialization;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import org.jboss.netty.channel.ChannelEvent;
@@ -13,24 +15,25 @@ import org.jboss.netty.channel.ChannelStateEvent;
 import org.jboss.netty.channel.ExceptionEvent;
 import org.jboss.netty.channel.MessageEvent;
 import org.jboss.netty.channel.SimpleChannelUpstreamHandler;
+import org.codehaus.jackson.map.ObjectMapper;
 
 public class FtpServerHandler extends SimpleChannelUpstreamHandler {
 
     private static Map<String, String> storage = new HashMap<String, String>();
+    private static ObjectMapper mapper = new ObjectMapper();
     
     public static boolean addHashKeyIdentificator(String key, String message)
     {
-        if (storage.containsKey(key)) 
+        if (storage.containsKey(key))
         {
             return false;
-        }
-        else
+        } else
         {
             storage.put(key, message);
             return true;
         }
     }
-    
+
     public FtpServerHandler()
     {
     }
@@ -59,19 +62,19 @@ public class FtpServerHandler extends SimpleChannelUpstreamHandler {
     {
         try
         {
-            String key = e.getMessage().toString();
-            if (storage.containsKey(key)) 
+            String message = e.getMessage().toString();
+            String key = getObjectFromJson(message).param2;
+            if (storage.containsKey(key))
             {
-                new SenderBigData(e.getChannel(), 
+                new SenderBigData(e.getChannel(),
                         storage.get(key)).start();
                 storage.remove(key);
-            }
-            else
+            } else
             {
-                new SenderBigData(e.getChannel(), 
+                new SenderBigData(e.getChannel(),
                         storage.get(key), false).start();
             }
-            
+
         } catch (Exception ex)
         {
             ex.printStackTrace();
@@ -89,5 +92,13 @@ public class FtpServerHandler extends SimpleChannelUpstreamHandler {
     private void log(String txt)
     {
         System.out.print("NettyServerHandler: " + txt + "\n");
+    }
+
+    private ObjectForSerialization getObjectFromJson(String jsonInString)
+            throws IOException
+    {
+
+        return mapper.readValue(jsonInString,
+                ObjectForSerialization.class);
     }
 }
