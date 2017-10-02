@@ -191,10 +191,9 @@ public class SenderSmallData extends Thread {
 
     private String getContentFile(ObjectForSerialization obj) throws IOException
     {
-        String path = obj.param1;
-        String resultInFtp = this.mapper.writeValueAsString(
-                new ObjectForSerialization("content_file",
-                        getFileInString(path)));
+        String path = this.aliance.get(obj.param1) + obj.param2;
+        
+        String resultInFtp = getFileInString(path);
         String expectedSize = Integer.toString(resultInFtp.toCharArray().length);
         return this.mapper.writeValueAsString(
                 new ObjectForSerialization("content_file",

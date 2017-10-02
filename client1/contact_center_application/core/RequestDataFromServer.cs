@@ -105,9 +105,9 @@ namespace contact_center_application.core
 			};
 
 			resultJson = JsonConvert.SerializeObject(objForSendToFtpSocket);
-			ConnectWithFtpSocket.sendMessage(resultJson, expectedSize);
+			answer = ConnectWithFtpSocket.sendMessage(resultJson, expectedSize);
 
-			return ConnectWithFtpSocket.sendMessage(resultJson, expectedSize);
+			return answer;
 		}
 	}
 }

@@ -29,6 +29,13 @@
 				HorizontalAlignment="Left" 
 				Margin="10,10,0,10" 
 				Width="530"/>
+			<RichTextBox x:Name="richTextBox" Grid.Column="1" HorizontalAlignment="Left" Height="489" Margin="10,10,0,0" VerticalAlignment="Top" Width="530">
+				<FlowDocument>
+					<Paragraph>
+						<Run Text="RichTextBox"/>
+					</Paragraph>
+				</FlowDocument>
+			</RichTextBox>
 		</Grid>
 		<!--Конец-->
 	</Grid>
