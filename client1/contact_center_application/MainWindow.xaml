@@ -7,11 +7,9 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="600" Width="800" MinWidth="3">
 	<Grid Height="509" VerticalAlignment="Bottom">
-		<ComboBox x:Name="ComboboxFileSystem" HorizontalAlignment="Left" Margin="150,-42,0,0"
-					  VerticalAlignment="Top" Width="219" Height="22" SelectionChanged="ComboboxFileSystem_SelectionChanged"/>
-		<Label Content="Приветствие" HorizontalAlignment="Right" 
-			   Margin="534,-48,0,0" VerticalAlignment="Top" Width="246" Height="28"/>
-		<Label Content="Файловая система" Margin="5,-46,0,0" VerticalAlignment="Top" 
+		<ComboBox x:Name="ComboboxFileSystem" HorizontalAlignment="Left" Margin="121,-42,0,0"
+					  VerticalAlignment="Top" Width="296" Height="22" SelectionChanged="ComboboxFileSystem_SelectionChanged"/>
+		<Label Content="Файловый ресурс: " Margin="5,-46,0,0" VerticalAlignment="Top" 
 			   HorizontalAlignment="Left" Width="111"/>
 		<!--Начало нового файла-->
 		<Grid Height="509" VerticalAlignment="Bottom">
@@ -20,23 +18,24 @@
 				<ColumnDefinition Width="117*"/>
 				<ColumnDefinition Width="266*"/>
 			</Grid.ColumnDefinitions>
-			<TextBlock TextWrapping="Wrap" Margin="5" Grid.ColumnSpan="1">
-				Меню просмотра файловой системы
-			</TextBlock>
-			<TreeView x:Name="treeViewCatalog" HorizontalAlignment="Left" Height="469" Margin="10,30,0,0" VerticalAlignment="Top" Width="222"/>
+			<TextBlock TextWrapping="Wrap" Margin="5" Grid.ColumnSpan="1" TextAlignment="Center"><Run Text="Меню просмотра каталогов  "/><InlineUIContainer>
+					<Button Width="60" Height="20" RenderTransformOrigin="2.318,0.5" Content="Обновить"> 
+						<!--<StackPanel Orientation="Horizontal">
+							<Image Source="Resources/refresh.png" Width="20" Height="20" Margin="0,0,0,0" RenderTransformOrigin="0,0"></Image>
+						</StackPanel>-->
+					</Button>
+				</InlineUIContainer></TextBlock>
+
+			<TreeView x:Name="treeViewCatalog" HorizontalAlignment="Left" Height="454" Margin="10,45,0,0" VerticalAlignment="Top" Width="232"/>
 			<DocumentViewer x:Name="viewer" 
 				Grid.Column="1" 
 				HorizontalAlignment="Left" 
-				Margin="10,10,0,10" 
+				Margin="10,35,0,10" 
 				Width="530"/>
-			<RichTextBox x:Name="richTextBox" Grid.Column="1" HorizontalAlignment="Left" Height="489" Margin="10,10,0,0" VerticalAlignment="Top" Width="530">
-				<FlowDocument>
-					<Paragraph>
-						<Run Text="RichTextBox"/>
-					</Paragraph>
-				</FlowDocument>
-			</RichTextBox>
+			<Button Content="Открыть во внешнем приложении" Grid.Column="1" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="206" Click="Button_Click"/>
+			<Button Content="Сохранить изменения" Grid.Column="1" HorizontalAlignment="Left" Margin="221,10,0,0" VerticalAlignment="Top" Width="128"/>
 		</Grid>
+		<TextBlock HorizontalAlignment="Left" Margin="458,-55,0,0" TextWrapping="Wrap" Text="Добро пожаловать, Гость!" VerticalAlignment="Top" Width="274" TextAlignment="Right" Height="50"/>
 		<!--Конец-->
 	</Grid>
 </Window>

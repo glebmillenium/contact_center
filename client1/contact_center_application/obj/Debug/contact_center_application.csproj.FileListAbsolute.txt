@@ -78,3 +78,10 @@ C:\contact_center\client1\contact_center_application\obj\Debug\Authorization.g.c
 C:\contact_center\client1\contact_center_application\obj\Debug\CommonWindow.g.cs
 C:\contact_center\client1\contact_center_application\obj\Debug\Authorization.baml
 C:\contact_center\client1\contact_center_application\obj\Debug\CommonWindow.baml
+C:\contact_center\client1\contact_center_application\obj\Debug\contact_center_application.csproj.CoreCompileInputs.cache
+C:\contact_center\client1\contact_center_application\bin\Debug\Spire.Doc.dll
+C:\contact_center\client1\contact_center_application\bin\Debug\Spire.License.dll
+C:\contact_center\client1\contact_center_application\bin\Debug\Spire.Pdf.dll
+C:\contact_center\client1\contact_center_application\bin\Debug\Microsoft.mshtml.dll
+C:\contact_center\client1\contact_center_application\bin\Debug\Spire.Doc.xml
+C:\contact_center\client1\contact_center_application\bin\Debug\Spire.License.xml

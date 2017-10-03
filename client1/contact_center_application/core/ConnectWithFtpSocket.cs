@@ -40,6 +40,26 @@ namespace contact_center_application.core
 			return result;
 		}
 
+		public static byte[] sendMessageGetContentFile(String message, int expectedSize)
+		{
+			message += "\0";
+			byte[] answerFromServer = new byte[expectedSize + 1];
+			if (realization)
+			{
+				byte[] msg = Encoding.UTF8.GetBytes(message);
+				// Отправляем данные через сокет
+				int bytesSent = sender.Send(msg);
+				// Получаем ответ от сервера
+				int bytesRec = sender.Receive(answerFromServer);
+			}
+			byte[] answer = new byte[expectedSize];
+			for (int i = 0; i < answer.Length; i++)
+			{
+				answer[i] = answerFromServer[i];
+			}
+			return answer;
+		}
+
 		public static void releaseSocket()
 		{
 			if (realization)

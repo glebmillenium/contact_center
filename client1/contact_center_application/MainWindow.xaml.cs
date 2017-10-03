@@ -7,21 +7,24 @@ using contact_center_application.serialization;
 using System;
 using System.IO;
 using System.Text;
-using System.Windows.Xps;
+using Spire.Doc;
+using System.Diagnostics;
 using System.Windows.Xps.Packaging;
-using System.Windows.Documents;
 
 namespace contact_center_application
 {
+
 	/// <summary>
 	/// Логика взаимодействия для MainWindow.xaml
 	/// </summary>
 	public partial class MainWindow : Window
 	{
+		string openFile = "";
 		private Dictionary<TreeViewItem, string> listTreeView = new Dictionary<TreeViewItem, string>();
 		private Dictionary<string, string> alianceAndId= new Dictionary<string, string>();
 		public MainWindow()
 		{
+			System.Drawing.Bitmap bitmap = contact_center_application.Properties.Resources.img_refresh;
 			InitializeComponent();
 			string[] aliance = RequestDataFromServer.primaryExchangeWithSocket();
 			alianceAndId.Clear();
@@ -104,36 +107,50 @@ namespace contact_center_application
 			{
 				string aliance = ComboboxFileSystem.SelectedItem.ToString();
 				string relativeWay = this.listTreeView[selectedItem.Item2];
-				string contentFile = RequestDataFromServer.getContentFile(
-					aliance,
+				string selected = ComboboxFileSystem.SelectedItem.ToString();
+				int index = Int32.Parse(this.alianceAndId[ComboboxFileSystem.SelectedItem.ToString()]);
+				byte[] contentFile = RequestDataFromServer.getContentFile(
+					index.ToString(),
 					relativeWay);
-				contentFile = contentFile.Remove(contentFile.Length - 1, 1);
+				//contentFile = contentFile.Remove(contentFile.Length - 1, 1);
 
 				
 				string temporaryRelativeWay = "tmp" + relativeWay;
 				writeToFile(temporaryRelativeWay, contentFile);
-
-				LoadToViewer(temporaryRelativeWay, contentFile);
+				this.openFile = temporaryRelativeWay;
+				LoadToViewer(temporaryRelativeWay);
 			}
 		}
 
-		private void LoadToViewer(string way, string contentFile)
+		private void LoadToViewer(string way, string viewWay = "view/temp")
 		{
 			string extension = Path.GetExtension(way);
 			//			XpsDocument doc = new XpsDocument(way, FileAccess.Read);
 			//			viewer.Document = doc.GetFixedDocumentSequence();
+			
 			if (extension.Equals(".txt"))
 			{
-				richTextBox.Document.Blocks.Clear();
-				richTextBox.Document.Blocks.Add(new Paragraph(new Run(contentFile)));
+				
+				//richTextBox.Document.Blocks.Clear();
+				//richTextBox.Document.Blocks.Add(new Paragraph(new Run(contentFile)));
+			}
+			else if (extension.Equals(".doc") || extension.Equals(".docx"))
+			{
+				convertDocxDocToXps(way, viewWay);
+				XpsDocument doc = new XpsDocument(viewWay, FileAccess.Read);
+				viewer.Document = doc.GetFixedDocumentSequence();
+			}
+			else if (extension.Equals(".xlsx"))
+			{
+
 			}
 		}
 
-		private static void writeToFile(string relativeWay, string contentFile)
+		private static void writeToFile(string relativeWay, byte[] contentFile)
 		{
 			string directoryWay = Path.GetDirectoryName(relativeWay);
 			Directory.CreateDirectory(directoryWay);
-			File.AppendAllText(@relativeWay, contentFile, Encoding.UTF8);
+			File.WriteAllBytes(@relativeWay, contentFile);
 		}
 
 		private Tuple<bool, TreeViewItem> searchSelectedItem()
@@ -145,6 +162,26 @@ namespace contact_center_application
 				}
 			}
 			return new Tuple<bool, TreeViewItem>(false, new TreeViewItem());
+		}
+
+		public static void convertDocxDocToXps(string way, string viewWay)
+		{
+			try
+			{
+				Document doc = new Document(way);
+				string directoryWay = Path.GetDirectoryName(viewWay);
+				Directory.CreateDirectory(directoryWay);
+				doc.SaveToFile(viewWay, Spire.Doc.FileFormat.XPS);
+			}
+			catch (System.OutOfMemoryException e)
+			{
+
+			}
+		}
+
+		private void Button_Click(object sender, RoutedEventArgs e)
+		{
+			Process.Start(this.openFile);
 		}
 	}
 }

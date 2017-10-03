@@ -51,8 +51,7 @@ namespace contact_center_application.core
 			ObjectForSerialization objForSendToFastSocket = new ObjectForSerialization
 			{
 				command = "get_catalog",
-				//TODO
-				param1 = "0"
+				param1 = aliance
 			};
 			string resultJson = JsonConvert.SerializeObject(objForSendToFastSocket);
 			string answer = ConnectWithFastSocket.sendMessage(resultJson, 1024);
@@ -78,25 +77,27 @@ namespace contact_center_application.core
 			return answer;
 		}
 
-		public static string getContentFile(string aliance, string relativeWay)
+		public static byte[] getContentFile(string aliance, string relativeWay)
 		{
 			ObjectForSerialization objForSendToFastSocket = new ObjectForSerialization {
 				command = "get_content_file",
 				param1 = aliance,
-				param2 = relativeWay
+				param2 = "",
+				param3 = "",
+				byteArray = System.Text.Encoding.UTF8.GetBytes(relativeWay)
 			};
 			string resultJson = JsonConvert.SerializeObject(objForSendToFastSocket);
 			string answer = ConnectWithFastSocket.sendMessage(resultJson, 1024);
 			ObjectForSerialization objResponseFromFastSocket =
 				JsonConvert.DeserializeObject<ObjectForSerialization>(answer);
-
+			byte[] answerToFunction = new byte[] { };
 			string result = null;
 
 			int expectedSize = Int32.Parse(objResponseFromFastSocket.param1);
 			int index = Int32.Parse(objResponseFromFastSocket.param2);
 			if (!objResponseFromFastSocket.command.Equals("content_file"))
 			{
-				return result;
+				return answerToFunction;
 			}
 			ObjectForSerialization objForSendToFtpSocket = new ObjectForSerialization
 			{
@@ -106,9 +107,9 @@ namespace contact_center_application.core
 			};
 
 			resultJson = JsonConvert.SerializeObject(objForSendToFtpSocket);
-			answer = ConnectWithFtpSocket.sendMessage(resultJson, expectedSize);
+			answerToFunction = ConnectWithFtpSocket.sendMessageGetContentFile(resultJson, expectedSize);
 
-			return answer;
+			return answerToFunction;
 		}
 	}
 }
