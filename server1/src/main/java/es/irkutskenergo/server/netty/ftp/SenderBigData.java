@@ -5,14 +5,9 @@
  */
 package es.irkutskenergo.server.netty.ftp;
 
-import es.irkutskenergo.serialization.ObjectForSerialization;
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.jboss.netty.channel.Channel;
 
 /**
@@ -24,7 +19,6 @@ public class SenderBigData extends Thread {
     private Channel channel;
     private byte[] responseToClient;
     private boolean successfull;
-    private static ObjectMapper mapper = new ObjectMapper();
 
     public SenderBigData(Channel channel, byte[] responseToClient) {
         super();
@@ -45,7 +39,6 @@ public class SenderBigData extends Thread {
     @Override
     public void run() {
         if (this.successfull) {
-            //.replaceAll("[\\\\]+\\\\0", "\\0") + "\0";
             sendToClient(this.responseToClient);
         } else {
             try {

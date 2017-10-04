@@ -57,6 +57,7 @@ namespace contact_center_application.core
 			{
 				answer[i] = answerFromServer[i];
 			}
+
 			return answer;
 		}
 

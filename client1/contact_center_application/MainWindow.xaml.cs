@@ -109,16 +109,15 @@ namespace contact_center_application
 				string relativeWay = this.listTreeView[selectedItem.Item2];
 				string selected = ComboboxFileSystem.SelectedItem.ToString();
 				int index = Int32.Parse(this.alianceAndId[ComboboxFileSystem.SelectedItem.ToString()]);
-				byte[] contentFile = RequestDataFromServer.getContentFile(
+				byte[] contentFile = null;
+				contentFile = RequestDataFromServer.getContentFile(
 					index.ToString(),
 					relativeWay);
 				//contentFile = contentFile.Remove(contentFile.Length - 1, 1);
-
-				
-				string temporaryRelativeWay = "tmp" + relativeWay;
-				writeToFile(temporaryRelativeWay, contentFile);
-				this.openFile = temporaryRelativeWay;
-				LoadToViewer(temporaryRelativeWay);
+				this.openFile = "tmp" + relativeWay;
+				writeToFile(this.openFile, contentFile);
+				Array.Clear(contentFile, 0, contentFile.Length);
+				LoadToViewer(this.openFile);
 			}
 		}
 
@@ -127,7 +126,6 @@ namespace contact_center_application
 			string extension = Path.GetExtension(way);
 			//			XpsDocument doc = new XpsDocument(way, FileAccess.Read);
 			//			viewer.Document = doc.GetFixedDocumentSequence();
-			
 			if (extension.Equals(".txt"))
 			{
 				
@@ -136,9 +134,18 @@ namespace contact_center_application
 			}
 			else if (extension.Equals(".doc") || extension.Equals(".docx"))
 			{
-				convertDocxDocToXps(way, viewWay);
-				XpsDocument doc = new XpsDocument(viewWay, FileAccess.Read);
-				viewer.Document = doc.GetFixedDocumentSequence();
+				/*try
+				{
+					viewer.Document = null;
+					convertDocxDocToXps(way, viewWay);
+					XpsDocument doc = new XpsDocument(viewWay, FileAccess.Read);
+					viewer.Document = doc.GetFixedDocumentSequence();
+					doc.Close();
+				}
+				catch (System.OutOfMemoryException e)
+				{
+
+				}*/
 			}
 			else if (extension.Equals(".xlsx"))
 			{
@@ -150,7 +157,11 @@ namespace contact_center_application
 		{
 			string directoryWay = Path.GetDirectoryName(relativeWay);
 			Directory.CreateDirectory(directoryWay);
-			File.WriteAllBytes(@relativeWay, contentFile);
+			if (File.Exists(relativeWay))
+			{
+				File.Delete(relativeWay);
+			}
+			File.WriteAllBytes(relativeWay, contentFile);
 		}
 
 		private Tuple<bool, TreeViewItem> searchSelectedItem()
@@ -171,11 +182,16 @@ namespace contact_center_application
 				Document doc = new Document(way);
 				string directoryWay = Path.GetDirectoryName(viewWay);
 				Directory.CreateDirectory(directoryWay);
+				if (File.Exists(viewWay))
+				{
+					File.Delete(viewWay);
+				}
 				doc.SaveToFile(viewWay, Spire.Doc.FileFormat.XPS);
+				doc.Close();
 			}
 			catch (System.OutOfMemoryException e)
 			{
-
+				throw new OutOfMemoryException();
 			}
 		}
 

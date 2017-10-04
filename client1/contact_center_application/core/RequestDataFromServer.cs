@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using contact_center_application.serialization;
 using System;
+using System.IO;
 
 namespace contact_center_application.core
 {
@@ -90,14 +91,12 @@ namespace contact_center_application.core
 			string answer = ConnectWithFastSocket.sendMessage(resultJson, 1024);
 			ObjectForSerialization objResponseFromFastSocket =
 				JsonConvert.DeserializeObject<ObjectForSerialization>(answer);
-			byte[] answerToFunction = new byte[] { };
-			string result = null;
 
 			int expectedSize = Int32.Parse(objResponseFromFastSocket.param1);
 			int index = Int32.Parse(objResponseFromFastSocket.param2);
 			if (!objResponseFromFastSocket.command.Equals("content_file"))
 			{
-				return answerToFunction;
+				return new byte[] { };
 			}
 			ObjectForSerialization objForSendToFtpSocket = new ObjectForSerialization
 			{
@@ -107,7 +106,10 @@ namespace contact_center_application.core
 			};
 
 			resultJson = JsonConvert.SerializeObject(objForSendToFtpSocket);
-			answerToFunction = ConnectWithFtpSocket.sendMessageGetContentFile(resultJson, expectedSize);
+			byte[] answerToFunction = ConnectWithFtpSocket.sendMessageGetContentFile(resultJson, expectedSize);
+
+			///////////////////////
+			File.WriteAllBytes("C:\\Users\\admin\\Desktop\\log\\client.log", answerToFunction);
 
 			return answerToFunction;
 		}

@@ -68,7 +68,7 @@ public class FtpServerHandler extends SimpleChannelUpstreamHandler {
             {
                 new SenderBigData(e.getChannel(),
                         storage.get(key)).start();
-                storage.remove(key);
+                //storage.remove(key);
             } else
             {
                 new SenderBigData(e.getChannel(),

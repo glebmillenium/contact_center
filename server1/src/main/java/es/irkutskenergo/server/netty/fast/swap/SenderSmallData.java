@@ -209,8 +209,6 @@ public class SenderSmallData extends Thread {
 
         byte[] resultInFtp = getFileInArrayByte(path);
         String expectedSize = Integer.toString(resultInFtp.length);
-        System.out.println("Ожидаемый объем данных для отправки файла: "
-                + expectedSize);
         return this.mapper.writeValueAsString(
                 new ObjectForSerialization("content_file",
                         expectedSize, sendToStorage(resultInFtp)));
@@ -242,6 +240,13 @@ public class SenderSmallData extends Thread {
             FileInputStream fin = new FileInputStream(way);
             byte[] buffer = new byte[fin.available()];
             fin.read(buffer, 0, fin.available());
+            fin.close();
+            
+            ///////////////
+            FileOutputStream fout = new FileOutputStream("C:\\Users\\admin\\Desktop\\log\\server.log");
+            fout.write(buffer, 0, buffer.length);
+            fout.close();
+            
             return buffer;
         } catch (FileNotFoundException e)
         {
