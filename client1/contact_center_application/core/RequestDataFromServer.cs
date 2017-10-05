@@ -9,8 +9,15 @@ namespace contact_center_application.core
     {
 		public static string[] primaryExchangeWithSocket()
 		{
-			ConnectWithFastSocket.createSocket("localhost", 6500);
-			ConnectWithFtpSocket.createSocket("localhost", 7000);
+			try
+			{
+				ConnectWithFastSocket.createSocket("localhost", 6500);
+				ConnectWithDataSocket.createSocket("localhost", 6501);
+			}
+			catch (System.Net.Sockets.SocketException socketException)
+			{
+				throw new System.Net.Sockets.SocketException();
+			}
 
 			return getListFileSystem();
 		}
@@ -42,7 +49,7 @@ namespace contact_center_application.core
 
 			resultJson = JsonConvert.SerializeObject(objForSendToFtpSocket);
 
-			answer = ConnectWithFtpSocket.sendMessage(resultJson, expectedSize);
+			answer = ConnectWithDataSocket.sendMessage(resultJson, expectedSize);
 			result = JsonConvert.DeserializeObject<string[]>(answer);
 			return result;
 		}
@@ -74,7 +81,7 @@ namespace contact_center_application.core
 			};
 
 			resultJson = JsonConvert.SerializeObject(objForSendToFtpSocket);
-			answer = ConnectWithFtpSocket.sendMessage(resultJson, expectedSize);
+			answer = ConnectWithDataSocket.sendMessage(resultJson, expectedSize);
 			return answer;
 		}
 
@@ -105,9 +112,10 @@ namespace contact_center_application.core
 				param2 = index.ToString()
 			};
 
+			ConnectWithFtpSocket.createSocket("localhost", 6502);
 			resultJson = JsonConvert.SerializeObject(objForSendToFtpSocket);
 			byte[] answerToFunction = ConnectWithFtpSocket.sendMessageGetContentFile(resultJson, expectedSize);
-
+			ConnectWithFtpSocket.closeSocket();
 			///////////////////////
 			File.WriteAllBytes("C:\\Users\\admin\\Desktop\\log\\client.log", answerToFunction);
 

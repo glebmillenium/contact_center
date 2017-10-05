@@ -5,9 +5,10 @@
  */
 package es.irkutskenergo.client;
 
-import es.irkutskenergo.server.netty.fast.swap.NettyServer;
+import es.irkutskenergo.server.netty.fast.FastServer;
 import es.irkutskenergo.serialization.ObjectForSerialization;
-import es.irkutskenergo.server.netty.ftp.FtpServer;
+import es.irkutskenergo.server.ftp.FtpServer;
+import es.irkutskenergo.server.netty.data.DataServer;
 import java.io.IOException;
 import java.util.List;
 import java.util.logging.Level;
@@ -27,8 +28,10 @@ public class Main {
     {
         try
         {
-            NettyServer NT = new NettyServer(6500);
-            FtpServer ftp = new FtpServer(7000);
+            FastServer NT = new FastServer(6500);
+            DataServer ds = new DataServer(6501);
+            FtpServer fs = new FtpServer(6502);
+            fs.start();
             // debug
             //serialize();
         } catch (Exception ex)

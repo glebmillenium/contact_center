@@ -1,15 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Net;
 using System.Net.Sockets;
 
 namespace contact_center_application.core
 {
-	class ConnectWithFtpSocket
-	{
+    class ConnectWithFtpSocket
+    {
 		private static Socket sender;
 		private static bool realization = false;
 		public static void createSocket(String ip, int port)
@@ -21,6 +18,12 @@ namespace contact_center_application.core
 			sender = new Socket(ipAddr.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
 			sender.Connect(ipEndPoint);
 			realization = true;
+		}
+
+		public static void closeSocket()
+		{
+			sender.Close();
+			realization = false;
 		}
 
 		public static string sendMessage(String message, int expectedSize)
@@ -43,21 +46,61 @@ namespace contact_center_application.core
 		public static byte[] sendMessageGetContentFile(String message, int expectedSize)
 		{
 			message += "\0";
-			byte[] answerFromServer = new byte[expectedSize + 1];
+			byte[] answerFromServer = null; 
+			byte[] answer = null;
+			int fixedSize = 50 * 1024;
 			if (realization)
 			{
-				byte[] msg = Encoding.UTF8.GetBytes(message);
-				// Отправляем данные через сокет
-				int bytesSent = sender.Send(msg);
-				// Получаем ответ от сервера
-				int bytesRec = sender.Receive(answerFromServer);
+				answerFromServer = new byte[expectedSize + 1];
+				if (expectedSize < fixedSize)
+				{
+					byte[] msg = Encoding.UTF8.GetBytes(message);
+					int bytesSent = sender.Send(msg);
+					int bytesRec = sender.Receive(answerFromServer);
+					answer = getRightArrayByte(answerFromServer);
+				}
+				else
+				{
+					answer = new byte[expectedSize];
+					byte[] sourceArray = new byte[1024 * 50];
+					answerFromServer = new byte[1024 * 50 + 1];
+					byte[] msg;
+					int bytesSent;
+					int bytesRec; 
+					int getBytes = 0;
+					string toSend = message;
+					do
+					{
+						msg = Encoding.UTF8.GetBytes(toSend);
+						bytesSent = sender.Send(msg);
+						bytesRec = sender.Receive(answerFromServer);
+						sourceArray = getRightArrayByte(answerFromServer);
+						getBytes += fixedSize;
+						Array.ConstrainedCopy(sourceArray, 0, answer, 
+							getBytes - fixedSize, sourceArray.Length);
+						toSend = "1";
+					} while (getBytes + fixedSize < expectedSize);
+
+
+					answerFromServer = new byte[expectedSize - getBytes + 1];
+					msg = Encoding.UTF8.GetBytes(toSend);
+					bytesSent = sender.Send(msg);
+					bytesRec = sender.Receive(answerFromServer);
+					sourceArray = getRightArrayByte(answerFromServer);
+					Array.ConstrainedCopy(sourceArray, 0, answer,
+							getBytes, sourceArray.Length);
+				}
 			}
-			byte[] answer = new byte[expectedSize];
+			return answer;
+		}
+
+		private static byte[] getRightArrayByte(byte[] answerFromServer)
+		{
+			byte[] answer = new byte[answerFromServer.Length - 1];
 			for (int i = 0; i < answer.Length; i++)
 			{
 				answer[i] = answerFromServer[i];
 			}
-
 			return answer;
 		}
 
