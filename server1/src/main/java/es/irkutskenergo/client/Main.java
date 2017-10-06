@@ -32,8 +32,6 @@ public class Main {
             DataServer ds = new DataServer(6501);
             FtpServer fs = new FtpServer(6502);
             fs.start();
-            // debug
-            //serialize();
         } catch (Exception ex)
         {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);

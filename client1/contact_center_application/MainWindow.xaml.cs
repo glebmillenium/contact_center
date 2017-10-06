@@ -29,27 +29,28 @@ namespace contact_center_application
 		public MainWindow()
 		{
 			InitializeComponent();
+
+			getFileSystemInThread();
+		}
+
+		private void getFileSystemInThread()
+		{
 			SynchronizationContext uiContext = SynchronizationContext.Current;
 			Thread thread = new Thread(Run);
-			// Запустим поток и установим ему контекст синхронизации,
-			// таким образом этот поток сможет обновлять UI
 			thread.Start(uiContext);
-	
-					//firstExchangeWithServer();
 		}
 
 		private void Run(object state)
 		{
 			// вытащим контекст синхронизации из state'а
 			SynchronizationContext uiContext = state as SynchronizationContext;
-			// говорим что в UI потоке нужно выполнить метод UpdateUI 
-			// и передать ему в качестве аргумента строку
 			uiContext.Post(firstExchangeWithServer, "");
 		}
 
 		private void getContentFileSystem()
 		{
-			int index = Int32.Parse(this.alianceAndId[ComboboxFileSystem.SelectedItem.ToString()]);
+			int index = Int32.Parse(
+				this.alianceAndId[ComboboxFileSystem.SelectedItem.ToString()]);
 
 			string answer =
 				RequestDataFromServer.getCatalogFileSystem(index.ToString());
@@ -75,10 +76,11 @@ namespace contact_center_application
 				}
 				ComboboxFileSystem.SelectedItem = JsonConvert.DeserializeObject<string[]>(aliance[0])[1];
 				string selected = ComboboxFileSystem.SelectedItem.ToString();
+				buttonRefresh.Visibility = Visibility.Hidden;
 			}
 			catch(System.Net.Sockets.SocketException socketException)
 			{
-
+				buttonRefresh.Visibility = Visibility.Visible;
 			}
 		}
 
@@ -280,6 +282,11 @@ namespace contact_center_application
 		private void ButtonUpdateCatalogs_Click(object sender, RoutedEventArgs e)
 		{
 			getContentFileSystem();
+		}
+
+		private void buttonRefresh_Click(object sender, RoutedEventArgs e)
+		{
+			getFileSystemInThread();
 		}
 	}
 }
