@@ -109,3 +109,5 @@ C:\contact_center\client1\contact_center_application\bin\Debug\Spire.PdfViewer.A
 C:\contact_center\client1\contact_center_application\bin\Debug\Spire.PdfViewer.Forms.xml
 C:\contact_center\client1\contact_center_application\bin\Debug\Spire.Presentation.xml
 C:\contact_center\client1\contact_center_application\bin\Debug\Spire.Spreadsheet.xml
+C:\contact_center\client1\contact_center_application\obj\Debug\ProcessDownloadFile.g.cs
+C:\contact_center\client1\contact_center_application\obj\Debug\ProcessDownloadFile.baml

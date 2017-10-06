@@ -1,0 +1,15 @@
+﻿<Page x:Class="contact_center_application.ProcessDownloadFile"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:contact_center_application"
+      mc:Ignorable="d" 
+      d:DesignHeight="55" d:DesignWidth="222"
+      Title="ProcessDownloadFile">
+
+	<Grid>
+		<ProgressBar Name="progressBarControllProcess" HorizontalAlignment="Left" Height="20" VerticalAlignment="Top" Width="222"/>
+		<TextBlock Name="textBlockControllProcess" TextWrapping="Wrap" Text="TextBlock" Margin="0,20,0,0"/>
+	</Grid>
+</Page>

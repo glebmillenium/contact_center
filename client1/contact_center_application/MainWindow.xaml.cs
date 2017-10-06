@@ -12,6 +12,9 @@ using System.Windows.Xps.Packaging;
 using System.Threading;
 using Spire.Doc;
 using Spire.Xls;
+using System.ComponentModel;
+using System.Windows.Threading;
+using System.Threading.Tasks;
 
 namespace contact_center_application
 {
@@ -21,26 +24,29 @@ namespace contact_center_application
 	/// </summary>
 	public partial class MainWindow : Window
 	{
+		//BackgroundWorker asyncCall = new BackgroundWorker();
 		string openFile = "";
 		private Dictionary<TreeViewItem, string> listTreeView = 
 			new Dictionary<TreeViewItem, string>();
 		private Dictionary<string, string> alianceAndId= new Dictionary<string, string>();
 		XpsDocument doc;
+
 		public MainWindow()
 		{
 			InitializeComponent();
-
+			
 			getFileSystemInThread();
 		}
 
 		private void getFileSystemInThread()
 		{
 			SynchronizationContext uiContext = SynchronizationContext.Current;
-			Thread thread = new Thread(Run);
+			Thread thread = new Thread(runFirstExchangeWithServer);
+			thread.Priority = ThreadPriority.Lowest;
 			thread.Start(uiContext);
 		}
 
-		private void Run(object state)
+		private void runFirstExchangeWithServer(object state)
 		{
 			// вытащим контекст синхронизации из state'а
 			SynchronizationContext uiContext = state as SynchronizationContext;
@@ -49,6 +55,7 @@ namespace contact_center_application
 
 		private void getContentFileSystem()
 		{
+			
 			int index = Int32.Parse(
 				this.alianceAndId[ComboboxFileSystem.SelectedItem.ToString()]);
 
@@ -143,6 +150,15 @@ namespace contact_center_application
 
 		private void selectFile(object sender, RoutedEventArgs e)
 		{
+			runSelectFileAsync();
+		}
+
+
+		private void runSelectFileAsync()
+		{
+			var processDownloadFile = new ProcessDownloadFile();
+			downloadFrame.Navigate(processDownloadFile);
+			
 			Tuple<bool, TreeViewItem> selectedItem = searchSelectedItem();
 			if (selectedItem.Item1)
 			{
@@ -150,16 +166,30 @@ namespace contact_center_application
 				string relativeWay = this.listTreeView[selectedItem.Item2];
 				string selected = ComboboxFileSystem.SelectedItem.ToString();
 				int index = Int32.Parse(this.alianceAndId[ComboboxFileSystem.SelectedItem.ToString()]);
-				byte[] contentFile = null;
-				contentFile = RequestDataFromServer.getContentFile(
-					index.ToString(),
-					relativeWay);
-				//contentFile = contentFile.Remove(contentFile.Length - 1, 1);
 				this.openFile = "tmp" + relativeWay;
-				writeToFile(this.openFile, contentFile);
-				Array.Clear(contentFile, 0, contentFile.Length);
+				Task<int> result = Data(aliance, relativeWay, selected, index, processDownloadFile,
+					this.openFile);
+				//MainWindow.setStateCurrentProgress(progressBarControllProcess, 92,
+				///textBlockControllProcess,
+				//"Вывод в приложение..");
 				LoadToViewer(this.openFile);
+				//MainWindow.setStateCurrentProgress(progressBarControllProcess, 100,
+				//textBlockControllProcess,
 			}
+		}
+
+		private async Task<int> Data(string aliance, string relativeWay, string selected, int index,
+			ProcessDownloadFile processDownloadFile, string openFile)
+		{
+			return await Task.Run(() =>
+			 {
+				 int result = 1;
+				 byte[] contentFile = null;
+				 contentFile = processDownloadFile.getContentFile(index, relativeWay);
+				 writeToFile(openFile, contentFile);
+				 Array.Clear(contentFile, 0, contentFile.Length);
+				 return result;
+			 });
 		}
 
 		private void LoadToViewer(string way, string viewWay = "view/temp")
@@ -287,6 +317,27 @@ namespace contact_center_application
 		private void buttonRefresh_Click(object sender, RoutedEventArgs e)
 		{
 			getFileSystemInThread();
+		}
+
+		private void setStateCurrentProgress(int valueInPersisten, string decribeState)
+		{
+			Thread.Sleep(200);
+			progressBarControllProcess.Value = valueInPersisten;
+			textBlockControllProcess.Text = decribeState;
+		}
+
+		private void setStateCurrentProgress(int valueInPersisten)
+		{
+			Thread.Sleep(200);
+			progressBarControllProcess.Value = valueInPersisten;
+		}
+
+		public static void setStateCurrentProgress(ProgressBar progressBar, 
+			int valueInPersisten, TextBlock textBlock, string decribeState)
+		{
+			Thread.Sleep(500);
+			progressBar.Value = valueInPersisten;
+			textBlock.Text = decribeState;
 		}
 	}
 }

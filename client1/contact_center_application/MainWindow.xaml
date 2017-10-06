@@ -6,37 +6,38 @@
         xmlns:local="clr-namespace:contact_center_application"
         mc:Ignorable="d"
         Title="MainWindow" Height="600" Width="800" MinWidth="3">
-	<Grid Height="509" VerticalAlignment="Bottom">
+
+	<Grid Height="502" VerticalAlignment="Bottom" Margin="0,0,0,-3" Grid.ColumnSpan="2">
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition/>
-			<ColumnDefinition Width="Auto"/>
-			<ColumnDefinition Width="Auto"/>
 		</Grid.ColumnDefinitions>
-		<ComboBox x:Name="ComboboxFileSystem" HorizontalAlignment="Left" Margin="121,-42,0,0"
-					  VerticalAlignment="Top" Width="296" Height="22" SelectionChanged="ComboboxFileSystem_SelectionChanged"/>
-		<Label Content="Файловый ресурс: " Margin="5,-46,0,0" VerticalAlignment="Top" 
+		<TextBlock x:Name="UpdateCatalogs" TextWrapping="Wrap" Margin="5,10,552,48" TextAlignment="Center"><Run Text="Меню просмотра каталогов  "/><InlineUIContainer>
+				<Button x:Name="ButtonUpdateCatalogs" Width="60" Height="20" RenderTransformOrigin="2.318,0.5" Content="Обновить" Click="ButtonUpdateCatalogs_Click"/>
+			</InlineUIContainer></TextBlock>
+
+		<TreeView x:Name="treeViewCatalog" HorizontalAlignment="Left" Height="351" Margin="10,35,0,0" VerticalAlignment="Top" Width="222"/>
+		<DocumentViewer x:Name="viewer" 
+			Margin="250,10,10,116"/>
+		<Button Content="Открыть во внешнем приложении" HorizontalAlignment="Left" Margin="443,466,0,0" VerticalAlignment="Top" Width="206" Click="Button_Click" Height="20"/>
+		<Button Content="Сохранить изменения" HorizontalAlignment="Left" Margin="654,466,0,0" VerticalAlignment="Top" Width="128" Height="20"/>
+		<TextBlock Margin="469,-18,12,0" TextWrapping="Wrap" Text="Добро пожаловать, Гость!" VerticalAlignment="Top" TextAlignment="Right" Height="17" Grid.ColumnSpan="2"/>
+		<Button Content="Помощь" Margin="721,-47,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.907,1.5" Grid.ColumnSpan="2" HorizontalAlignment="Right" Width="59"/>
+
+		<StackPanel Height="33" Margin="0,-56,174,532" 
+					VerticalAlignment="Top" HorizontalAlignment="Left" Width="560">
+			<Label Content="Файловый ресурс: " Margin="5,5,0,0" VerticalAlignment="Top" 
 			   HorizontalAlignment="Left" Width="111"/>
-		<Grid Height="509" VerticalAlignment="Bottom" Margin="0,0,0,-3">
+			<ComboBox x:Name="ComboboxFileSystem" HorizontalAlignment="Left"
+					  Margin="120, -25,0,300" Width="291" 
+					  SelectionChanged="ComboboxFileSystem_SelectionChanged"/>
+			<Button x:Name="buttonRefresh"  HorizontalAlignment="Left" Margin="415, -320,0,0" VerticalAlignment="Top" Width="141" Height="20" TextOptions.TextFormattingMode="Display" Click="buttonRefresh_Click">
+				<TextBlock x:Name="buttonRetryConnection" Text="Повторить соединение" TextAlignment="Center" TextWrapping="Wrap" Height="15" Width="132"/>
+			</Button>
+		</StackPanel>
+		<Frame x:Name="downloadFrame" Content="" HorizontalAlignment="Left" Height="101" Margin="10,391,0,0" VerticalAlignment="Top" Width="222"/>
 
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition/>
-			</Grid.ColumnDefinitions>
-			<TextBlock x:Name="UpdateCatalogs" TextWrapping="Wrap" Margin="5,0,547,48" Grid.ColumnSpan="1" TextAlignment="Center"><Run Text="Меню просмотра каталогов  "/><InlineUIContainer>
-					<Button x:Name="ButtonUpdateCatalogs" Width="60" Height="20" RenderTransformOrigin="2.318,0.5" Content="Обновить" Click="ButtonUpdateCatalogs_Click"/>
-				</InlineUIContainer></TextBlock>
-
-			<TreeView x:Name="treeViewCatalog" HorizontalAlignment="Left" Height="426" Margin="10,35,0,0" VerticalAlignment="Top" Width="222"/>
-			<DocumentViewer x:Name="viewer" 
-				Margin="250,48,10,10"/>
-			<Button Content="Открыть во внешнем приложении" HorizontalAlignment="Left" Margin="441,19,0,0" VerticalAlignment="Top" Width="206" Click="Button_Click"/>
-			<Button Content="Сохранить изменения" HorizontalAlignment="Left" Margin="652,19,0,0" VerticalAlignment="Top" Width="128"/>
-			<ProgressBar x:Name="progressBarControllProcess"  HorizontalAlignment="Left" Height="21" Margin="10,466,0,0" VerticalAlignment="Top" Width="222"/>
-			<TextBlock x:Name="textBlockControllProcess" HorizontalAlignment="Left" Margin="10,487,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="222"/>
-		</Grid>
-		<TextBlock HorizontalAlignment="Left" Margin="469,-18,0,0" TextWrapping="Wrap" Text="Добро пожаловать, Гость!" VerticalAlignment="Top" Width="311" TextAlignment="Right" Height="17"/>
-		<Button Content="Помощь" HorizontalAlignment="Left" Margin="721,-47,0,0" VerticalAlignment="Top" Width="59" RenderTransformOrigin="0.907,1.5"/>
-		<Button x:Name="buttonRefresh"  HorizontalAlignment="Left" Margin="424,-41,0,0" VerticalAlignment="Top" Width="141" Height="20" TextOptions.TextFormattingMode="Display" Click="buttonRefresh_Click">
-			<TextBlock x:Name="buttonRetryConnection" Text="Повторить соединение" TextAlignment="Center" TextWrapping="Wrap" Height="15" Width="142"/>
-		</Button>
+		<ProgressBar Name="progressBarControllProcess" HorizontalAlignment="Left" Height="10" Margin="284,456,0,0" VerticalAlignment="Top" Width="100"/>
+		<TextBlock Name="textBlockControllProcess" HorizontalAlignment="Left" Margin="284,466,0,0" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top"/>
 	</Grid>
+
 </Window>
