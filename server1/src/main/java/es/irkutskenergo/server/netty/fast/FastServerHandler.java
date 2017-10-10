@@ -1,10 +1,6 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package es.irkutskenergo.server.netty.fast;
 
+import es.irkutskenergo.other.Logging;
 import org.jboss.netty.channel.ChannelEvent;
 import org.jboss.netty.channel.ChannelHandlerContext;
 import org.jboss.netty.channel.ChannelStateEvent;
@@ -28,14 +24,16 @@ public class FastServerHandler extends SimpleChannelUpstreamHandler {
     @Override
     public void channelConnected(ChannelHandlerContext ctx, ChannelStateEvent e) throws Exception
     {
-        log("Client connected from " + ctx.getChannel().getRemoteAddress() + " (" + ctx.getChannel().getId() + ")");
+        Logging.log("Клиент присоединился к серверу: "
+                + ctx.getChannel().getRemoteAddress() + " (" + ctx.getChannel()
+                .getId() + ")", 1);
     }
 
     @Override
     public void channelClosed(ChannelHandlerContext ctx, ChannelStateEvent e) throws Exception
     {
-        log("Connection closed from " + ctx.getChannel().getRemoteAddress() + 
-                " (" + ctx.getChannel().getId() + ")");
+        Logging.log("Соединение с сервером было закрыто " + ctx.getChannel().getRemoteAddress()
+                + " (" + ctx.getChannel().getId() + ")", 1);
     }
 
     @Override
@@ -43,9 +41,11 @@ public class FastServerHandler extends SimpleChannelUpstreamHandler {
     {
         try
         {
+            Logging.log("Получено сообщение от " + ctx.getChannel().getRemoteAddress()
+                    + " (" + ctx.getChannel().getId() + ")", 1);
             new SenderSmallData(e.getChannel(), e.getMessage().toString())
                     .start();
-            System.out.println(e.getRemoteAddress());
+
         } catch (Exception ex)
         {
             ex.printStackTrace();
@@ -55,13 +55,9 @@ public class FastServerHandler extends SimpleChannelUpstreamHandler {
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, ExceptionEvent e)
     {
-        log("Error (" + ctx.getChannel().getRemoteAddress() + "): "
-                + e.getCause() + " (" + ctx.getChannel().getId() + ")");
+        Logging.log("Ошибка при передаче данных ("
+                + ctx.getChannel().getRemoteAddress() + "): "
+                + e.getCause() + " (" + ctx.getChannel().getId() + ")", 1);
         e.getChannel().close();
-    }
-
-    private void log(String txt)
-    {
-        System.out.print("NettyServerHandler: " + txt + "\n");
     }
 }

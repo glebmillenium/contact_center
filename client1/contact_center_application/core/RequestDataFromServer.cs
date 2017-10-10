@@ -10,13 +10,19 @@ namespace contact_center_application.core
     public class RequestDataFromServer
     {
 		static string addressServer = "localhost";
+
+		public static string getAddressServer()
+		{
+			return addressServer;
+		}
+
 		public static string[] primaryExchangeWithSocket(string address = "localhost")
 		{
 			addressServer = address;
 			try
 			{
 				ConnectWithFastSocket.createSocket(addressServer, 6500);
-				ConnectWithDataSocket.createSocket(addressServer, 6501);
+				//ConnectWithDataSocket.createSocket(addressServer, 6501);
 			}
 			catch (System.Net.Sockets.SocketException socketException)
 			{
@@ -53,8 +59,12 @@ namespace contact_center_application.core
 
 			resultJson = JsonConvert.SerializeObject(objForSendToFtpSocket);
 
-			answer = ConnectWithDataSocket.sendMessage(resultJson, expectedSize);
-			result = JsonConvert.DeserializeObject<string[]>(answer);
+			ConnectWithFtpSocket.createSocket(addressServer, 6502);
+			resultJson = JsonConvert.SerializeObject(objForSendToFtpSocket);
+			string answerSocket = ConnectWithFtpSocket.sendMessage(resultJson, expectedSize);
+			ConnectWithFtpSocket.closeSocket();
+
+			result = JsonConvert.DeserializeObject<string[]>(answerSocket);
 			return result;
 		}
 
@@ -84,16 +94,16 @@ namespace contact_center_application.core
 				param2 = index.ToString()
 			};
 
+			ConnectWithFtpSocket.createSocket(addressServer, 6502);
 			resultJson = JsonConvert.SerializeObject(objForSendToFtpSocket);
-			answer = ConnectWithDataSocket.sendMessage(resultJson, expectedSize);
+			answer = ConnectWithFtpSocket.sendMessage(resultJson, expectedSize);
+			ConnectWithFtpSocket.closeSocket();
+			
 			return answer;
 		}
 
-		public static byte[] getContentFile(string aliance, string relativeWay,
-			ProgressBar progressBar, TextBlock textBlock)
+		public static byte[] getContentFile(string aliance, string relativeWay)
 		{
-			MainWindow.setStateCurrentProgress(progressBar, 13, textBlock,
-				"Получение сведений о файле...");
 			ObjectForSerialization objForSendToFastSocket = new ObjectForSerialization {
 				command = "get_content_file",
 				param1 = aliance,
@@ -105,8 +115,7 @@ namespace contact_center_application.core
 			string answer = ConnectWithFastSocket.sendMessage(resultJson, 1024);
 			ObjectForSerialization objResponseFromFastSocket =
 				JsonConvert.DeserializeObject<ObjectForSerialization>(answer);
-			MainWindow.setStateCurrentProgress(progressBar, 16, textBlock,
-				"Получение сведений о файле...");
+
 			int expectedSize = Int32.Parse(objResponseFromFastSocket.param1);
 			int index = Int32.Parse(objResponseFromFastSocket.param2);
 			if (!objResponseFromFastSocket.command.Equals("content_file"))
@@ -136,15 +145,12 @@ namespace contact_center_application.core
 				outputSizeFile = String.Format(
 					"{0} гб", (expectedSize / 1073741824.0).ToString("0.00", CultureInfo.InvariantCulture));
 
-			MainWindow.setStateCurrentProgress(progressBar, 18, textBlock,
-				"Получение сведений о файле...");
+
 			string output = "Получение содержимого файла... Общий размер: " + outputSizeFile;
-			MainWindow.setStateCurrentProgress(progressBar, 19, textBlock,
-				output);
+
 			ConnectWithFtpSocket.createSocket(addressServer, 6502);
 			resultJson = JsonConvert.SerializeObject(objForSendToFtpSocket);
-			byte[] answerToFunction = ConnectWithFtpSocket.sendMessageGetContentFile(resultJson, expectedSize, 
-				progressBar, textBlock, output);
+			byte[] answerToFunction = ConnectWithFtpSocket.sendMessageGetContentFile(resultJson, expectedSize);
 			ConnectWithFtpSocket.closeSocket();
 
 			return answerToFunction;

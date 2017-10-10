@@ -12,52 +12,43 @@ using System.Windows.Xps.Packaging;
 using System.Threading;
 using Spire.Doc;
 using Spire.Xls;
-using System.ComponentModel;
-using System.Windows.Threading;
-using System.Threading.Tasks;
 
 namespace contact_center_application
 {
-
 	/// <summary>
 	/// Логика взаимодействия для MainWindow.xaml
 	/// </summary>
 	public partial class MainWindow : Window
 	{
-		//BackgroundWorker asyncCall = new BackgroundWorker();
 		string openFile = "";
-		private Dictionary<TreeViewItem, string> listTreeView = 
+		private Dictionary<TreeViewItem, string> listTreeView =
 			new Dictionary<TreeViewItem, string>();
-		private Dictionary<string, string> alianceAndId= new Dictionary<string, string>();
+		private Dictionary<string, string> alianceAndId = new Dictionary<string, string>();
 		XpsDocument doc;
-
 		public MainWindow()
 		{
 			InitializeComponent();
-			
-			getFileSystemInThread();
-		}
-
-		private void getFileSystemInThread()
-		{
 			SynchronizationContext uiContext = SynchronizationContext.Current;
-			Thread thread = new Thread(runFirstExchangeWithServer);
-			thread.Priority = ThreadPriority.Lowest;
+			Thread thread = new Thread(Run);
+			// Запустим поток и установим ему контекст синхронизации,
+			// таким образом этот поток сможет обновлять UI
 			thread.Start(uiContext);
+
+			//firstExchangeWithServer();
 		}
 
-		private void runFirstExchangeWithServer(object state)
+		private void Run(object state)
 		{
 			// вытащим контекст синхронизации из state'а
 			SynchronizationContext uiContext = state as SynchronizationContext;
+			// говорим что в UI потоке нужно выполнить метод UpdateUI 
+			// и передать ему в качестве аргумента строку
 			uiContext.Post(firstExchangeWithServer, "");
 		}
 
 		private void getContentFileSystem()
 		{
-			
-			int index = Int32.Parse(
-				this.alianceAndId[ComboboxFileSystem.SelectedItem.ToString()]);
+			int index = Int32.Parse(this.alianceAndId[ComboboxFileSystem.SelectedItem.ToString()]);
 
 			string answer =
 				RequestDataFromServer.getCatalogFileSystem(index.ToString());
@@ -83,18 +74,16 @@ namespace contact_center_application
 				}
 				ComboboxFileSystem.SelectedItem = JsonConvert.DeserializeObject<string[]>(aliance[0])[1];
 				string selected = ComboboxFileSystem.SelectedItem.ToString();
-				buttonRefresh.Visibility = Visibility.Hidden;
 			}
-			catch(System.Net.Sockets.SocketException socketException)
+			catch (System.Net.Sockets.SocketException socketException)
 			{
-				buttonRefresh.Visibility = Visibility.Visible;
+
 			}
 		}
 
 		private void fullingTreeView(string json)
 		{
 			this.listTreeView.Clear();
-			//ComboboxFileSystem.Items.Clear();
 			List<TreeViewItem> listItems = getItemsCatalogsFromJson(json, "");
 
 			if (listItems.Count != 0)
@@ -121,7 +110,7 @@ namespace contact_center_application
 				if (!element.file)
 				{
 					List<TreeViewItem> listChildren =
-						getItemsCatalogsFromJson(element.content, 
+						getItemsCatalogsFromJson(element.content,
 							currentWay + "\\" + element.name);
 					if (listChildren.Count != 0)
 					{
@@ -144,21 +133,12 @@ namespace contact_center_application
 
 		private void ComboboxFileSystem_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
-			
+
 			getContentFileSystem();
 		}
 
 		private void selectFile(object sender, RoutedEventArgs e)
 		{
-			runSelectFileAsync();
-		}
-
-
-		private void runSelectFileAsync()
-		{
-			var processDownloadFile = new ProcessDownloadFile();
-			downloadFrame.Navigate(processDownloadFile);
-			
 			Tuple<bool, TreeViewItem> selectedItem = searchSelectedItem();
 			if (selectedItem.Item1)
 			{
@@ -166,30 +146,21 @@ namespace contact_center_application
 				string relativeWay = this.listTreeView[selectedItem.Item2];
 				string selected = ComboboxFileSystem.SelectedItem.ToString();
 				int index = Int32.Parse(this.alianceAndId[ComboboxFileSystem.SelectedItem.ToString()]);
-				this.openFile = "tmp" + relativeWay;
-				Task<int> result = Data(aliance, relativeWay, selected, index, processDownloadFile,
-					this.openFile);
-				//MainWindow.setStateCurrentProgress(progressBarControllProcess, 92,
-				///textBlockControllProcess,
-				//"Вывод в приложение..");
-				LoadToViewer(this.openFile);
-				//MainWindow.setStateCurrentProgress(progressBarControllProcess, 100,
-				//textBlockControllProcess,
-			}
-		}
+				byte[] contentFile = null;
 
-		private async Task<int> Data(string aliance, string relativeWay, string selected, int index,
-			ProcessDownloadFile processDownloadFile, string openFile)
-		{
-			return await Task.Run(() =>
-			 {
-				 int result = 1;
-				 byte[] contentFile = null;
-				 contentFile = processDownloadFile.getContentFile(index, relativeWay);
-				 writeToFile(openFile, contentFile);
-				 Array.Clear(contentFile, 0, contentFile.Length);
-				 return result;
-			 });
+				DownloadWindow download = new DownloadWindow(index.ToString(),
+					relativeWay);
+				contentFile = download.getContentFile();
+
+				//contentFile = RequestDataFromServer.getContentFile(
+				//	index.ToString(),
+				//	relativeWay);
+				//contentFile = contentFile.Remove(contentFile.Length - 1, 1);
+				this.openFile = "tmp" + relativeWay;
+				writeToFile(this.openFile, contentFile);
+				Array.Clear(contentFile, 0, contentFile.Length);
+				LoadToViewer(this.openFile);
+			}
 		}
 
 		private void LoadToViewer(string way, string viewWay = "view/temp")
@@ -199,7 +170,7 @@ namespace contact_center_application
 			//			viewer.Document = doc.GetFixedDocumentSequence();
 			if (extension.Equals(".txt"))
 			{
-				
+
 				//richTextBox.Document.Blocks.Clear();
 				//richTextBox.Document.Blocks.Add(new Paragraph(new Run(contentFile)));
 			}
@@ -247,7 +218,8 @@ namespace contact_center_application
 		{
 			foreach (var item in this.listTreeView)
 			{
-				if (item.Key.IsSelected) {
+				if (item.Key.IsSelected)
+				{
 					return new Tuple<bool, TreeViewItem>(true, item.Key);
 				}
 			}
@@ -316,28 +288,11 @@ namespace contact_center_application
 
 		private void buttonRefresh_Click(object sender, RoutedEventArgs e)
 		{
-			getFileSystemInThread();
-		}
-
-		private void setStateCurrentProgress(int valueInPersisten, string decribeState)
-		{
-			Thread.Sleep(200);
-			progressBarControllProcess.Value = valueInPersisten;
-			textBlockControllProcess.Text = decribeState;
-		}
-
-		private void setStateCurrentProgress(int valueInPersisten)
-		{
-			Thread.Sleep(200);
-			progressBarControllProcess.Value = valueInPersisten;
-		}
-
-		public static void setStateCurrentProgress(ProgressBar progressBar, 
-			int valueInPersisten, TextBlock textBlock, string decribeState)
-		{
-			Thread.Sleep(500);
-			progressBar.Value = valueInPersisten;
-			textBlock.Text = decribeState;
+			SynchronizationContext uiContext = SynchronizationContext.Current;
+			Thread thread = new Thread(Run);
+			// Запустим поток и установим ему контекст синхронизации,
+			// таким образом этот поток сможет обновлять UI
+			thread.Start(uiContext);
 		}
 	}
 }

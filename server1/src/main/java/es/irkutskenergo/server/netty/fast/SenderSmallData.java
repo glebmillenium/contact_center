@@ -1,5 +1,7 @@
 package es.irkutskenergo.server.netty.fast;
 
+import es.irkutskenergo.other.ExceptionServer;
+import es.irkutskenergo.other.Logging;
 import es.irkutskenergo.other.Tuple;
 import org.jboss.netty.channel.Channel;
 import es.irkutskenergo.serialization.ObjectForSerialization;
@@ -7,10 +9,8 @@ import java.io.IOException;
 import org.codehaus.jackson.map.ObjectMapper;
 import es.irkutskenergo.serialization.CatalogForSerialization;
 import es.irkutskenergo.server.ftp.FtpServer;
-import es.irkutskenergo.server.netty.data.DataServerHandler;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -27,6 +27,8 @@ public class SenderSmallData extends Thread {
     private String commandFromClient;
     ObjectMapper mapper;
     Map<String, Tuple<String, String>> aliance;
+    private static int query = 0;
+    private int numberConnect;
 
     public SenderSmallData(Channel channel, String commandFromClient)
     {
@@ -40,6 +42,13 @@ public class SenderSmallData extends Thread {
                 "C:\\Users\\admin\\Desktop\\Инструкции"));
         aliance.put("1", new Tuple<String, String>("Обычный каталог для тестирования",
                 "C:\\Users\\admin\\Desktop\\cat"));
+
+        query++;
+        if (query >= 65536)
+        {
+            query = 1;
+        }
+        numberConnect = query;
     }
 
     @Override
@@ -52,7 +61,9 @@ public class SenderSmallData extends Thread {
         } catch (IOException ex)
         {
             response = getResponseWhenError();
-            System.out.println("Не получилось обработать входящую команду");
+            Logging.log("Не получилось обработать входящую команду "
+                    + this.channel.toString() + ") Номер запроса: "
+                    + this.numberConnect, 1);
         }
         sendToClient(response);
     }
@@ -79,7 +90,10 @@ public class SenderSmallData extends Thread {
                     new ObjectForSerialization("error"));
         } catch (IOException ex)
         {
-            System.out.println("Ошибка при сериализации объекта");
+            Logging.log("Ошибка при сериализации объекта "
+                    + this.channel.toString() + ") Номер запроса: "
+                    + this.numberConnect, 1);
+
             result = "";
         }
         return result;
@@ -100,19 +114,37 @@ public class SenderSmallData extends Thread {
         ObjectForSerialization obj = getObjectFromJson(
                 this.commandFromClient);
         String result = null;
-        if (obj.command.equals("error"))
+        try
         {
-            //debug
-            throw new IOException();
-        } else if (obj.command.equals("get_aliance"))
+            if (obj.command.equals("error"))
+            {
+                throw new ExceptionServer("Пришла команда от клиента: "
+                        + this.channel + " Запрос: " + this.numberConnect);
+            } else if (obj.command.equals("get_aliance"))
+            {
+                Logging.log("Обработка запроса на получение всех файловых систем "
+                        + this.channel.toString() + ") Номер запроса: "
+                        + this.numberConnect, 1);
+                result = getAliance(obj);
+            } else if (obj.command.equals("get_catalog"))
+            {
+                Logging.log("Обработка запроса на получение "
+                        + "содержимого файловой системы "
+                        + this.aliance.get(obj.param1).y + " Канал"
+                        + this.channel.toString() + ") Номер запроса: "
+                        + this.numberConnect, 1);
+                result = getCatalog(obj);
+            } else if (obj.command.equals("get_content_file"))
+            {
+                result = getContentFile(obj);
+            }
+            Logging.log("Запрос успешно выполнен, отправление данных: "
+                    + this.channel.toString() + ") Номер запроса: "
+                    + this.numberConnect, 1);
+        } catch (ExceptionServer e)
         {
-            result = getAliance(obj);
-        } else if (obj.command.equals("get_catalog"))
-        {
-            result = getCatalog(obj);
-        } else if (obj.command.equals("get_content_file"))
-        {
-            result = getContentFile(obj);
+            Logging.log(e.toString(), 1);
+            result = "";
         }
 
         return result;
@@ -140,7 +172,7 @@ public class SenderSmallData extends Thread {
         //TODO param3 = 0 - отладка!
         return this.mapper.writeValueAsString(
                 new ObjectForSerialization("aliance",
-                        expectedSize, sendToStorageInDataServer(resultInFtp), "0"));
+                        expectedSize, sendToStorageInFtpServer(resultInFtp), "0"));
     }
 
     private String getCatalog(ObjectForSerialization obj)
@@ -154,7 +186,7 @@ public class SenderSmallData extends Thread {
                 resultInFtp.length);
         String result = this.mapper.writeValueAsString(
                 new ObjectForSerialization("catalog",
-                        expectedSize, sendToStorageInDataServer(resultInFtp)));
+                        expectedSize, sendToStorageInFtpServer(resultInFtp)));
         return result;
     }
 
@@ -201,7 +233,9 @@ public class SenderSmallData extends Thread {
     private String getContentFile(ObjectForSerialization obj) throws IOException
     {
         String path = this.aliance.get(obj.param1).y + (new String(obj.byteArray, "UTF-8"));
-
+        Logging.log("Обработка запроса на получение файла по пути: " + path
+                + " Канал " + this.channel.toString() + ") Номер запроса: "
+                + this.numberConnect, 1);
         byte[] resultInFtp = getFileInArrayByte(path);
         String expectedSize = Integer.toString(resultInFtp.length);
         return this.mapper.writeValueAsString(
@@ -237,12 +271,6 @@ public class SenderSmallData extends Thread {
             fin.read(buffer, 0, fin.available());
             fin.close();
 
-            ///////////////
-            FileOutputStream fout = new FileOutputStream(
-                    "C:\\Users\\admin\\Desktop\\log\\server.log");
-            fout.write(buffer, 0, buffer.length);
-            fout.close();
-
             return buffer;
         } catch (FileNotFoundException e)
         {
@@ -256,20 +284,6 @@ public class SenderSmallData extends Thread {
         return new byte[]
         {
         };
-    }
-
-    private static String sendToStorageInDataServer(byte[] resultInFtp)
-    {
-        while (!DataServerHandler
-                .addHashKeyIdentificator(Integer.toString(i), resultInFtp))
-        {
-            i++;
-            if (i > 1024)
-            {
-                i = 0;
-            }
-        }
-        return Integer.toString(i);
     }
 
     private static String sendToStorageInFtpServer(byte[] resultInFtp)

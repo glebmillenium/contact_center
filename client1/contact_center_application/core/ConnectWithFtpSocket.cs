@@ -29,24 +29,13 @@ namespace contact_center_application.core
 
 		public static string sendMessage(String message, int expectedSize)
 		{
-			message += "\0";
-			byte[] answerFromServer = new byte[expectedSize];
-			if (realization)
-			{
-				byte[] msg = Encoding.UTF8.GetBytes(message);
-				// Отправляем данные через сокет
-				int bytesSent = sender.Send(msg);
-				// Получаем ответ от сервера
-				int bytesRec = sender.Receive(answerFromServer);
-			}
-			string result = System.Text.Encoding.UTF8.GetString(answerFromServer);
-			int size = answerFromServer.Length;
+			string result = System.Text.Encoding.UTF8.GetString(sendMessageGetContentFile(message,
+			expectedSize));
 			return result;
 		}
 
 		public static byte[] sendMessageGetContentFile(String message, 
-			int expectedSize, ProgressBar progressBar, TextBlock textBlock,
-			string output)
+			int expectedSize)
 		{
 			message += "\0";
 			byte[] answerFromServer = null; 
@@ -58,19 +47,15 @@ namespace contact_center_application.core
 				answerFromServer = new byte[expectedSize + 1];
 				if (expectedSize < fixedSize)
 				{
-					MainWindow.setStateCurrentProgress(progressBar, 40, textBlock,
-				output);
+
 					byte[] msg = Encoding.UTF8.GetBytes(message);
 					int bytesSent = sender.Send(msg);
 					int bytesRec = sender.Receive(answerFromServer);
 					answer = getRightArrayByte(answerFromServer);
-					MainWindow.setStateCurrentProgress(progressBar, 90, textBlock,
-				"Файл успешно загружен с удаленного сервера");
+
 				}
 				else
 				{
-					MainWindow.setStateCurrentProgress(progressBar, 20, textBlock,
-				output);
 					answer = new byte[expectedSize];
 					byte[] sourceArray = new byte[1024 * 50];
 					answerFromServer = new byte[1024 * 50 + 1];
@@ -90,9 +75,6 @@ namespace contact_center_application.core
 						Array.ConstrainedCopy(sourceArray, 0, answer, 
 							getBytes - fixedSize, sourceArray.Length);
 						toSend = "1";
-						MainWindow.setStateCurrentProgress(progressBar, 
-							(int) (20 + 70.0 * (getBytes/(float)expectedSize)),
-							textBlock, output);
 					} while (getBytes + fixedSize < expectedSize);
 
 
@@ -101,8 +83,6 @@ namespace contact_center_application.core
 					bytesSent = sender.Send(msg);
 					bytesRec = sender.Receive(answerFromServer);
 					sourceArray = getRightArrayByte(answerFromServer);
-					MainWindow.setStateCurrentProgress(progressBar, 90, textBlock,
-				output);
 					Array.ConstrainedCopy(sourceArray, 0, answer,
 							getBytes, sourceArray.Length);
 				}
@@ -110,7 +90,7 @@ namespace contact_center_application.core
 			return answer;
 		}
 
-		private static byte[] getRightArrayByte(byte[] answerFromServer)
+		public static byte[] getRightArrayByte(byte[] answerFromServer)
 		{
 			byte[] answer = new byte[answerFromServer.Length - 1];
 			for (int i = 0; i < answer.Length; i++)

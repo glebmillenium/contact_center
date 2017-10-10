@@ -111,3 +111,9 @@ C:\contact_center\client1\contact_center_application\bin\Debug\Spire.Presentatio
 C:\contact_center\client1\contact_center_application\bin\Debug\Spire.Spreadsheet.xml
 C:\contact_center\client1\contact_center_application\obj\Debug\ProcessDownloadFile.g.cs
 C:\contact_center\client1\contact_center_application\obj\Debug\ProcessDownloadFile.baml
+C:\contact_center\client1\contact_center_application\obj\Debug\Themes\Brushes.baml
+C:\contact_center\client1\contact_center_application\obj\Debug\Themes\Core.baml
+C:\contact_center\client1\contact_center_application\obj\Debug\Themes\Core.g.cs
+C:\contact_center\client1\contact_center_application\obj\Debug\App.baml
+C:\contact_center\client1\contact_center_application\obj\Debug\DownloadWindow.g.cs
+C:\contact_center\client1\contact_center_application\obj\Debug\DownloadWindow.baml

@@ -5,15 +5,9 @@
  */
 package es.irkutskenergo.client;
 
+import es.irkutskenergo.other.Logging;
 import es.irkutskenergo.server.netty.fast.FastServer;
-import es.irkutskenergo.serialization.ObjectForSerialization;
 import es.irkutskenergo.server.ftp.FtpServer;
-import es.irkutskenergo.server.netty.data.DataServer;
-import java.io.IOException;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.codehaus.jackson.map.ObjectMapper;
 
 /**
  *
@@ -28,13 +22,19 @@ public class Main {
     {
         try
         {
-            FastServer NT = new FastServer(6500);
-            DataServer ds = new DataServer(6501);
-            FtpServer fs = new FtpServer(6502);
+            Logging.clear();
+            int portFast = 6500;
+            int portFtp = 6502;
+            FastServer NT = new FastServer(portFast);
+            FtpServer fs = new FtpServer(portFtp);
             fs.start();
+
+            Logging.log("Сервер ЕЭИСЦ успешно запущен:\n"
+                    + "\nПорт обмена сообщений - " + portFast
+                    + "\nПорт файлового обмена - " + portFtp, 0);
         } catch (Exception ex)
         {
-            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("Сервер не удалось запустить");
         }
     }
 }

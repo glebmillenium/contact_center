@@ -1,11 +1,9 @@
 package es.irkutskenergo.server.ftp;
 
+import es.irkutskenergo.other.Logging;
 import es.irkutskenergo.serialization.ObjectForSerialization;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashMap;
@@ -19,36 +17,30 @@ import org.codehaus.jackson.map.ObjectMapper;
 public class FtpServer extends Thread {
 
     private ServerSocket server;
-    private InetAddress host;
-    private InetSocketAddress address;
+//    private InetAddress host;
+//    private InetSocketAddress address;
     private int port;
     private boolean canWork = false;
     private static Map<String, byte[]> storage = new HashMap<String, byte[]>();
     private static ObjectMapper mapper = new ObjectMapper();
 
-    public FtpServer(int port)
+    public FtpServer(int port) throws IOException
     {
-        try
-        {
-            this.port = port;
-            this.server = new ServerSocket(this.port);
+
+        this.port = port;
+        this.server = new ServerSocket(this.port);
 //            this.host = InetAddress.getLocalHost();
 //            this.address = new InetSocketAddress(this.host, this.port);
 //            server.bind(address);
-//            System.out.println("Ftp server: " + this.host.toString());
-            this.canWork = true;
-        } catch (IOException ex)
-        {
-            System.out.println("Error create socket port: " + this.port
-                    + " message: " + ex.getMessage());
-        }
+        this.canWork = true;
+
     }
 
     @Override
     public void finalize()
     {
         this.canWork = false;
-        System.out.println("Ftp server: " + this.port + " is destroyed");
+        Logging.log("Сервер открытый по порту: " + this.port + " был закрыт", 2);
     }
 
     @Override
@@ -58,38 +50,41 @@ public class FtpServer extends Thread {
         {
             try
             {
-                // Starting the listener
-                System.out.println("Starting FTP Server, port: " + this.port);
+                Logging.log("Сервер запущен по порту: " + this.port, 2);
                 if (server.isBound())
                 {
-                    System.out.println("Wait connection...");
-
                     /* Continue receiving clients while canWork stays TRUE */
                     byte[] b = new byte[1024];
                     while (this.canWork)
                     {
                         Socket socket = server.accept();
+                        Logging.log("Новое соединение: " + socket.getInetAddress(), 2);
                         InputStream inputStream = socket.getInputStream();
                         inputStream.read(b);
                         String query = new String(b, "UTF-8");
                         String key = getObjectFromJson(query).param2;
                         if (storage.containsKey(key))
                         {
-                            System.out.println(
-                                    "Отправка сообщения клиенту, по запросу " + query);
                             byte[] message = storage.get(key);
+                            Logging.log("Запрос на отправку данных клиенту: "
+                                    + socket.getInetAddress() + " По запросу №"
+                                    + key + " Объем файла: "
+                                    + message.length + "байт", 2);
                             TCPSession tcpSessionLocal = new TCPSession(socket, message);
                             tcpSessionLocal.start();
                         } else
                         {
-                            System.out.println("Ошибочный запрос");
+                            Logging.log("Ошибочный запрос. "
+                                    + "Запрос на отправку данных клиенту: "
+                                    + socket.getInetAddress() + " По запросу №",
+                                    2);
                         }
                     }
                 }
             } catch (IOException ex)
             {
-                System.out.println("tcp receiver main try-catch error "
-                        + ex.getMessage());
+                Logging.log("Сервер при выполнении запроса "
+                        + "получил неизвестную ошибку: " + ex.getMessage(), 2);
             }
         }
     }
@@ -109,7 +104,6 @@ public class FtpServer extends Thread {
     private ObjectForSerialization getObjectFromJson(String jsonInString)
             throws IOException
     {
-
         return mapper.readValue(jsonInString,
                 ObjectForSerialization.class);
     }

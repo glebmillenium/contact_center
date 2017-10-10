@@ -33,8 +33,7 @@ namespace contact_center_application
 			setStateCurrentProgress(10,	"Загрузка файла...");
 
 			byte[] contentFile = RequestDataFromServer.getContentFile(
-				index.ToString(),
-				relativeWay, progressBarControllProcess, textBlockControllProcess);
+				index.ToString(), relativeWay);
 			setStateCurrentProgress(90, "Сохранение файла...");
 			return contentFile;
 		}

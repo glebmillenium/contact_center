@@ -20,12 +20,12 @@ public class ObjectForSerialization {
     public ObjectForSerialization()
     {
         this.command = null;
-        this.param1  = null;
-        this.param2  = null;
-        this.param3  = null;
+        this.param1 = null;
+        this.param2 = null;
+        this.param3 = null;
         this.byteArray = null;
     }
-    
+
     public ObjectForSerialization(String command)
     {
         this.command = command;
@@ -62,7 +62,7 @@ public class ObjectForSerialization {
         this.param3 = param3;
         this.byteArray = null;
     }
-    
+
     public ObjectForSerialization(String command, String param1, String param2,
             String param3, byte[] byteArray)
     {

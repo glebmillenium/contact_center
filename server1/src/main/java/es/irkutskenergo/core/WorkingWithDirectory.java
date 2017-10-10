@@ -13,7 +13,7 @@ import java.io.File;
  * @author admin
  */
 public class WorkingWithDirectory {
-    
+
     public static void getAllFolder(String s)
     {
         File f = new File(s);
@@ -30,7 +30,7 @@ public class WorkingWithDirectory {
                 System.out.println(sDirList[i]);
             } else
             {
-                
+
                 getAllFolder(s + "\\" + sDirList[i]);
             }
         }
