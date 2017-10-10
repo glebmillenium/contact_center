@@ -132,7 +132,6 @@ public class Logging {
                 file.delete();
             }
             file.createNewFile();
-            int i = 0;
 
         } catch (IOException ex)
         {

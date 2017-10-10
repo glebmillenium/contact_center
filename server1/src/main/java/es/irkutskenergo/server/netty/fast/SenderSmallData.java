@@ -54,18 +54,33 @@ public class SenderSmallData extends Thread {
     @Override
     public void run()
     {
-        String response;
         try
         {
-            response = getResponse();
+            String response;
+            try
+            {
+                response = getResponse();
+            } catch (IOException ex)
+            {
+                
+                response = this.mapper.writeValueAsString(
+                        new ObjectForSerialization("error",
+                                "0", "Произошла ошибка при выполнении команды"));
+                Logging.log("Произошла ошибка при выполнении команды." 
+                                        + " Клиент " + channel.toString() + 
+                                        " Номер запроса " + this.numberConnect +
+                                        ". Сообщение от клиента: " + 
+                                        commandFromClient, 1);
+            }
+            sendToClient(response);
         } catch (IOException ex)
         {
-            response = getResponseWhenError();
-            Logging.log("Не получилось обработать входящую команду "
-                    + this.channel.toString() + ") Номер запроса: "
-                    + this.numberConnect, 1);
+            Logging.log("Произошла ошибка при выполнении команды и её отправке." 
+                                        + " Клиент " + channel.toString() + 
+                                        " Номер запроса " + this.numberConnect +
+                                        ". Сообщение от клиента: " + 
+                                        commandFromClient, 1);
         }
-        sendToClient(response);
     }
 
     private void sendToClient(String response)
@@ -81,7 +96,7 @@ public class SenderSmallData extends Thread {
                 ObjectForSerialization.class);
     }
 
-    private String getResponseWhenError()
+    private String getResponseWhenError() throws IOException
     {
         String result;
         try
@@ -94,7 +109,9 @@ public class SenderSmallData extends Thread {
                     + this.channel.toString() + ") Номер запроса: "
                     + this.numberConnect, 1);
 
-            result = "";
+            result = this.mapper.writeValueAsString(
+                    new ObjectForSerialization("error",
+                            "0", "Серверу не удалось выполнить требуемую команду"));
         }
         return result;
     }
@@ -118,8 +135,9 @@ public class SenderSmallData extends Thread {
         {
             if (obj.command.equals("error"))
             {
-                throw new ExceptionServer("Пришла команда от клиента: "
-                        + this.channel + " Запрос: " + this.numberConnect);
+                throw new ExceptionServer("Случилась неизвестная ошибка "
+                        + "на стороне клиента " + channel.toString()
+                        + " номер подключения " + numberConnect);
             } else if (obj.command.equals("get_aliance"))
             {
                 Logging.log("Обработка запроса на получение всех файловых систем "
@@ -169,10 +187,10 @@ public class SenderSmallData extends Thread {
                         + "\0").getBytes("UTF-8");
 
         String expectedSize = Integer.toString(resultInFtp.length);
-        //TODO param3 = 0 - отладка!
+
         return this.mapper.writeValueAsString(
                 new ObjectForSerialization("aliance",
-                        expectedSize, sendToStorageInFtpServer(resultInFtp), "0"));
+                        expectedSize, sendToStorageInFtpServer(resultInFtp)));
     }
 
     private String getCatalog(ObjectForSerialization obj)
@@ -232,7 +250,7 @@ public class SenderSmallData extends Thread {
 
     private String getContentFile(ObjectForSerialization obj) throws IOException
     {
-        String path = this.aliance.get(obj.param1).y + (new String(obj.byteArray, "UTF-8"));
+        String path = this.aliance.get(obj.param1).y + (new String(obj.param4_array, "UTF-8"));
         Logging.log("Обработка запроса на получение файла по пути: " + path
                 + " Канал " + this.channel.toString() + ") Номер запроса: "
                 + this.numberConnect, 1);

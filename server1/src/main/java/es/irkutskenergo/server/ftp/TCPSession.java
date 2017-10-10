@@ -39,16 +39,17 @@ public class TCPSession extends Thread {
     {
         try
         {
-            try
+
+            if (socket != null)
             {
-                if (socket != null)
+                if (!socket.isClosed())
                 {
-                    if (!socket.isClosed())
+                    Logging.log("Началась отправка данных клиенту: "
+                            + socket.getInetAddress() + " Номер сеанса: " + numberConnect, 2);
+                    OutputStream outputStream;
+                    outputStream = socket.getOutputStream();
+                    try
                     {
-                        Logging.log("Началась отправка данных клиенту: "
-                                + socket.getInetAddress() + " Номер сеанса: " + numberConnect, 2);
-                        OutputStream outputStream;
-                        outputStream = socket.getOutputStream();
                         if (this.message.length < 50 * 1024)
                         {
                             outputStream.write(this.message, 0, this.message.length);
@@ -98,13 +99,15 @@ public class TCPSession extends Thread {
                         Logging.log("Отправка данных клиенту: "
                                 + socket.getInetAddress()
                                 + " успешно завершена!", 2);
+                    } catch (ExceptionServer e)
+                    {
+                        byte[] failPackage = new byte[]
+                        {
+                        };
+                        outputStream.write(failPackage, 0, failPackage.length);
+                        Logging.log(e.toString(), 2);
                     }
                 }
-            } catch (IOException ioe)
-            {
-                Logging.log("Сессия передачи файлов была завершена с клиентом "
-                        + socket.getInetAddress() + " Номер сеанса: "
-                        + numberConnect, 2);
             }
 
             if (this.socket != null && !this.socket.isClosed())
@@ -118,9 +121,11 @@ public class TCPSession extends Thread {
                             + error_num + " Номер сеанса: " + numberConnect, 2);
                 }
             }
-        } catch (ExceptionServer e)
+        } catch (IOException ioe)
         {
-            Logging.log(e.toString(), 2);
+            Logging.log("Сессия передачи файлов была завершена с клиентом "
+                    + socket.getInetAddress() + " Номер сеанса: "
+                    + numberConnect, 2);
         }
     }
 }

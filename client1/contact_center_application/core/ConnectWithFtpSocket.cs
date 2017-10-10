@@ -40,7 +40,7 @@ namespace contact_center_application.core
 			message += "\0";
 			byte[] answerFromServer = null; 
 			byte[] answer = null;
-			int fixedSize = 50 * 1024;
+			int fixedSize = 64 * 1024;
 
 			if (realization)
 			{
@@ -57,8 +57,8 @@ namespace contact_center_application.core
 				else
 				{
 					answer = new byte[expectedSize];
-					byte[] sourceArray = new byte[1024 * 50];
-					answerFromServer = new byte[1024 * 50 + 1];
+					byte[] sourceArray = new byte[fixedSize];
+					answerFromServer = new byte[fixedSize + 1];
 					byte[] msg;
 					int bytesSent;
 					int bytesRec; 

@@ -10,7 +10,8 @@ namespace contact_center_application.core
     public class RequestDataFromServer
     {
 		static string addressServer = "localhost";
-
+		static int portFtp = 6502;
+		static int portFast = 6500;
 		public static string getAddressServer()
 		{
 			return addressServer;
@@ -21,7 +22,7 @@ namespace contact_center_application.core
 			addressServer = address;
 			try
 			{
-				ConnectWithFastSocket.createSocket(addressServer, 6500);
+				ConnectWithFastSocket.createSocket(addressServer, portFast);
 				//ConnectWithDataSocket.createSocket(addressServer, 6501);
 			}
 			catch (System.Net.Sockets.SocketException socketException)
@@ -94,7 +95,7 @@ namespace contact_center_application.core
 				param2 = index.ToString()
 			};
 
-			ConnectWithFtpSocket.createSocket(addressServer, 6502);
+			ConnectWithFtpSocket.createSocket(addressServer, portFtp);
 			resultJson = JsonConvert.SerializeObject(objForSendToFtpSocket);
 			answer = ConnectWithFtpSocket.sendMessage(resultJson, expectedSize);
 			ConnectWithFtpSocket.closeSocket();
@@ -109,7 +110,7 @@ namespace contact_center_application.core
 				param1 = aliance,
 				param2 = "",
 				param3 = "",
-				byteArray = System.Text.Encoding.UTF8.GetBytes(relativeWay)
+				param4_array = System.Text.Encoding.UTF8.GetBytes(relativeWay)
 			};
 			string resultJson = JsonConvert.SerializeObject(objForSendToFastSocket);
 			string answer = ConnectWithFastSocket.sendMessage(resultJson, 1024);
@@ -148,12 +149,22 @@ namespace contact_center_application.core
 
 			string output = "Получение содержимого файла... Общий размер: " + outputSizeFile;
 
-			ConnectWithFtpSocket.createSocket(addressServer, 6502);
+			ConnectWithFtpSocket.createSocket(addressServer, portFtp);
 			resultJson = JsonConvert.SerializeObject(objForSendToFtpSocket);
 			byte[] answerToFunction = ConnectWithFtpSocket.sendMessageGetContentFile(resultJson, expectedSize);
 			ConnectWithFtpSocket.closeSocket();
 
 			return answerToFunction;
+		}
+
+		public static int getFtpPort()
+		{
+			return portFtp;
+		}
+
+		public static int getFastPort()
+		{
+			return portFast;
 		}
 	}
 }

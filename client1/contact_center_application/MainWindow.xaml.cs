@@ -12,6 +12,7 @@ using System.Windows.Xps.Packaging;
 using System.Threading;
 using Spire.Doc;
 using Spire.Xls;
+using System.Windows.Forms;
 
 namespace contact_center_application
 {
@@ -27,6 +28,12 @@ namespace contact_center_application
 		XpsDocument doc;
 		public MainWindow()
 		{
+			if (Directory.Exists("tmp"))
+			{
+				Directory.Delete("tmp", true);
+				Directory.CreateDirectory("tmp");
+			}
+
 			InitializeComponent();
 			SynchronizationContext uiContext = SynchronizationContext.Current;
 			Thread thread = new Thread(Run);
@@ -119,13 +126,33 @@ namespace contact_center_application
 							item.Items.Add(children);
 						}
 					}
-
 				}
 				else
 				{
 					item.Selected += this.selectFile;
 					this.listTreeView.Add(item, currentWay + "\\" + element.name);
 				}
+
+				// Create the ContextMenuStrip.
+				System.Windows.Controls.ContextMenu docMenu = new System.Windows.Controls.ContextMenu();
+
+				//Create some menu items.
+				System.Windows.Controls.Label open = new System.Windows.Controls.Label();
+				open.Content = "Открыть файл";
+				System.Windows.Controls.Label rename = new System.Windows.Controls.Label();
+				rename.Content = "Переименовать";
+				System.Windows.Controls.Label upload = new System.Windows.Controls.Label();
+				upload.Content = "Загрузить";
+				System.Windows.Controls.Label delete = new System.Windows.Controls.Label();
+				delete.Content = "Удалить файл";
+
+				//Add the menu items to the menu.
+				docMenu.Items.Add(open);
+				docMenu.Items.Add(rename);
+				docMenu.Items.Add(upload);
+				docMenu.Items.Add(delete);
+				item.ContextMenu = docMenu;
+
 				result.Add(item);
 			}
 			return result;
@@ -145,6 +172,8 @@ namespace contact_center_application
 				string aliance = ComboboxFileSystem.SelectedItem.ToString();
 				string relativeWay = this.listTreeView[selectedItem.Item2];
 				string selected = ComboboxFileSystem.SelectedItem.ToString();
+				this.openFile = "tmp" + relativeWay;
+
 				int index = Int32.Parse(this.alianceAndId[ComboboxFileSystem.SelectedItem.ToString()]);
 				byte[] contentFile = null;
 
@@ -156,7 +185,8 @@ namespace contact_center_application
 				//	index.ToString(),
 				//	relativeWay);
 				//contentFile = contentFile.Remove(contentFile.Length - 1, 1);
-				this.openFile = "tmp" + relativeWay;
+
+
 				writeToFile(this.openFile, contentFile);
 				Array.Clear(contentFile, 0, contentFile.Length);
 				LoadToViewer(this.openFile);
@@ -168,6 +198,8 @@ namespace contact_center_application
 			string extension = Path.GetExtension(way);
 			//			XpsDocument doc = new XpsDocument(way, FileAccess.Read);
 			//			viewer.Document = doc.GetFixedDocumentSequence();
+
+
 			if (extension.Equals(".txt"))
 			{
 
@@ -242,19 +274,19 @@ namespace contact_center_application
 			}
 			catch (System.OutOfMemoryException e)
 			{
-				MessageBox.Show("По неясным причинам приложению не удалось отобразить требуемый документ." +
+				System.Windows.MessageBox.Show("По неясным причинам приложению не удалось отобразить требуемый документ." +
 					" Тем не менее требуемый документ можно открыть в любом внешнем приложении.\n" +
 					"Например: Word Office, OpenOffice, LibreOffice", "Ошибка вывода на экран");
 			}
 			catch (System.IO.IOException e)
 			{
-				MessageBox.Show("По неясным причинам приложению не удалось отобразить требуемый документ." +
+				System.Windows.MessageBox.Show("По неясным причинам приложению не удалось отобразить требуемый документ." +
 					" Тем не менее требуемый документ можно открыть в любом внешнем приложении.\n" +
 					"Например: Word Office, OpenOffice, LibreOffice", "Ошибка вывода на экран");
 			}
 			catch (System.ApplicationException e)
 			{
-				MessageBox.Show("По неясным причинам приложению не удалось отобразить требуемый документ." +
+				System.Windows.MessageBox.Show("По неясным причинам приложению не удалось отобразить требуемый документ." +
 					" Тем не менее требуемый документ можно открыть в любом внешнем приложении.\n" +
 					"Например: Word Office, OpenOffice, LibreOffice", "Ошибка вывода на экран");
 			}
@@ -262,17 +294,25 @@ namespace contact_center_application
 
 		public static void convertXlsToXps(string way, string viewWay)
 		{
-			Workbook workbook = new Workbook();
-			workbook.LoadFromFile(way, ExcelVersion.Version97to2003);
-			string directoryWay = Path.GetDirectoryName(viewWay);
-			Directory.CreateDirectory(directoryWay);
-			if (File.Exists(viewWay))
+			try
 			{
-				File.Delete(viewWay);
+				Workbook workbook = new Workbook();
+				workbook.LoadFromFile(way, ExcelVersion.Version97to2003);
+				string directoryWay = Path.GetDirectoryName(viewWay);
+				Directory.CreateDirectory(directoryWay);
+				if (File.Exists(viewWay))
+				{
+					File.Delete(viewWay);
+				}
+				workbook.SaveToFile(viewWay, Spire.Xls.FileFormat.XPS);
+				workbook.Dispose();
+				workbook = null;
 			}
-			workbook.SaveToFile(viewWay, Spire.Xls.FileFormat.XPS);
-			workbook.Dispose();
-			workbook = null;
+			catch (System.NotSupportedException e)
+			{
+				System.Windows.MessageBox.Show("Не удалось выполнить преобразование документа," +
+					" скорее всего файл поврежден и нуждается в восстановлении");
+			}
 		}
 
 		private void Button_Click(object sender, RoutedEventArgs e)

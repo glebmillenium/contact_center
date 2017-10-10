@@ -1,6 +1,7 @@
 package es.irkutskenergo.server.ftp;
 
 import es.irkutskenergo.other.Logging;
+import es.irkutskenergo.other.Tuple;
 import es.irkutskenergo.serialization.ObjectForSerialization;
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,7 +22,7 @@ public class FtpServer extends Thread {
 //    private InetSocketAddress address;
     private int port;
     private boolean canWork = false;
-    private static Map<String, byte[]> storage = new HashMap<String, byte[]>();
+    private static Map<String, Tuple<String, byte[]>> storage = new HashMap<String, Tuple<String, byte[]>>();
     private static ObjectMapper mapper = new ObjectMapper();
 
     public FtpServer(int port) throws IOException
@@ -65,13 +66,20 @@ public class FtpServer extends Thread {
                         String key = getObjectFromJson(query).param2;
                         if (storage.containsKey(key))
                         {
-                            byte[] message = storage.get(key);
-                            Logging.log("Запрос на отправку данных клиенту: "
-                                    + socket.getInetAddress() + " По запросу №"
-                                    + key + " Объем файла: "
-                                    + message.length + "байт", 2);
-                            TCPSession tcpSessionLocal = new TCPSession(socket, message);
-                            tcpSessionLocal.start();
+                            byte[] message = storage.get(key).y;
+                            String typeQuery = storage.get(key).x;
+                            if (typeQuery.equals("1"))
+                            {
+
+                            } else if (typeQuery.equals("0"))
+                            {
+                                Logging.log("Запрос на отправку данных клиенту: "
+                                        + socket.getInetAddress() + " По запросу №"
+                                        + key + " Объем файла: "
+                                        + message.length + "байт", 2);
+                                TCPSession tcpSessionLocal = new TCPSession(socket, message);
+                                tcpSessionLocal.start();
+                            }
                         } else
                         {
                             Logging.log("Ошибочный запрос. "
@@ -96,7 +104,7 @@ public class FtpServer extends Thread {
             return false;
         } else
         {
-            storage.put(key, message);
+            storage.put(key, new Tuple<String, byte[]>("", message));
             return true;
         }
     }

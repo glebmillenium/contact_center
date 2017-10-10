@@ -32,13 +32,15 @@
 			</StackPanel>
 
 			<StackPanel Grid.Row="2" Orientation="Horizontal">
-				<TextBlock x:Name="UpdateCatalogs" Margin="5" TextWrapping="Wrap" TextAlignment="Center" VerticalAlignment="Bottom">"Меню просмотра каталогов  "</TextBlock>
+				<TextBlock x:Name="UpdateCatalogs" Margin="5" TextWrapping="Wrap" TextAlignment="Center" VerticalAlignment="Bottom">Меню просмотра каталогов  "</TextBlock>
 				<Button x:Name="ButtonUpdateCatalogs" VerticalAlignment="Bottom"  Width="60" Height="20" Content="Обновить" Click="ButtonUpdateCatalogs_Click"/>
 			</StackPanel>
 
 			<StackPanel Grid.Row="3" Orientation="Vertical" >
 				<DockPanel  LastChildFill="True" >
-					<TreeView x:Name="treeViewCatalog" Margin="5" MinWidth="200" DockPanel.Dock="Left" Height="auto" />
+					<Border BorderThickness="2" BorderBrush="DarkGoldenrod" Margin="4">
+						<TreeView x:Name="treeViewCatalog" Margin="5" MinWidth="200" MaxHeight="410" MaxWidth="200" MinHeight="410" DockPanel.Dock="Left"/>
+					</Border>
 					<DocumentViewer x:Name="viewer" Margin="5" DockPanel.Dock="Bottom" />
 				</DockPanel>
 			</StackPanel>

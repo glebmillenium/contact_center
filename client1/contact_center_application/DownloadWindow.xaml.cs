@@ -62,7 +62,7 @@ namespace contact_center_application
 				param1 = aliance,
 				param2 = "",
 				param3 = "",
-				byteArray = System.Text.Encoding.UTF8.GetBytes(relativeWay)
+				param4_array = System.Text.Encoding.UTF8.GetBytes(relativeWay)
 			};
 			string resultJson = JsonConvert.SerializeObject(objForSendToFastSocket);
 			string answer = ConnectWithFastSocket.sendMessage(resultJson, 1024);
@@ -102,7 +102,7 @@ namespace contact_center_application
 			string output = "Получение содержимого файла... Общий размер: " + outputSizeFile;
 			setData(12, "Подключение к файловому серверу...");
 			Thread.Sleep(500);
-			createSocket(RequestDataFromServer.getAddressServer(), 6502);
+			createSocket(RequestDataFromServer.getAddressServer(), RequestDataFromServer.getFtpPort());
 			resultJson = JsonConvert.SerializeObject(objForSendToFtpSocket);
 			setData(14, output);
 			byte[] answerToFunction = sendMessageGetContentFile(resultJson, expectedSize);
@@ -157,8 +157,8 @@ namespace contact_center_application
 				else
 				{
 					answer = new byte[expectedSize];
-					byte[] sourceArray = new byte[1024 * 50];
-					answerFromServer = new byte[1024 * 50 + 1];
+					byte[] sourceArray = new byte[fixedSize];
+					answerFromServer = new byte[fixedSize + 1];
 					byte[] msg;
 					int bytesSent;
 					int bytesRec;
