@@ -190,7 +190,7 @@ public class SenderSmallData extends Thread {
 
         return this.mapper.writeValueAsString(
                 new ObjectForSerialization("aliance",
-                        expectedSize, sendToStorageInFtpServer(resultInFtp)));
+                        expectedSize, sendToStorageInFtpServer(resultInFtp, 0)));
     }
 
     private String getCatalog(ObjectForSerialization obj)
@@ -204,7 +204,7 @@ public class SenderSmallData extends Thread {
                 resultInFtp.length);
         String result = this.mapper.writeValueAsString(
                 new ObjectForSerialization("catalog",
-                        expectedSize, sendToStorageInFtpServer(resultInFtp)));
+                        expectedSize, sendToStorageInFtpServer(resultInFtp, 0)));
         return result;
     }
 
@@ -258,7 +258,7 @@ public class SenderSmallData extends Thread {
         String expectedSize = Integer.toString(resultInFtp.length);
         return this.mapper.writeValueAsString(
                 new ObjectForSerialization("content_file",
-                        expectedSize, sendToStorageInFtpServer(resultInFtp)));
+                        expectedSize, sendToStorageInFtpServer(resultInFtp, 0)));
     }
 
     private String getFileInString(String way)
@@ -304,9 +304,10 @@ public class SenderSmallData extends Thread {
         };
     }
 
-    private static String sendToStorageInFtpServer(byte[] resultInFtp)
+    private static String sendToStorageInFtpServer(byte[] resultInFtp, int typeQuery)
     {
-        while (!FtpServer.addHashKeyIdentificator(Integer.toString(i), resultInFtp))
+        String query = String.valueOf(typeQuery);
+        while (!FtpServer.addHashKeyIdentificator(Integer.toString(i), resultInFtp, query))
         {
             i++;
             if (i > 1024)

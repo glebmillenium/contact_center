@@ -97,14 +97,15 @@ public class FtpServer extends Thread {
         }
     }
 
-    public static boolean addHashKeyIdentificator(String key, byte[] message)
+    public static boolean addHashKeyIdentificator(String key, byte[] message, 
+            String typeQuery)
     {
         if (storage.containsKey(key))
         {
             return false;
         } else
         {
-            storage.put(key, new Tuple<String, byte[]>("", message));
+            storage.put(key, new Tuple<String, byte[]>(typeQuery, message));
             return true;
         }
     }

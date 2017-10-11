@@ -189,13 +189,13 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\disconnect.png" />
+    <None Include="resources\disconnect.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\connect.png" />
+    <None Include="resources\connect.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\refresh.png" />
+    <None Include="resources\refresh.png" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Connected Services\" />

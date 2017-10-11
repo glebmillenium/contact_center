@@ -26,14 +26,15 @@ public class EqualsStr {
         {
             FileInputStream fin;
             fin = new FileInputStream(
-                    "C:\\Users\\admin\\Desktop\\log\\server.log");
+                    "C:\\Users\\admin\\Desktop\\ИЭСК130716 ЖЗ объединенный.xlsx");
             byte[] buffer_server = new byte[fin.available()];
             fin.read(buffer_server, 0, fin.available());
             fin.close();
             
             FileInputStream fin1;
             fin1 = new FileInputStream(
-                    "C:\\Users\\admin\\Desktop\\log\\client.log");
+                    "C:\\contact_center\\client1\\contact_center_application\\"
+                            + "bin\\Debug\\tmp\\ИЭСК130716 ЖЗ объединенный.xlsx");
             byte[] buffer_client = new byte[fin1.available()];
             fin1.read(buffer_client, 0, fin1.available());
             fin1.close();

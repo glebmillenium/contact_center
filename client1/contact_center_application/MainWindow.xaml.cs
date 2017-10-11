@@ -175,20 +175,14 @@ namespace contact_center_application
 				this.openFile = "tmp" + relativeWay;
 
 				int index = Int32.Parse(this.alianceAndId[ComboboxFileSystem.SelectedItem.ToString()]);
-				byte[] contentFile = null;
+				//byte[] contentFile = null;
 
 				DownloadWindow download = new DownloadWindow(index.ToString(),
 					relativeWay);
-				contentFile = download.getContentFile();
+				download.getContentFileAndWriteToFile(this.openFile);
 
-				//contentFile = RequestDataFromServer.getContentFile(
-				//	index.ToString(),
-				//	relativeWay);
-				//contentFile = contentFile.Remove(contentFile.Length - 1, 1);
-
-
-				writeToFile(this.openFile, contentFile);
-				Array.Clear(contentFile, 0, contentFile.Length);
+				//writeToFile(this.openFile, contentFile);
+				//Array.Clear(contentFile, 0, contentFile.Length);
 				LoadToViewer(this.openFile);
 			}
 		}
@@ -200,11 +194,19 @@ namespace contact_center_application
 			//			viewer.Document = doc.GetFixedDocumentSequence();
 
 
-			if (extension.Equals(".txt"))
+			if (extension.Equals(".txt") || extension.Equals(".csv"))
 			{
+				/*
+				 * string strFile = way;
+				Paragraph flowParagraph = new Paragraph();
+				flowParagraph.Inlines.Add(File.ReadAllText(strFile));
+				FlowDocument flowDoc = new FlowDocument(flowParagraph);
+				IDocumentPaginatorSource idpSource = flowDoc;
+				DocumentPaginator docPaginator = idpSource.DocumentPaginator;
 
 				//richTextBox.Document.Blocks.Clear();
 				//richTextBox.Document.Blocks.Add(new Paragraph(new Run(contentFile)));
+				*/
 			}
 			else if (extension.Equals(".doc") || extension.Equals(".docx"))
 			{
@@ -234,6 +236,8 @@ namespace contact_center_application
 				viewer.Document = doc.GetFixedDocumentSequence();
 			}
 		}
+
+		private static void te
 
 		private static void writeToFile(string relativeWay, byte[] contentFile)
 		{

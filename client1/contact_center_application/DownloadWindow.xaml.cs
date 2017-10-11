@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -44,74 +45,35 @@ namespace contact_center_application
 			this.contentFile = null;
 		}
 
-		private void setData(int value, string describe)
-		{
-			progressBar.Value = value;
-			info.Text = describe;
-			Refresh();
-		}
-
-		public byte[] getContentFile()
+		public void getContentFileAndWriteToFile(string relativeWay)
 		{
 			this.Show();
+			try
+			{
+				string directoryWay = System.IO.Path.GetDirectoryName(relativeWay);
+				Directory.CreateDirectory(directoryWay);
+				if (File.Exists(relativeWay))
+				{
+					File.Delete(relativeWay);
+				}
 
-			setData(10, "Сбор сведений о файле");
-			ObjectForSerialization objForSendToFastSocket = new ObjectForSerialization
-			{
-				command = "get_content_file",
-				param1 = aliance,
-				param2 = "",
-				param3 = "",
-				param4_array = System.Text.Encoding.UTF8.GetBytes(relativeWay)
-			};
-			string resultJson = JsonConvert.SerializeObject(objForSendToFastSocket);
-			string answer = ConnectWithFastSocket.sendMessage(resultJson, 1024);
-			ObjectForSerialization objResponseFromFastSocket =
-				JsonConvert.DeserializeObject<ObjectForSerialization>(answer);
-			
-			int expectedSize = Int32.Parse(objResponseFromFastSocket.param1);
-			int index = Int32.Parse(objResponseFromFastSocket.param2);
-			if (!objResponseFromFastSocket.command.Equals("content_file"))
-			{
-				return new byte[] { };
+				Tuple<int, int> result = collectInformationAboutFile();
+
+				int expectedSize = result.Item2;
+				int index = result.Item1;
+
+				string outputSizeFile = getHumanSize(expectedSize);
+
+				interactionWithFtpSocket(index, expectedSize, relativeWay);
 			}
-			ObjectForSerialization objForSendToFtpSocket = new ObjectForSerialization
+			catch (Exception e)
 			{
-				command = "content_file",
-				param1 = "",
-				param2 = index.ToString()
-			};
-
-			string outputSizeFile = "";
-			if (expectedSize < 1024)
-				outputSizeFile = String.Format(
-					"{0} байт", expectedSize);
-			else if (expectedSize < 1048576)
-				outputSizeFile = String.Format(
-					"{0} кб", (expectedSize / 1024.0).ToString(
-					"0.00", CultureInfo.InvariantCulture));
-			else if (expectedSize < 1073741824)
-				outputSizeFile = String.Format(
-					"{0} мб", (expectedSize / 1048576.0).ToString(
-					"0.00", CultureInfo.InvariantCulture));
-			else
-				outputSizeFile = String.Format(
-					"{0} гб", (expectedSize / 1073741824.0).ToString("0.00", CultureInfo.InvariantCulture));
-
-
-			string output = "Получение содержимого файла... Общий размер: " + outputSizeFile;
-			setData(12, "Подключение к файловому серверу...");
-			Thread.Sleep(500);
-			createSocket(RequestDataFromServer.getAddressServer(), RequestDataFromServer.getFtpPort());
-			resultJson = JsonConvert.SerializeObject(objForSendToFtpSocket);
-			setData(14, output);
-			byte[] answerToFunction = sendMessageGetContentFile(resultJson, expectedSize);
-			closeSocket();
-
-			
-			Thread.Sleep(1500);
-			this.Close();
-			return answerToFunction;
+				throw e;
+			}
+			finally
+			{
+				this.Close();
+			}
 		}
 
 		private Socket sender;
@@ -134,8 +96,8 @@ namespace contact_center_application
 			realization = false;
 		}
 
-		public byte[] sendMessageGetContentFile(String message,
-			int expectedSize)
+		public void sendMessageGetContentFile(String message,
+			int expectedSize, string relativeWay)
 		{
 			message += "\0";
 			byte[] answerFromServer = null;
@@ -147,12 +109,17 @@ namespace contact_center_application
 				answerFromServer = new byte[expectedSize + 1];
 				if (expectedSize < fixedSize)
 				{
+					FileStream stream = new FileStream(relativeWay, FileMode.Append);
 					setData(55, "Получение содержимого файла...");
 					byte[] msg = Encoding.UTF8.GetBytes(message);
 					int bytesSent = sender.Send(msg);
 					int bytesRec = sender.Receive(answerFromServer);
 					answer = ConnectWithFtpSocket.getRightArrayByte(answerFromServer);
-					setData(90, "Получение содержимого файла...");
+					setData(90, "Запись файла...");
+					//write answer to file
+					stream.Write(answer, 0, answer.Length);
+					stream.Close();
+					stream.Dispose();
 				}
 				else
 				{
@@ -164,9 +131,10 @@ namespace contact_center_application
 					int bytesRec;
 					int getBytes = 0;
 					string toSend = message;
+					FileStream stream = new FileStream(relativeWay, FileMode.Append);
 
 					do
-					{
+					{						
 						setData((int) (15 + 100 * 0.85 * 
 							(float)getBytes/expectedSize),
 							"Получение содержимого файла...");
@@ -174,9 +142,12 @@ namespace contact_center_application
 						bytesSent = sender.Send(msg);
 						bytesRec = sender.Receive(answerFromServer);
 						sourceArray = ConnectWithFtpSocket.getRightArrayByte(answerFromServer);
+
+						//sourceArray to write
+						stream.Write(sourceArray, 0, sourceArray.Length);
 						getBytes += fixedSize;
-						Array.ConstrainedCopy(sourceArray, 0, answer,
-							getBytes - fixedSize, sourceArray.Length);
+						//Array.ConstrainedCopy(sourceArray, 0, answer,
+						//	getBytes - fixedSize, sourceArray.Length);
 						toSend = "1";
 					} while (getBytes + fixedSize < expectedSize);
 
@@ -186,11 +157,14 @@ namespace contact_center_application
 					bytesSent = sender.Send(msg);
 					bytesRec = sender.Receive(answerFromServer);
 					sourceArray = ConnectWithFtpSocket.getRightArrayByte(answerFromServer);
-					Array.ConstrainedCopy(sourceArray, 0, answer,
-							getBytes, sourceArray.Length);
+
+					stream.Write(sourceArray, 0, sourceArray.Length);
+					stream.Close();
+					stream.Dispose();
+					//Array.ConstrainedCopy(sourceArray, 0, answer,
+					//		getBytes, sourceArray.Length);
 				}
 			}
-			return answer;
 		}
 
 		public void Refresh()
@@ -200,6 +174,76 @@ namespace contact_center_application
 			{
 				return this;
 			}, DispatcherPriority.ApplicationIdle, Visibility.Hidden);
+		}
+
+
+		private void setData(int value, string describe)
+		{
+			progressBar.Value = value;
+			info.Text = describe;
+			Refresh();
+		}
+
+		private string getHumanSize(int expectedSize)
+		{
+			string outputSizeFile = "";
+			if (expectedSize < 1024)
+				outputSizeFile = String.Format(
+					"{0} байт", expectedSize);
+			else if (expectedSize < 1048576)
+				outputSizeFile = String.Format(
+					"{0} кб", (expectedSize / 1024.0).ToString(
+					"0.00", CultureInfo.InvariantCulture));
+			else if (expectedSize < 1073741824)
+				outputSizeFile = String.Format(
+					"{0} мб", (expectedSize / 1048576.0).ToString(
+					"0.00", CultureInfo.InvariantCulture));
+			else
+				outputSizeFile = String.Format(
+					"{0} гб", (expectedSize / 1073741824.0).ToString("0.00", CultureInfo.InvariantCulture));
+			return outputSizeFile;
+		}
+
+		private Tuple<int, int> collectInformationAboutFile()
+		{
+			setData(10, "Сбор сведений о файле");
+			ObjectForSerialization objForSendToFastSocket = new ObjectForSerialization
+			{
+				command = "get_content_file",
+				param1 = aliance,
+				param2 = "",
+				param3 = "",
+				param4_array = System.Text.Encoding.UTF8.GetBytes(relativeWay)
+			};
+			string resultJson = JsonConvert.SerializeObject(objForSendToFastSocket);
+			string answer = ConnectWithFastSocket.sendMessage(resultJson, 1024);
+			ObjectForSerialization objResponseFromFastSocket =
+				JsonConvert.DeserializeObject<ObjectForSerialization>(answer);
+			int expectedSize = Int32.Parse(objResponseFromFastSocket.param1);
+			int index = Int32.Parse(objResponseFromFastSocket.param2);
+			if (!objResponseFromFastSocket.command.Equals("content_file"))
+			{
+				throw new Exception();
+			}
+			return new Tuple<int, int>(index, expectedSize);
+		}
+
+		private void interactionWithFtpSocket(int index, int expectedSize, string relativeWay)
+		{
+
+			createSocket(RequestDataFromServer.getAddressServer(), RequestDataFromServer.getFtpPort());
+			ObjectForSerialization objForSendToFtpSocket = new ObjectForSerialization
+			{
+				command = "content_file",
+				param1 = "",
+				param2 = index.ToString()
+			};
+			string resultJson = JsonConvert.SerializeObject(objForSendToFtpSocket);
+
+			sendMessageGetContentFile(resultJson, expectedSize, relativeWay);
+			closeSocket();
+			Thread.Sleep(1500);
+			this.Close();
 		}
 	}
 }
