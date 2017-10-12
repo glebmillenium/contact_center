@@ -5,52 +5,51 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:contact_center_application"
         mc:Ignorable="d"
-        Title="Информационный портал ЕЭИСЦ" Height="600" Width="800" MinWidth="800" MinHeight="600">
+        Title="Информационный портал ЕЭИСЦ" MinWidth="800" MinHeight="600" SizeChanged="Window_SizeChanged">
 
-	<Grid Grid.IsSharedSizeScope="True">
-		<Grid>
-			<Grid.RowDefinitions>
-				<RowDefinition Height="0.03*"></RowDefinition>
-				<RowDefinition Height="0.02*"></RowDefinition>
-				<RowDefinition Height="0.02*"></RowDefinition>
-				<RowDefinition Height="0.3*"></RowDefinition>
-				<RowDefinition Height="0.03*"></RowDefinition>
-			</Grid.RowDefinitions>
 
-			<StackPanel Grid.Row="0">
-				<Button Content="Помощь" Margin="0,5,5,0" VerticalAlignment="Top" HorizontalAlignment="Right"/>
-				<TextBlock Text="Добро пожаловать, Гость!" Margin="0,0,5,0" HorizontalAlignment="Right"/>
+	<Grid >
+		<Grid.RowDefinitions>
+			<RowDefinition Height="40"></RowDefinition>
+			<RowDefinition Height="30"></RowDefinition>
+			<RowDefinition Height="25"></RowDefinition>
+			<RowDefinition x:Name="row3"></RowDefinition>
+			<RowDefinition Height="25"></RowDefinition>
+		</Grid.RowDefinitions>
+
+		<StackPanel Grid.Row="0">
+			<Button Content="Помощь" Margin="0,5,5,0" VerticalAlignment="Top" HorizontalAlignment="Right"/>
+			<TextBlock Text="Добро пожаловать, Гость!" Margin="0,0,5,0" HorizontalAlignment="Right"/>
+		</StackPanel>
+
+		<StackPanel Grid.Row="1" Orientation="Horizontal">
+			<Label Content="Файловый ресурс: " HorizontalAlignment="Left" VerticalAlignment="Top"/>
+			<ComboBox x:Name="ComboboxFileSystem" 
+						SelectionChanged="ComboboxFileSystem_SelectionChanged" HorizontalAlignment="Left" VerticalAlignment="Top" Width="300"/>
+			<Button x:Name="buttonRefresh" ToolTip="Button" HorizontalAlignment="Left" VerticalAlignment="Top" TextOptions.TextFormattingMode="Display" Click="buttonRefresh_Click">
+				<TextBlock x:Name="buttonRetryConnection" Text="Повторить соединение" TextAlignment="Center" TextWrapping="Wrap" Height="15" Width="132"/>
+			</Button>
+		</StackPanel>
+
+		<StackPanel Grid.Row="2" Orientation="Horizontal">
+			<TextBlock x:Name="UpdateCatalogs" Margin="5" TextWrapping="Wrap" TextAlignment="Center" VerticalAlignment="Bottom">Меню просмотра каталогов  "</TextBlock>
+			<Button x:Name="ButtonUpdateCatalogs" VerticalAlignment="Bottom"  Width="60" Height="20" Content="Обновить" Click="ButtonUpdateCatalogs_Click"/>
+		</StackPanel>
+
+
+		<DockPanel Grid.Row="3">
+			<TreeView x:Name="treeViewCatalog" Margin="5" MinWidth="200" DockPanel.Dock="Left"/>
+			<StackPanel x:Name="stackpanel" Margin="5" DockPanel.Dock="Right">
+				<DocumentViewer x:Name="viewer"/>
 			</StackPanel>
+		</DockPanel>
 
-			<StackPanel Grid.Row="1" Orientation="Horizontal">
-				<Label Content="Файловый ресурс: " HorizontalAlignment="Left" VerticalAlignment="Top"/>
-				<ComboBox x:Name="ComboboxFileSystem" 
-					  SelectionChanged="ComboboxFileSystem_SelectionChanged" HorizontalAlignment="Left" VerticalAlignment="Top" Width="300"/>
-				<Button x:Name="buttonRefresh" ToolTip="Button" HorizontalAlignment="Left" VerticalAlignment="Top" TextOptions.TextFormattingMode="Display" Click="buttonRefresh_Click">
-					<TextBlock x:Name="buttonRetryConnection" Text="Повторить соединение" TextAlignment="Center" TextWrapping="Wrap" Height="15" Width="132"/>
-				</Button>
-			</StackPanel>
 
-			<StackPanel Grid.Row="2" Orientation="Horizontal">
-				<TextBlock x:Name="UpdateCatalogs" Margin="5" TextWrapping="Wrap" TextAlignment="Center" VerticalAlignment="Bottom">Меню просмотра каталогов  "</TextBlock>
-				<Button x:Name="ButtonUpdateCatalogs" VerticalAlignment="Bottom"  Width="60" Height="20" Content="Обновить" Click="ButtonUpdateCatalogs_Click"/>
-			</StackPanel>
 
-			<StackPanel Grid.Row="3" Orientation="Vertical" >
-				<DockPanel  LastChildFill="True" >
-					<Border BorderThickness="2" BorderBrush="DarkGoldenrod" Margin="4">
-						<TreeView x:Name="treeViewCatalog" Margin="5" MinWidth="200" MaxHeight="410" MaxWidth="200" MinHeight="410" DockPanel.Dock="Left"/>
-					</Border>
-					<DocumentViewer x:Name="viewer" Margin="5" DockPanel.Dock="Bottom" />
-				</DockPanel>
-			</StackPanel>
-
-			<StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right" >
-				<Button Content="Открыть во внешнем приложении" VerticalAlignment="Top" Click="Button_Click" />
-				<Button Content="Сохранить изменения" VerticalAlignment="Top"/>
-			</StackPanel>
-
-		</Grid>
+		<StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right" >
+			<Button Content="Открыть во внешнем приложении" Margin="0,0,5,0" VerticalAlignment="Top" Click="Button_Click" />
+			<Button Content="Сохранить изменения" Margin="0,0,5,0" VerticalAlignment="Top"/>
+		</StackPanel>
+		<Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="100" Margin="728,92,-68,-167" Grid.Row="4" VerticalAlignment="Top" Width="100"/>
 	</Grid>
-
 </Window>

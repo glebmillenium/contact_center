@@ -12,6 +12,7 @@ using System.Windows.Xps.Packaging;
 using System.Threading;
 using Spire.Doc;
 using Spire.Xls;
+using Spire.DocViewer.Forms;
 using System.Windows.Forms;
 
 namespace contact_center_application
@@ -35,6 +36,19 @@ namespace contact_center_application
 			}
 
 			InitializeComponent();
+			DocDocumentViewer docDocumentViewer1 = new DocDocumentViewer();
+			docDocumentViewer1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+			docDocumentViewer1.Cursor = System.Windows.Forms.Cursors.Arrow;
+			docDocumentViewer1.Dock = System.Windows.Forms.DockStyle.Fill;
+			docDocumentViewer1.EnableHandTools = false;
+			docDocumentViewer1.Location = new System.Drawing.Point(0, 39);
+			docDocumentViewer1.Name = "docDocumentViewer1";
+			docDocumentViewer1.Size = new System.Drawing.Size(792, 534);
+			docDocumentViewer1.TabIndex = 1;
+			docDocumentViewer1.Text = "docDocumentViewer1";
+			docDocumentViewer1.ZoomMode = Spire.DocViewer.Forms.ZoomMode.Default;
+
+			this.(docDocumentViewer1);
 			SynchronizationContext uiContext = SynchronizationContext.Current;
 			Thread thread = new Thread(Run);
 			// Запустим поток и установим ему контекст синхронизации,
@@ -237,8 +251,6 @@ namespace contact_center_application
 			}
 		}
 
-		private static void te
-
 		private static void writeToFile(string relativeWay, byte[] contentFile)
 		{
 			string directoryWay = Path.GetDirectoryName(relativeWay);
@@ -337,6 +349,13 @@ namespace contact_center_application
 			// Запустим поток и установим ему контекст синхронизации,
 			// таким образом этот поток сможет обновлять UI
 			thread.Start(uiContext);
+		}
+
+		private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
+		{
+			viewer.Height = row3.ActualHeight - 10;
+			viewer.Width = stackpanel.ActualWidth;
+			
 		}
 	}
 }
