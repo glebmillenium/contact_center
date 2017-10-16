@@ -39,7 +39,6 @@ public class TCPSession extends Thread {
     {
         try
         {
-
             if (socket != null)
             {
                 if (!socket.isClosed())

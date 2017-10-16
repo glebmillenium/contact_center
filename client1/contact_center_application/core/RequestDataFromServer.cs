@@ -69,6 +69,16 @@ namespace contact_center_application.core
 			return result;
 		}
 
+		private static bool sendMessageToRenameFile()
+		{
+			return true;
+		}
+
+		private static bool sendMessageToDeleteFile()
+		{
+			return true;
+		}
+
 		public static string getCatalogFileSystem(string aliance)
 		{
 			ObjectForSerialization objForSendToFastSocket = new ObjectForSerialization

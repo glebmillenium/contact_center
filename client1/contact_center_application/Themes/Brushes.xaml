@@ -48,7 +48,7 @@
 
 	<LinearGradientBrush x:Key="ControlActiveBorderBrush" StartPoint="0,0.5" EndPoint="1,0.5">
 		<GradientStop Color="#FF1D83BE" Offset="0.204" />
-		<GradientStop Color="#FF1ECDA7" Offset="0.864" />
+		<GradientStop Color="#FF347487" Offset="0.864" />
 	</LinearGradientBrush>
 
 
@@ -66,7 +66,7 @@
 				<TranslateTransform Y="0.47999998927116394" />
 			</TransformGroup>
 		</RadialGradientBrush.RelativeTransform>
-		<GradientStop Color="#FF50D2F3" Offset="0.009" />
+		<GradientStop Color="#FF617B81" Offset="0.009" />
 		<GradientStop Color="#0098DAFF" Offset="1" />
 		<GradientStop Color="#FF8DDFFB" Offset="0" />
 	</RadialGradientBrush>
@@ -79,7 +79,7 @@
 	</RadialGradientBrush>
 
 	<LinearGradientBrush x:Key="ToggleButtonBackgroundON_forOccupado" EndPoint="0.5,1" StartPoint="0.5,0">
-		<GradientStop Color="#FF21BABA" Offset="1"/>
+		<GradientStop Color="#FF81A8A8" Offset="1"/>
 		<GradientStop Color="#FF157676"/>
 	</LinearGradientBrush>
 
@@ -107,17 +107,17 @@
 	<!---->
     
     <LinearGradientBrush x:Key="ScrollBarThumbBackground" EndPoint="1,1" StartPoint="0,0">
-        <GradientStop Color="#FF97E9E9" Offset="1"/>
-        <GradientStop Color="#FF2CC8C8"/>
+        <GradientStop Color="#FF3D8181" Offset="1"/>
+        <GradientStop Color="#FF111568"/>
     </LinearGradientBrush>
     
     <LinearGradientBrush x:Key="ScrollBarThumbPressedBackground" EndPoint="1,1" StartPoint="0,0">
-        <GradientStop Color="#FF439797" Offset="1"/>
-        <GradientStop Color="#FF2CC8C8"/>
+        <GradientStop Color="#FF8A9E9E" Offset="1"/>
+        <GradientStop Color="#FF335F5F"/>
     </LinearGradientBrush>
     
     <SolidColorBrush x:Key="NormalBrushScrollBar" Color="#FFCCCCCC"/>
-    <SolidColorBrush x:Key="HoverBrushScrollBar" Color="#FF2CC8C8"/>
+    <SolidColorBrush x:Key="HoverBrushScrollBar" Color="#FF355757"/>
     <SolidColorBrush x:Key="DisabledBrushScrollBar" Color="#FFAAAAAA"/>
     
     <LinearGradientBrush x:Key="IndeterminateBrushProgressbar" EndPoint="0,1" MappingMode="Absolute" SpreadMethod="Repeat" StartPoint="20,1">
@@ -134,8 +134,8 @@
     </LinearGradientBrush>
                                         
     <LinearGradientBrush x:Key="BrushTrackProgressBar" EndPoint="0,0.5" StartPoint="1,0.5">
-        <GradientStop Color="#FF13E7D9" Offset="0"/>
-        <GradientStop Color="#FF16C38F" Offset="1"/>
+        <GradientStop Color="#FF28A803" Offset="0"/>
+        <GradientStop Color="#FF00CD13" Offset="1"/>
     </LinearGradientBrush>
     
     <SolidColorBrush x:Key="BorderBrushToolTip" Color="#FFAAAAAA" />

@@ -92,18 +92,18 @@ public class Logging {
      * @return boolean результат выполненных действий (успех/не успех)
      * @author Ан Г.В.
      */
-//    public static boolean log(String message)
-//    {
-//        try
-//        {
-//            System.out.println(message);
-//        } catch (Exception e)
-//        {
-//            System.out.println(e.getMessage());
-//            return false;
-//        }
-//        return true;
-//    }
+    public static boolean log(String message)
+    {
+        try
+        {
+            System.out.println(message);
+        } catch (Exception e)
+        {
+            System.out.println(e.getMessage());
+            return false;
+        }
+        return true;
+    }
     public static void clear()
     {
         FileWriter writer = null;

@@ -20,16 +20,57 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.io.FileInputStream;
 
-public class SenderSmallData extends Thread {
 
+/**
+ * SenderSmallData - класс, предназначенный для ответа на первичный запрос 
+ * от клиента, также генерирует заявку на отправку большого массива данных со 
+ * стороны ftp сервера
+ * @author admin
+ */
+public class SenderSmallData extends Thread 
+{
+    /**
+     * i - вспомогательная переменная, учавствует в формировании заявки на ftp
+     * @param int
+     */
     private static int i = 0;
+    /**
+     * @param Channel
+     */
     private Channel channel;
+    /**
+     * Команда поступившая от клиента в форме JSON запроса
+     * @param String
+     */
     private String commandFromClient;
+    /**
+     * Объект типа ObjectMapper, необходим для сериализации в json строку
+     * @param ObjectMapper
+     */
     ObjectMapper mapper;
-    Map<String, Tuple<String, String>> aliance;
+    /**
+     * Объект, содержащий данные о текущих файловых системах, которые доступны
+     * для просмотра пользователям. Состоит из следующих элементов: 
+     *      param1 - уникальный идентификатор файловой системы (обычно хранится
+     *              на стороне БД)
+     *      param2 - кортеж содержащий данные о файловой системе
+     *          param2.1 - короткое имя файловой системы 
+     *                  (то что отправляется пользователю)
+     *          param2.2 - полный путь к файловой системе (пользователю такие 
+     *                      данные недоступны)
+     * @param Map<String, Tuple<String, String>>
+     */
+    private static Map<String, Tuple<String, String>> aliance;
     private static int query = 0;
     private int numberConnect;
 
+    /**
+     * SenderSmallData(Channel, String) - конструктор, инициализирует 
+     * сериализатор в JSON, получает канал по которому клиент соединен с сервером fast
+     * 
+     * @param channel
+     * @param commandFromClient 
+     */
     public SenderSmallData(Channel channel, String commandFromClient)
     {
         super();

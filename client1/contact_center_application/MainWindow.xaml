@@ -38,10 +38,8 @@
 
 
 		<DockPanel Grid.Row="3">
-			<TreeView x:Name="treeViewCatalog" Margin="5" MinWidth="200" DockPanel.Dock="Left"/>
-			<StackPanel x:Name="stackpanel" Margin="5" DockPanel.Dock="Right">
-				<DocumentViewer x:Name="viewer"/>
-			</StackPanel>
+			<TreeView x:Name="treeViewCatalog" Margin="5" MinWidth="200" MaxWidth="400" DockPanel.Dock="Left"/>
+			<DocumentViewer x:Name="viewer" DockPanel.Dock="Right"/>
 		</DockPanel>
 
 

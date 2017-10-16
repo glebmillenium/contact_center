@@ -9,11 +9,20 @@ import org.jboss.netty.channel.ChannelFactory;
 import org.jboss.netty.channel.socket.nio.NioServerSocketChannelFactory;
 
 /**
- *
+ * FastServer - предназначен для получения первичных данных от клиента на 
+ * выполнение запроса, и установки заявки в ftp сервере для полу
+ * 
  * @author admin
  */
 public class FastServer {
 
+    /**
+     * FastServer(port) - конструктор, создает сокет на сервере по указанному 
+     * логическому порту
+     * 
+     * @param port - порт для открытия сокета
+     * @throws Exception 
+     */
     public FastServer(int port) throws Exception
     {
         ChannelFactory factory = new NioServerSocketChannelFactory(

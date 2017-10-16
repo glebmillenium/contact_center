@@ -127,6 +127,7 @@
     <Compile Include="DownloadWindow.xaml.cs">
       <DependentUpon>DownloadWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="form\UsersTreeViewItem.cs" />
     <Compile Include="ProcessDownloadFile.xaml.cs">
       <DependentUpon>ProcessDownloadFile.xaml</DependentUpon>
     </Compile>
@@ -209,9 +210,6 @@
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Connected Services\" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="css\" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="resources\icon_home.png" />

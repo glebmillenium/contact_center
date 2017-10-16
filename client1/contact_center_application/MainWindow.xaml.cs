@@ -12,6 +12,7 @@ using System.Windows.Xps.Packaging;
 using System.Threading;
 using Spire.Doc;
 using Spire.Xls;
+using contact_center_application.form;
 using Spire.DocViewer.Forms;
 using System.Windows.Forms;
 
@@ -23,6 +24,12 @@ namespace contact_center_application
 	public partial class MainWindow : Window
 	{
 		string openFile = "";
+		/// <summary>
+		/// listTreeView - словарь (хэш-таблица), хранит относительный путь в 
+		///				файловой системе, включая имя самого объекта, и значения всех TreeView
+		/// 
+		/// @param Dictionary<TreeView, string>
+		/// </summary>
 		private Dictionary<TreeViewItem, string> listTreeView =
 			new Dictionary<TreeViewItem, string>();
 		private Dictionary<string, string> alianceAndId = new Dictionary<string, string>();
@@ -36,44 +43,26 @@ namespace contact_center_application
 			}
 
 			InitializeComponent();
-			DocDocumentViewer docDocumentViewer1 = new DocDocumentViewer();
-			docDocumentViewer1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-			docDocumentViewer1.Cursor = System.Windows.Forms.Cursors.Arrow;
-			docDocumentViewer1.Dock = System.Windows.Forms.DockStyle.Fill;
-			docDocumentViewer1.EnableHandTools = false;
-			docDocumentViewer1.Location = new System.Drawing.Point(0, 39);
-			docDocumentViewer1.Name = "docDocumentViewer1";
-			docDocumentViewer1.Size = new System.Drawing.Size(792, 534);
-			docDocumentViewer1.TabIndex = 1;
-			docDocumentViewer1.Text = "docDocumentViewer1";
-			docDocumentViewer1.ZoomMode = Spire.DocViewer.Forms.ZoomMode.Default;
-
-			this.(docDocumentViewer1);
 			SynchronizationContext uiContext = SynchronizationContext.Current;
 			Thread thread = new Thread(Run);
-			// Запустим поток и установим ему контекст синхронизации,
-			// таким образом этот поток сможет обновлять UI
 			thread.Start(uiContext);
-
-			//firstExchangeWithServer();
 		}
 
+		/// <summary>
+		/// Функция для запуска первичной инициализации графического интерфейса в дочернем треде
+		/// </summary>
+		/// <param name="state"></param>
 		private void Run(object state)
 		{
-			// вытащим контекст синхронизации из state'а
 			SynchronizationContext uiContext = state as SynchronizationContext;
-			// говорим что в UI потоке нужно выполнить метод UpdateUI 
-			// и передать ему в качестве аргумента строку
 			uiContext.Post(firstExchangeWithServer, "");
 		}
 
 		private void getContentFileSystem()
 		{
 			int index = Int32.Parse(this.alianceAndId[ComboboxFileSystem.SelectedItem.ToString()]);
-
 			string answer =
 				RequestDataFromServer.getCatalogFileSystem(index.ToString());
-
 			fullingTreeView(answer);
 		}
 
@@ -124,12 +113,16 @@ namespace contact_center_application
 				   JsonConvert.DeserializeObject<List<string>>(json);
 			foreach (var catalog in listCatalog)
 			{
+				System.Windows.Controls.ContextMenu docMenu = new System.Windows.Controls.ContextMenu();
 				CatalogForSerialization element =
 					JsonConvert.DeserializeObject<CatalogForSerialization>(catalog);
-				TreeViewItem item = new TreeViewItem();
-				item.Header = element.name;
+
+				TreeViewItem item;
+				
+				//item.Header = element.name;
 				if (!element.file)
 				{
+					item = UsersTreeViewItem.getTreeViewItem(element.name, false);
 					List<TreeViewItem> listChildren =
 						getItemsCatalogsFromJson(element.content,
 							currentWay + "\\" + element.name);
@@ -140,36 +133,68 @@ namespace contact_center_application
 							item.Items.Add(children);
 						}
 					}
+
+					System.Windows.Controls.Label upload = new System.Windows.Controls.Label();
+					upload.Content = "Загрузить";
+					upload.KeyUp += Upload_KeyUp;
+					docMenu.Items.Add(upload);
+
+					System.Windows.Controls.Label delete = new System.Windows.Controls.Label();
+					delete.Content = "Удалить папку";
+					delete.KeyUp += Delete_KeyUp;
+					docMenu.Items.Add(delete);
 				}
 				else
 				{
+					item = UsersTreeViewItem.getTreeViewItem(element.name, true);
 					item.Selected += this.selectFile;
 					this.listTreeView.Add(item, currentWay + "\\" + element.name);
+
+					System.Windows.Controls.Label open = new System.Windows.Controls.Label();
+					open.KeyUp += Open_KeyUp;
+					open.Content = "Открыть файл";
+					docMenu.Items.Add(open);
+
+					System.Windows.Controls.Label delete = new System.Windows.Controls.Label();
+					delete.Content = "Удалить файл";
+					delete.KeyUp += Delete_KeyUp;
+					docMenu.Items.Add(delete);
 				}
 
-				// Create the ContextMenuStrip.
-				System.Windows.Controls.ContextMenu docMenu = new System.Windows.Controls.ContextMenu();
-
-				//Create some menu items.
-				System.Windows.Controls.Label open = new System.Windows.Controls.Label();
-				open.Content = "Открыть файл";
 				System.Windows.Controls.Label rename = new System.Windows.Controls.Label();
 				rename.Content = "Переименовать";
-				System.Windows.Controls.Label upload = new System.Windows.Controls.Label();
-				upload.Content = "Загрузить";
-				System.Windows.Controls.Label delete = new System.Windows.Controls.Label();
-				delete.Content = "Удалить файл";
-
-				//Add the menu items to the menu.
-				docMenu.Items.Add(open);
+				rename.KeyUp += Rename_KeyUp;
 				docMenu.Items.Add(rename);
-				docMenu.Items.Add(upload);
-				docMenu.Items.Add(delete);
+
 				item.ContextMenu = docMenu;
 
 				result.Add(item);
 			}
 			return result;
+		}
+
+		private void Open_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
+		{
+			Tuple<bool, TreeViewItem> selectedItem = searchSelectedItem();
+			if (selectedItem.Item1)
+			{
+				TreeViewItem item = selectedItem.Item2;
+			}
+		}
+
+		private void Rename_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
+		{
+
+		}
+
+		private void Upload_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
+		{
+
+		}
+
+		private void Delete_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
+		{
+
 		}
 
 		private void ComboboxFileSystem_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -204,9 +229,6 @@ namespace contact_center_application
 		private void LoadToViewer(string way, string viewWay = "view/temp")
 		{
 			string extension = Path.GetExtension(way);
-			//			XpsDocument doc = new XpsDocument(way, FileAccess.Read);
-			//			viewer.Document = doc.GetFixedDocumentSequence();
-
 
 			if (extension.Equals(".txt") || extension.Equals(".csv"))
 			{
@@ -353,9 +375,7 @@ namespace contact_center_application
 
 		private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
 		{
-			viewer.Height = row3.ActualHeight - 10;
-			viewer.Width = stackpanel.ActualWidth;
-			
+
 		}
 	}
 }
