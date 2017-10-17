@@ -85,7 +85,10 @@ public class FtpServer extends Thread {
                             String typeQuery = storage.get(key).param2;
                             if (typeQuery.equals("1"))
                             {
-                                
+                                Logging.log("Запрос на прием данных от клиента: "
+                                        + socket.getInetAddress() + " По запросу №"
+                                        + key + " Объем файла: "
+                                        + message.length + "байт", 2);
                             } else if (typeQuery.equals("0"))
                             {
                                 Logging.log("Запрос на отправку данных клиенту: "

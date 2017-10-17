@@ -20,17 +20,18 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.io.FileInputStream;
 
-
 /**
- * SenderSmallData - класс, предназначенный для ответа на первичный запрос 
- * от клиента, также генерирует заявку на отправку большого массива данных со 
+ * SenderSmallData - класс, предназначенный для ответа на первичный запрос от
+ * клиента, также генерирует заявку на отправку большого массива данных со
  * стороны ftp сервера
+ *
  * @author admin
  */
-public class SenderSmallData extends Thread 
-{
+public class SenderSmallData extends Thread {
+
     /**
      * i - вспомогательная переменная, учавствует в формировании заявки на ftp
+     *
      * @param int
      */
     private static int i = 0;
@@ -40,36 +41,46 @@ public class SenderSmallData extends Thread
     private Channel channel;
     /**
      * Команда поступившая от клиента в форме JSON запроса
+     *
      * @param String
      */
     private String commandFromClient;
     /**
      * Объект типа ObjectMapper, необходим для сериализации в json строку
+     *
      * @param ObjectMapper
      */
     ObjectMapper mapper;
     /**
      * Объект, содержащий данные о текущих файловых системах, которые доступны
-     * для просмотра пользователям. Состоит из следующих элементов: 
-     *      param1 - уникальный идентификатор файловой системы (обычно хранится
-     *              на стороне БД)
-     *      param2 - кортеж содержащий данные о файловой системе
-     *          param2.1 - короткое имя файловой системы 
-     *                  (то что отправляется пользователю)
-     *          param2.2 - полный путь к файловой системе (пользователю такие 
-     *                      данные недоступны)
+     * для просмотра пользователям. Состоит из следующих элементов: param1 -
+     * уникальный идентификатор файловой системы (обычно хранится на стороне БД)
+     * param2 - кортеж содержащий данные о файловой системе param2.1 - короткое
+     * имя файловой системы (то что отправляется пользователю) param2.2 - полный
+     * путь к файловой системе (пользователю такие данные недоступны)
+     *
      * @param Map<String, Tuple<String, String>>
      */
     private static Map<String, Tuple<String, String>> aliance;
+    /**
+     * Косвенная переменная, необходима для операции нумерации пришедшей заявки,
+     * отправки и идентификации на стороне ftp сервера
+     *
+     * @param int
+     */
     private static int query = 0;
-    private int numberConnect;
+    /**
+     * Переменная класса, хранит номер заявки
+     */
+    private final int numberConnect;
 
     /**
-     * SenderSmallData(Channel, String) - конструктор, инициализирует 
-     * сериализатор в JSON, получает канал по которому клиент соединен с сервером fast
-     * 
+     * SenderSmallData(Channel, String) - конструктор, инициализирует
+     * сериализатор в JSON, получает канал по которому клиент соединен с
+     * сервером fast
+     *
      * @param channel
-     * @param commandFromClient 
+     * @param commandFromClient
      */
     public SenderSmallData(Channel channel, String commandFromClient)
     {
@@ -92,6 +103,13 @@ public class SenderSmallData extends Thread
         numberConnect = query;
     }
 
+    /**
+     * Переопределенный метод start(), запускает обработку пришедшей заявки от
+     * клиента на стороне fast сервера
+     *
+     * @param void
+     * @return void
+     */
     @Override
     public void run()
     {
@@ -103,27 +121,33 @@ public class SenderSmallData extends Thread
                 response = getResponse();
             } catch (IOException ex)
             {
-                
+
                 response = this.mapper.writeValueAsString(
                         new ObjectForSerialization("error",
                                 "0", "Произошла ошибка при выполнении команды"));
-                Logging.log("Произошла ошибка при выполнении команды." 
-                                        + " Клиент " + channel.toString() + 
-                                        " Номер запроса " + this.numberConnect +
-                                        ". Сообщение от клиента: " + 
-                                        commandFromClient, 1);
+                Logging.log("Произошла ошибка при выполнении команды."
+                        + " Клиент " + channel.toString()
+                        + " Номер запроса " + this.numberConnect
+                        + ". Сообщение от клиента: "
+                        + commandFromClient, 1);
             }
             sendToClient(response);
         } catch (IOException ex)
         {
-            Logging.log("Произошла ошибка при выполнении команды и её отправке." 
-                                        + " Клиент " + channel.toString() + 
-                                        " Номер запроса " + this.numberConnect +
-                                        ". Сообщение от клиента: " + 
-                                        commandFromClient, 1);
+            Logging.log("Произошла ошибка при выполнении команды и её отправке."
+                    + " Клиент " + channel.toString()
+                    + " Номер запроса " + this.numberConnect
+                    + ". Сообщение от клиента: "
+                    + commandFromClient, 1);
         }
     }
 
+    /**
+     * sendToClient - осуществляет отправку данных засериализованных в JSON
+     * клиенту
+     *
+     * @param response текст сообщения
+     */
     private void sendToClient(String response)
     {
         this.channel.write(response + "\0");
@@ -137,6 +161,13 @@ public class SenderSmallData extends Thread
                 ObjectForSerialization.class);
     }
 
+     /**
+      * getResponseWhenError
+      * Метод генерирующий JSON ответ клиенту при возникновении ошибки 
+      *                 (Не поддерживается!)
+      * @return
+      * @throws IOException 
+      */
     private String getResponseWhenError() throws IOException
     {
         String result;
@@ -209,6 +240,15 @@ public class SenderSmallData extends Thread
         return result;
     }
 
+    /**
+     * getAliance
+     * Запускает процесс получения сведений о файловых системах
+     * 
+     * @param obj Объект, не несет информативной нагрузки (AUTHORIZATION TODO!)
+     * @return String засериализованная строка, которая хранит информацию о
+     * файловых системах
+     * @throws IOException 
+     */
     private String getAliance(ObjectForSerialization obj) throws IOException
     {
         String[] getAlianceForSend = new String[this.aliance.size()];
@@ -234,6 +274,16 @@ public class SenderSmallData extends Thread
                         expectedSize, sendToStorageInFtpServer(resultInFtp, 0)));
     }
 
+    /**
+     * getCatalog
+     * Метод, запускающий процесс получения всех каталогов в интересующей 
+     * файловой системе
+     * 
+     * @param  obj         Объект хранящий информацию о файловой системе
+     * @return String      Информация о содержимом каталога в засериализованном 
+     * JSON виде
+     * @throws IOException 
+     */
     private String getCatalog(ObjectForSerialization obj)
             throws IOException
     {
@@ -289,9 +339,19 @@ public class SenderSmallData extends Thread
         return this.mapper.writeValueAsString(result);
     }
 
+    /**
+     * Запускает процесс получения требуемого файла с удаленной файловой системы
+     * раскодирует засериализованный объект в котором хранится информация о
+     * файловой системе, относительном пути к файлу, включая имя самого файла.
+     *
+     * @param obj
+     * @return
+     * @throws IOException
+     */
     private String getContentFile(ObjectForSerialization obj) throws IOException
     {
-        String path = this.aliance.get(obj.param1).y + (new String(obj.param4_array, "UTF-8"));
+        String path = this.aliance.get(obj.param1).y
+                + (new String(obj.param4_array, "UTF-8"));
         Logging.log("Обработка запроса на получение файла по пути: " + path
                 + " Канал " + this.channel.toString() + ") Номер запроса: "
                 + this.numberConnect, 1);
@@ -302,6 +362,13 @@ public class SenderSmallData extends Thread
                         expectedSize, sendToStorageInFtpServer(resultInFtp, 0)));
     }
 
+    /**
+     * getFileInString Получить содержимое файла по указанному пути в String
+     * кодировки UTF-16 (Не рекомендуется для использования)
+     *
+     * @param way Путь к файлу
+     * @return String содержимое файла в кодировке UTF-16
+     */
     private String getFileInString(String way)
     {
         String s = "";
@@ -321,6 +388,13 @@ public class SenderSmallData extends Thread
         return s;
     }
 
+    /**
+     * getFileInArrayByte Получить содержимое файла по указанному пути в виде
+     * byte массива (Не рекомендуется для чтения большого объема файла)
+     *
+     * @param way Путь к файлу
+     * @return byte[] Содержимое файла
+     */
     private byte[] getFileInArrayByte(String way)
     {
         try
@@ -333,22 +407,31 @@ public class SenderSmallData extends Thread
             return buffer;
         } catch (FileNotFoundException e)
         {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+
         } catch (IOException e)
         {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+
         }
+        
         return new byte[]
         {
         };
     }
 
+    /**
+     * sendToStorageInFtpServer Отправка заявки (и содержимое заявки) на
+     * хранение в FTP сервере до тех пор, пока клиент не придет за ней на
+     * получение, либо пока не истечет время её хранения (в случае запущенного
+     * граббера)
+     *
+     * @param resultInFtp Содержимое заявки
+     * @param typeQuery Тип заявки
+     * @return String Идентификатор заявки
+     */
     private static String sendToStorageInFtpServer(byte[] resultInFtp, int typeQuery)
     {
-        String query = String.valueOf(typeQuery);
-        while (!FtpServer.addHashKeyIdentificator(Integer.toString(i), resultInFtp, query))
+        String typeQueryToInt = String.valueOf(typeQuery);
+        while (!FtpServer.addHashKeyIdentificator(Integer.toString(i), resultInFtp, typeQueryToInt))
         {
             i++;
             if (i > 1024)
