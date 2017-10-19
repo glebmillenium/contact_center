@@ -2,7 +2,6 @@
 using contact_center_application.serialization;
 using System;
 using System.IO;
-using System.Windows.Controls;
 using System.Globalization;
 
 namespace contact_center_application.core
@@ -30,10 +29,10 @@ namespace contact_center_application.core
 				throw new System.Net.Sockets.SocketException();
 			}
 
-			return getListFileSystem();
+			return getAliance();
 		}
 
-		private static string[] getListFileSystem()
+		private static string[] getAliance()
 		{
 			ObjectForSerialization objForSendToFastSocket = new ObjectForSerialization
 			{
@@ -74,12 +73,51 @@ namespace contact_center_application.core
 			return true;
 		}
 
+		private static bool sendMessageToUploadFile(string aliance, 
+			string relativePathWithExistFileSystem, string pathToUploadFile)
+		{
+			bool notificationToUserInGUI = false;
+			FileInfo fi = new FileInfo(pathToUploadFile);
+			ObjectForSerialization objForSendToFastSocket = new ObjectForSerialization
+			{
+				command = "try_upload",
+				param1 = fi.Length.ToString(),
+				param2 = aliance,
+				param3 = "",
+				param4_array = System.Text.Encoding.UTF8.GetBytes(relativePathWithExistFileSystem)
+			};
+			string resultJson = JsonConvert.SerializeObject(objForSendToFastSocket);
+			string answer = ConnectWithFastSocket.sendMessage(resultJson, 1024);
+			ObjectForSerialization objResponseFromFastSocket =
+				JsonConvert.DeserializeObject<ObjectForSerialization>(answer);
+			if (objResponseFromFastSocket.param2.Equals("1"))
+			{
+				int index = Int32.Parse(objResponseFromFastSocket.param1);
+				ObjectForSerialization objForSendToFtpSocket = new ObjectForSerialization
+				{
+					command = "try_upload",
+					param1 = "",
+					param2 = index.ToString()
+				};
+
+				ConnectWithFtpSocket.createSocket(addressServer, portFtp);
+				resultJson = JsonConvert.SerializeObject(objForSendToFtpSocket);
+				notificationToUserInGUI = ConnectWithFtpSocket.sendFile(resultJson, 
+					pathToUploadFile, fi.Length);
+				ConnectWithFtpSocket.closeSocket();
+				return notificationToUserInGUI;
+			}
+			//answer.param1 - номер запроса
+			//answer.param2 - результат 0/1
+			return notificationToUserInGUI;
+		}
+
 		private static bool sendMessageToDeleteFile()
 		{
 			return true;
 		}
 
-		public static string getCatalogFileSystem(string aliance)
+		public static string getCatalog(string aliance)
 		{
 			ObjectForSerialization objForSendToFastSocket = new ObjectForSerialization
 			{

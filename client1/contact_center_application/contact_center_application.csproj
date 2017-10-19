@@ -127,6 +127,9 @@
     <Compile Include="DownloadWindow.xaml.cs">
       <DependentUpon>DownloadWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="form\ConfirmationChooseDialog.xaml.cs">
+      <DependentUpon>ConfirmationChooseDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="form\UsersTreeViewItem.cs" />
     <Compile Include="ProcessDownloadFile.xaml.cs">
       <DependentUpon>ProcessDownloadFile.xaml</DependentUpon>
@@ -142,6 +145,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="DownloadWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="form\ConfirmationChooseDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

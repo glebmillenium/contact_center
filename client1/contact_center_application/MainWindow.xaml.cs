@@ -62,7 +62,7 @@ namespace contact_center_application
 		{
 			int index = Int32.Parse(this.alianceAndId[ComboboxFileSystem.SelectedItem.ToString()]);
 			string answer =
-				RequestDataFromServer.getCatalogFileSystem(index.ToString());
+				RequestDataFromServer.getCatalog(index.ToString());
 			fullingTreeView(answer);
 		}
 
@@ -119,7 +119,6 @@ namespace contact_center_application
 
 				TreeViewItem item;
 				
-				//item.Header = element.name;
 				if (!element.file)
 				{
 					item = UsersTreeViewItem.getTreeViewItem(element.name, false);
@@ -134,9 +133,9 @@ namespace contact_center_application
 						}
 					}
 
-					System.Windows.Controls.Label upload = new System.Windows.Controls.Label();
+					System.Windows.Controls.Button upload = new System.Windows.Controls.Button();
 					upload.Content = "Загрузить";
-					upload.KeyUp += Upload_KeyUp;
+					upload.Click += Upload_KeyUp; //Upload_KeyUp;
 					docMenu.Items.Add(upload);
 
 					System.Windows.Controls.Label delete = new System.Windows.Controls.Label();
@@ -187,9 +186,14 @@ namespace contact_center_application
 
 		}
 
-		private void Upload_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
+		private void Upload_KeyUp(object sender, RoutedEventArgs e)
 		{
-
+			OpenFileDialog OPF = new OpenFileDialog();
+			OPF.Filter = "Файлы txt|*.txt|Файлы csv|*.csv|Файлы doc|*.doc|Файлы docx|*.docx|Файлы xls|*.xls|Файлы xlsx|*.xlsx|Файлы tiff|*.tiff";
+			if (OPF.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+			{
+				System.Windows.MessageBox.Show(OPF.FileName);
+			}
 		}
 
 		private void Delete_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)

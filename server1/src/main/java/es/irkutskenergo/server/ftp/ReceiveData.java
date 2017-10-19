@@ -8,9 +8,14 @@ import java.io.OutputStream;
 import java.net.Socket;
 import java.util.Arrays;
 
-public class TCPSession extends Thread {
+/**
+ * ReceiveData
+ * Класс, осуществляющий отправку/прием большого объема данных
+ * 
+ * @author admin
+ */
+public class ReceiveData extends Thread {
 
-    // Local variables
     private Socket socket = null;
     private int error_num = 0;
     byte[] message;
@@ -23,7 +28,7 @@ public class TCPSession extends Thread {
      *
      * @param socket the socket Handle of incoming connection
      */
-    public TCPSession(Socket socket, byte[] message)
+    public ReceiveData(Socket socket, byte[] message)
     {
         this.socket = socket;
         this.message = message;
@@ -34,7 +39,8 @@ public class TCPSession extends Thread {
         }
         numberConnect = query;
     }
-
+    
+    @Override
     public void run()
     {
         try
@@ -43,7 +49,7 @@ public class TCPSession extends Thread {
             {
                 if (!socket.isClosed())
                 {
-                    Logging.log("Началась отправка данных клиенту: "
+                    Logging.log("Запущен процесс приема данных от клиента: "
                             + socket.getInetAddress() + " Номер сеанса: " + numberConnect, 2);
                     OutputStream outputStream;
                     outputStream = socket.getOutputStream();
@@ -116,13 +122,13 @@ public class TCPSession extends Thread {
                     this.socket.close();
                 } catch (IOException ex)
                 {
-                    Logging.log("Сокет для файлового обмена закрыт: код ошибки "
+                    Logging.log("Сокет для файлового приема закрыт: код ошибки "
                             + error_num + " Номер сеанса: " + numberConnect, 2);
                 }
             }
         } catch (IOException ioe)
         {
-            Logging.log("Сессия передачи файлов была завершена с клиентом "
+            Logging.log("Сессия получения файла была завершена с клиентом "
                     + socket.getInetAddress() + " Номер сеанса: "
                     + numberConnect, 2);
         }

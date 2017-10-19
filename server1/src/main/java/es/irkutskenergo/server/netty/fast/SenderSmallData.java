@@ -2,13 +2,13 @@ package es.irkutskenergo.server.netty.fast;
 
 import es.irkutskenergo.other.ExceptionServer;
 import es.irkutskenergo.other.Logging;
+import es.irkutskenergo.other.Storage;
 import es.irkutskenergo.other.Tuple;
 import org.jboss.netty.channel.Channel;
 import es.irkutskenergo.serialization.ObjectForSerialization;
 import java.io.IOException;
 import org.codehaus.jackson.map.ObjectMapper;
 import es.irkutskenergo.serialization.CatalogForSerialization;
-import es.irkutskenergo.server.ftp.FtpServer;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -220,13 +220,29 @@ public class SenderSmallData extends Thread {
             {
                 Logging.log("Обработка запроса на получение "
                         + "содержимого файловой системы "
-                        + this.aliance.get(obj.param1).y + " Канал"
+                        + this.aliance.get(obj.param1).param2 + " Канал"
                         + this.channel.toString() + ") Номер запроса: "
                         + this.numberConnect, 1);
                 result = getCatalog(obj);
             } else if (obj.command.equals("get_content_file"))
             {
                 result = getContentFile(obj);
+            }
+            else if (obj.command.equals("try_remove"))
+            {
+                
+            }
+            else if (obj.command.equals("try_create_dir"))
+            {
+                
+            }
+            else if (obj.command.equals("try_rename"))
+            {
+                
+            }
+            else if (obj.command.equals("try_upload"))
+            {
+                result = setupToUpload(obj);
             }
             Logging.log("Запрос успешно выполнен, отправление данных: "
                     + this.channel.toString() + ") Номер запроса: "
@@ -259,7 +275,7 @@ public class SenderSmallData extends Thread {
             getAlianceForSend[i] = this.mapper.writeValueAsString(
                     new String[]
                     {
-                        value.getKey(), value.getValue().x
+                        value.getKey(), value.getValue().param1
                     });
             i++;
         }
@@ -268,10 +284,10 @@ public class SenderSmallData extends Thread {
                         + "\0").getBytes("UTF-8");
 
         String expectedSize = Integer.toString(resultInFtp.length);
-
         return this.mapper.writeValueAsString(
                 new ObjectForSerialization("aliance",
-                        expectedSize, sendToStorageInFtpServer(resultInFtp, 0)));
+                        expectedSize, sendToStorageInFtpServer(false, 
+                                obj.command, resultInFtp, new byte[]{ })));
     }
 
     /**
@@ -288,14 +304,15 @@ public class SenderSmallData extends Thread {
             throws IOException
     {
         byte[] resultInFtp
-                = (getAllFolder(this.aliance.get(obj.param1).y)
+                = (getAllFolder(this.aliance.get(obj.param1).param2)
                         + "\0").getBytes("UTF-8");
 
         String expectedSize = Integer.toString(
                 resultInFtp.length);
         String result = this.mapper.writeValueAsString(
                 new ObjectForSerialization("catalog",
-                        expectedSize, sendToStorageInFtpServer(resultInFtp, 0)));
+                        expectedSize, sendToStorageInFtpServer(false, 
+                                obj.command, resultInFtp, new byte[] { })));
         return result;
     }
 
@@ -350,7 +367,7 @@ public class SenderSmallData extends Thread {
      */
     private String getContentFile(ObjectForSerialization obj) throws IOException
     {
-        String path = this.aliance.get(obj.param1).y
+        String path = this.aliance.get(obj.param1).param2
                 + (new String(obj.param4_array, "UTF-8"));
         Logging.log("Обработка запроса на получение файла по пути: " + path
                 + " Канал " + this.channel.toString() + ") Номер запроса: "
@@ -359,7 +376,8 @@ public class SenderSmallData extends Thread {
         String expectedSize = Integer.toString(resultInFtp.length);
         return this.mapper.writeValueAsString(
                 new ObjectForSerialization("content_file",
-                        expectedSize, sendToStorageInFtpServer(resultInFtp, 0)));
+                        expectedSize, sendToStorageInFtpServer(false, 
+                                obj.command, resultInFtp, new byte[] { })));
     }
 
     /**
@@ -428,17 +446,28 @@ public class SenderSmallData extends Thread {
      * @param typeQuery Тип заявки
      * @return String Идентификатор заявки
      */
-    private static String sendToStorageInFtpServer(byte[] resultInFtp, int typeQuery)
+    private static String sendToStorageInFtpServer(boolean typeQuery, 
+            String nameCommand, byte[] information, byte[] additionalInformation)
     {
-        String typeQueryToInt = String.valueOf(typeQuery);
-        while (!FtpServer.addHashKeyIdentificator(Integer.toString(i), resultInFtp, typeQueryToInt))
-        {
-            i++;
-            if (i > 1024)
-            {
-                i = 0;
-            }
-        }
-        return Integer.toString(i);
+        int result = Storage.add(typeQuery, nameCommand, information, 
+                additionalInformation);
+        return String.valueOf(result);
+    }
+    
+    /**
+     * Создание заявки в FTP-сервере на прием данных
+     * 
+     * @param ObjectForSerialization
+     * @return String
+     * @throws IOException 
+     */
+    private String setupToUpload(ObjectForSerialization obj) throws IOException
+    {
+        String strPathToFile = this.aliance.get(obj.param2).param2 + obj.param4_array;
+        byte[] bytePathToFile = strPathToFile.getBytes("UTF-8");
+        return this.mapper.writeValueAsString(
+                new ObjectForSerialization("upload",
+                        sendToStorageInFtpServer(true, obj.command, 
+                                bytePathToFile, new byte[]{ })));
     }
 }

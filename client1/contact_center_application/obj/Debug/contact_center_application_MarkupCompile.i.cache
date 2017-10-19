@@ -10,11 +10,11 @@ none
 false
 DEBUG;TRACE
 C:\contact_center\client1\contact_center_application\App.xaml
-7241739512
+8-2100811468
 
-191552151426
+201538546086
 34-362243564
-Authorization.xaml;CommonWindow.xaml;DownloadWindow.xaml;MainWindow.xaml;ProcessDownloadFile.xaml;Themes\Brushes.xaml;Themes\Core.xaml;
+Authorization.xaml;CommonWindow.xaml;DownloadWindow.xaml;form\ConfirmationChooseDialog.xaml;MainWindow.xaml;ProcessDownloadFile.xaml;Themes\Brushes.xaml;Themes\Core.xaml;
 
 False
 

@@ -1,0 +1,30 @@
+﻿<Window x:Class="contact_center_application.form.ConfirmationChooseDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:contact_center_application.form"
+        mc:Ignorable="d"
+        Title="Загрузка файла на сервер" Height="300" Width="450">
+	<Grid>
+		<StackPanel Margin="10">
+			<StackPanel Orientation="Horizontal">
+				<Label Content="Загружаемый файл: " HorizontalAlignment="Left"/>
+				<TextBox Text="Здесь должен быть путь к файлу" x:Name="PathWithFile" HorizontalAlignment="Right"/>
+			</StackPanel>
+			<StackPanel Orientation="Horizontal">
+				<Label Content="Поместить в файловую систему"/>
+				<TextBox Text="Здесь должна быть файловая система"/>
+			</StackPanel>
+			<StackPanel Orientation="Horizontal">
+				<Label Content="Относительный путь в файловой системе" />
+				<TextBox Text="Здесь должен быть путь"/>
+			</StackPanel>
+			<StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+				<Button Content="Ок"></Button>
+				<Label Content="   "></Label>
+				<Button Content="Отмена"></Button>
+			</StackPanel>
+		</StackPanel>
+	</Grid>
+</Window>

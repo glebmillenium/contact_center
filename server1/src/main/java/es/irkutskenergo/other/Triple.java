@@ -9,6 +9,9 @@ package es.irkutskenergo.other;
  * Класс для создания кортежа
  *
  * @author Глеб
+ * @param <Param1>
+ * @param <Param2>
+ * @param <Param3>
  */
 public class Triple<Param1, Param2, Param3> {
 

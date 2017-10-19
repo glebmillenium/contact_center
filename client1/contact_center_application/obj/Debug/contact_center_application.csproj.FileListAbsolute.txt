@@ -117,3 +117,5 @@ C:\contact_center\client1\contact_center_application\obj\Debug\Themes\Core.g.cs
 C:\contact_center\client1\contact_center_application\obj\Debug\App.baml
 C:\contact_center\client1\contact_center_application\obj\Debug\DownloadWindow.g.cs
 C:\contact_center\client1\contact_center_application\obj\Debug\DownloadWindow.baml
+C:\contact_center\client1\contact_center_application\obj\Debug\form\ConfirmationChooseDialog.g.cs
+C:\contact_center\client1\contact_center_application\obj\Debug\form\ConfirmationChooseDialog.baml

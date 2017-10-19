@@ -3,6 +3,7 @@ using System.Text;
 using System.Net;
 using System.Net.Sockets;
 using System.Windows.Controls;
+using System.IO;
 
 namespace contact_center_application.core
 {
@@ -40,7 +41,7 @@ namespace contact_center_application.core
 			message += "\0";
 			byte[] answerFromServer = null; 
 			byte[] answer = null;
-			int fixedSize = 64 * 1024;
+			int fixedSize = 50 * 1024;
 
 			if (realization)
 			{
@@ -107,6 +108,52 @@ namespace contact_center_application.core
 				sender.Shutdown(SocketShutdown.Both);
 				sender.Close();
 			}
+		}
+
+		public static bool sendFile(string resultJson, string pathToUploadFile, long expectedSize)
+		{
+			resultJson += "\0";
+			byte[] answerFromServer = null;
+			int fixedSize = 50 * 1024;
+			if (realization)
+			{
+				FileStream f = new FileStream(pathToUploadFile, FileMode.Open, FileAccess.Read, 
+					FileShare.Read);
+				BinaryReader sr = new BinaryReader(f);
+				int currentBytes = 0;
+				byte[] input;
+				int bytesSent;
+				int bytesRec;
+				if (expectedSize > fixedSize)
+				{
+					while (currentBytes + fixedSize < expectedSize)
+					{
+						input = sr.ReadBytes(fixedSize);
+						bytesSent = sender.Send(input);
+						bytesRec = sender.Receive(answerFromServer);
+						if (answerFromServer[0] != 49)
+						{
+							return false;
+						}
+					}
+					input = sr.ReadBytes((int)(expectedSize - (long)currentBytes));
+					bytesSent = sender.Send(input);
+					bytesRec = sender.Receive(answerFromServer);
+					sr.Close();
+				}
+				else
+				{
+					input = sr.ReadBytes((int)expectedSize);
+					bytesSent = sender.Send(input);
+					bytesRec = sender.Receive(answerFromServer);
+					if (answerFromServer[0] != 49)
+					{
+						return false;
+					}
+					sr.Close();
+				}
+			}
+			return true;
 		}
 	}
 }
