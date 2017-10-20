@@ -381,13 +381,20 @@ namespace contact_center_application
 		private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
 		{
 			viewer.Height = window.ActualHeight - 195;
-			if (checkModeView)
+
+		}
+
+		private void CheckBox_Click(object sender, RoutedEventArgs e)
+		{
+			if ((bool) swtichModeView.IsChecked)
 			{
-				viewer.Visibility = Visibility.Hidden;
+				swtichModeView.Content = "Нагруженный интерфейс";
+				viewer.Visibility = Visibility.Visible;
 			}
 			else
 			{
-				viewer.Visibility = Visibility.Visible;
+				swtichModeView.Content = "Простой интерфейс";
+				viewer.Visibility = Visibility.Hidden;
 			}
 		}
 	}
