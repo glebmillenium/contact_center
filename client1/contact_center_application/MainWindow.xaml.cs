@@ -23,6 +23,7 @@ namespace contact_center_application
 	/// </summary>
 	public partial class MainWindow : Window
 	{
+		bool checkModeView = false;
 		string openFile = "";
 		/// <summary>
 		/// listTreeView - словарь (хэш-таблица), хранит относительный путь в 
@@ -43,6 +44,7 @@ namespace contact_center_application
 			}
 
 			InitializeComponent();
+
 			SynchronizationContext uiContext = SynchronizationContext.Current;
 			Thread thread = new Thread(Run);
 			thread.Start(uiContext);
@@ -64,6 +66,7 @@ namespace contact_center_application
 			string answer =
 				RequestDataFromServer.getCatalog(index.ToString());
 			fullingTreeView(answer);
+			viewer.Height = stackPanelView.ActualHeight;
 		}
 
 		private void firstExchangeWithServer(object state)
@@ -379,7 +382,15 @@ namespace contact_center_application
 
 		private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
 		{
-
+			viewer.Height = window.ActualHeight - 160;
+			if (checkModeView)
+			{
+				viewer.Visibility = Visibility.Hidden;
+			}
+			else
+			{
+				viewer.Visibility = Visibility.Visible;
+			}
 		}
 	}
 }

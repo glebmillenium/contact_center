@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:contact_center_application"
         mc:Ignorable="d"
-        Title="Информационный портал ЕЭИСЦ" MinWidth="800" MinHeight="600" SizeChanged="Window_SizeChanged">
+        Title="Информационный портал ЕЭИСЦ" MinWidth="800" MinHeight="600" SizeChanged="Window_SizeChanged" x:Name="window">
 
 
 	<Grid >
@@ -39,7 +39,9 @@
 
 		<DockPanel Grid.Row="3">
 			<TreeView x:Name="treeViewCatalog" Margin="5" MinWidth="200" MaxWidth="400" DockPanel.Dock="Left"/>
-			<DocumentViewer x:Name="viewer" DockPanel.Dock="Right"/>
+			<StackPanel x:Name="stackPanelView">
+				<DocumentViewer x:Name="viewer" DockPanel.Dock="Right"/>
+			</StackPanel>
 		</DockPanel>
 
 

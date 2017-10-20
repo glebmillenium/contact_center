@@ -12,7 +12,8 @@ import java.net.Socket;
 import org.codehaus.jackson.map.ObjectMapper;
 
 /**
- *
+ * Сервер, предназначенный для осуществления отправки большого объема информации
+ * 
  * @author admin
  */
 public class FtpServer extends Thread {
