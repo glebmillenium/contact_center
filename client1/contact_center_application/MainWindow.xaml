@@ -10,23 +10,23 @@
 
 	<Grid >
 		<Grid.RowDefinitions>
-			<RowDefinition Height="40"></RowDefinition>
-			<RowDefinition Height="30"></RowDefinition>
-			<RowDefinition Height="25"></RowDefinition>
+			<RowDefinition Height="45"></RowDefinition>
+			<RowDefinition Height="26"></RowDefinition>
+			<RowDefinition Height="20"></RowDefinition>
 			<RowDefinition x:Name="row3"></RowDefinition>
-			<RowDefinition Height="25"></RowDefinition>
+			<RowDefinition Height="20"></RowDefinition>
 		</Grid.RowDefinitions>
 
 		<StackPanel Grid.Row="0">
-			<Button Content="Помощь" Margin="0,5,5,0" VerticalAlignment="Top" HorizontalAlignment="Right"/>
+			<Button Content="Помощь" Margin="0,5,5,0" Height="20" VerticalAlignment="Top" HorizontalAlignment="Right" Width="89"/>
 			<TextBlock Text="Добро пожаловать, Гость!" Margin="0,0,5,0" HorizontalAlignment="Right"/>
 		</StackPanel>
 
 		<StackPanel Grid.Row="1" Orientation="Horizontal">
-			<Label Content="Файловый ресурс: " HorizontalAlignment="Left" VerticalAlignment="Top"/>
-			<ComboBox x:Name="ComboboxFileSystem" 
+			<Label Content="Файловый ресурс: " Height="30" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+			<ComboBox x:Name="ComboboxFileSystem" Height="23"
 						SelectionChanged="ComboboxFileSystem_SelectionChanged" HorizontalAlignment="Left" VerticalAlignment="Top" Width="300"/>
-			<Button x:Name="buttonRefresh" ToolTip="Button" HorizontalAlignment="Left" VerticalAlignment="Top" TextOptions.TextFormattingMode="Display" Click="buttonRefresh_Click">
+			<Button x:Name="buttonRefresh" Width="60" Height="20" ToolTip="Button" HorizontalAlignment="Left" VerticalAlignment="Top" TextOptions.TextFormattingMode="Display" Click="buttonRefresh_Click">
 				<TextBlock x:Name="buttonRetryConnection" Text="Повторить соединение" TextAlignment="Center" TextWrapping="Wrap" Height="15" Width="132"/>
 			</Button>
 		</StackPanel>
@@ -40,16 +40,18 @@
 		<DockPanel Grid.Row="3">
 			<TreeView x:Name="treeViewCatalog" Margin="5" MinWidth="200" MaxWidth="400" DockPanel.Dock="Left"/>
 			<StackPanel x:Name="stackPanelView">
-				<DocumentViewer x:Name="viewer" DockPanel.Dock="Right"/>
+				<StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+					<Button Content="Открыть во внешнем приложении" Height="20" Margin="0,0,5,0" VerticalAlignment="Top" Click="Button_Click" Width="208" />
+					<Button Content="Сохранить изменения" Height="20" Margin="0,0,5,0" VerticalAlignment="Top" Width="141"/>
+				</StackPanel>
+				<DocumentViewer Margin="5" x:Name="viewer" DockPanel.Dock="Right"/>
 			</StackPanel>
 		</DockPanel>
 
 
 
-		<StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right" >
-			<Button Content="Открыть во внешнем приложении" Margin="0,0,5,0" VerticalAlignment="Top" Click="Button_Click" />
-			<Button Content="Сохранить изменения" Margin="0,0,5,0" VerticalAlignment="Top"/>
+		<StackPanel Margin="5" Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right" >
+
 		</StackPanel>
-		<Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="100" Margin="728,92,-68,-167" Grid.Row="4" VerticalAlignment="Top" Width="100"/>
 	</Grid>
 </Window>

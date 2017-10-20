@@ -6,8 +6,7 @@
     <Application.Resources>
 		<ResourceDictionary>
 			<ResourceDictionary.MergedDictionaries>
-				<ResourceDictionary Source="Themes/Core.xaml"/>
-				<ResourceDictionary Source="Themes/Brushes.xaml" />
+				<ResourceDictionary Source="ThemesSoft/MoonUICore.xaml"/>
 			</ResourceDictionary.MergedDictionaries>
 		</ResourceDictionary>
 	</Application.Resources>

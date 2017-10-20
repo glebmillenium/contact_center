@@ -6,14 +6,12 @@ using Newtonsoft.Json;
 using contact_center_application.serialization;
 using System;
 using System.IO;
-using System.Text;
 using System.Diagnostics;
 using System.Windows.Xps.Packaging;
 using System.Threading;
 using Spire.Doc;
 using Spire.Xls;
 using contact_center_application.form;
-using Spire.DocViewer.Forms;
 using System.Windows.Forms;
 
 namespace contact_center_application
@@ -66,7 +64,7 @@ namespace contact_center_application
 			string answer =
 				RequestDataFromServer.getCatalog(index.ToString());
 			fullingTreeView(answer);
-			viewer.Height = stackPanelView.ActualHeight;
+			buttonRefresh.Visibility = Visibility.Hidden;
 		}
 
 		private void firstExchangeWithServer(object state)
@@ -149,7 +147,7 @@ namespace contact_center_application
 				else
 				{
 					item = UsersTreeViewItem.getTreeViewItem(element.name, true);
-					item.Selected += this.selectFile;
+					item.MouseDoubleClick += this.selectFile;
 					this.listTreeView.Add(item, currentWay + "\\" + element.name);
 
 					System.Windows.Controls.Label open = new System.Windows.Controls.Label();
@@ -382,7 +380,7 @@ namespace contact_center_application
 
 		private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
 		{
-			viewer.Height = window.ActualHeight - 160;
+			viewer.Height = window.ActualHeight - 195;
 			if (checkModeView)
 			{
 				viewer.Visibility = Visibility.Hidden;
