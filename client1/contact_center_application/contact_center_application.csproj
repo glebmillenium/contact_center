@@ -145,6 +145,7 @@
     <Compile Include="form\ConfirmationChooseDialog.xaml.cs">
       <DependentUpon>ConfirmationChooseDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="form\TemplateSelector.cs" />
     <Compile Include="form\UsersTreeViewItem.cs" />
     <Compile Include="ProcessDownloadFile.xaml.cs">
       <DependentUpon>ProcessDownloadFile.xaml</DependentUpon>

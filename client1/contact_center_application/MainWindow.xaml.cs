@@ -13,16 +13,25 @@ using Spire.Doc;
 using Spire.Xls;
 using contact_center_application.form;
 using System.Windows.Forms;
+using System.Windows.Media;
+using System.Windows.Documents;
+using System.Text;
+using System.Windows.Media.Imaging;
+using System.Reflection;
+using System.Drawing;
 
 namespace contact_center_application
 {
 	/// <summary>
-	/// Логика взаимодействия для MainWindow.xaml
+	/// Класс, формирующий графический интерфейс отображения содержимое файловой системы.
 	/// </summary>
 	public partial class MainWindow : Window
 	{
-		bool checkModeView = false;
+		/// <summary>
+		/// openFile - хранит путь открытого файла в приложении
+		/// </summary>
 		string openFile = "";
+
 		/// <summary>
 		/// listTreeView - словарь (хэш-таблица), хранит относительный путь в 
 		///				файловой системе, включая имя самого объекта, и значения всех TreeView
@@ -30,9 +39,18 @@ namespace contact_center_application
 		/// @param Dictionary<TreeView, string>
 		/// </summary>
 		private Dictionary<TreeViewItem, string> listTreeView =
-			new Dictionary<TreeViewItem, string>();
+											new Dictionary<TreeViewItem, string>();
+
+		/// <summary>
+		/// alianceAndId - словарь (хэш-таблица), хранит название файловой системы и его уникальный идентификатор
+		/// </summary>
 		private Dictionary<string, string> alianceAndId = new Dictionary<string, string>();
 		XpsDocument doc;
+		BitmapImage bitmap;
+
+		/// <summary>
+		/// Конструктор, осуществляет чистку папки временных файлов
+		/// </summary>
 		public MainWindow()
 		{
 			if (Directory.Exists("tmp"))
@@ -48,6 +66,26 @@ namespace contact_center_application
 			thread.Start(uiContext);
 		}
 
+		public IEnumerable<T> FindVisualChildren<T>(DependencyObject depObj) where T : DependencyObject
+		{
+			if (depObj != null)
+			{
+				for (int i = 0; i < VisualTreeHelper.GetChildrenCount(depObj); i++)
+				{
+					DependencyObject child = VisualTreeHelper.GetChild(depObj, i);
+					if (child != null && child is T)
+					{
+						yield return (T)child;
+					}
+
+					foreach (T childOfChild in FindVisualChildren<T>(child))
+					{
+						yield return childOfChild;
+					}
+				}
+			}
+		}
+
 		/// <summary>
 		/// Функция для запуска первичной инициализации графического интерфейса в дочернем треде
 		/// </summary>
@@ -58,6 +96,9 @@ namespace contact_center_application
 			uiContext.Post(firstExchangeWithServer, "");
 		}
 
+		/// <summary>
+		/// Получает содержимое, выбранной файловой системы
+		/// </summary>
 		private void getContentFileSystem()
 		{
 			int index = Int32.Parse(this.alianceAndId[ComboboxFileSystem.SelectedItem.ToString()]);
@@ -67,6 +108,10 @@ namespace contact_center_application
 			buttonRefresh.Visibility = Visibility.Hidden;
 		}
 
+		/// <summary>
+		/// Метод запускается при включении приложения
+		/// </summary>
+		/// <param name="state"></param>
 		private void firstExchangeWithServer(object state)
 		{
 			try
@@ -92,6 +137,10 @@ namespace contact_center_application
 			}
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="json"></param>
 		private void fullingTreeView(string json)
 		{
 			this.listTreeView.Clear();
@@ -107,6 +156,13 @@ namespace contact_center_application
 			}
 		}
 
+		/// <summary>
+		/// Десериализует json - строку в дерево treeView, 
+		/// с указанием их относительного пути
+		/// </summary>
+		/// <param name="json"></param>
+		/// <param name="currentWay"></param>
+		/// <returns></returns>
 		private List<TreeViewItem> getItemsCatalogsFromJson(string json, string currentWay)
 		{
 			List<TreeViewItem> result = new List<TreeViewItem>();
@@ -119,7 +175,7 @@ namespace contact_center_application
 					JsonConvert.DeserializeObject<CatalogForSerialization>(catalog);
 
 				TreeViewItem item;
-				
+
 				if (!element.file)
 				{
 					item = UsersTreeViewItem.getTreeViewItem(element.name, false);
@@ -136,7 +192,7 @@ namespace contact_center_application
 
 					System.Windows.Controls.Button upload = new System.Windows.Controls.Button();
 					upload.Content = "Загрузить";
-					upload.Click += Upload_KeyUp; //Upload_KeyUp;
+					upload.Click += Upload_Click;
 					docMenu.Items.Add(upload);
 
 					System.Windows.Controls.Label delete = new System.Windows.Controls.Label();
@@ -173,6 +229,16 @@ namespace contact_center_application
 			return result;
 		}
 
+		private void Upload_Click(object sender, EventArgs e)
+		{
+			OpenFileDialog OPF = new OpenFileDialog();
+			OPF.Filter = "Файлы txt|*.txt|Файлы csv|*.csv|Файлы doc|*.doc|Файлы docx|*.docx|Файлы xls|*.xls|Файлы xlsx|*.xlsx|Файлы tiff|*.tiff";
+			if (OPF.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+			{
+				System.Windows.MessageBox.Show(OPF.FileName);
+			}
+		}
+
 		private void Open_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
 		{
 			Tuple<bool, TreeViewItem> selectedItem = searchSelectedItem();
@@ -187,7 +253,7 @@ namespace contact_center_application
 
 		}
 
-		private void Upload_KeyUp(object sender, RoutedEventArgs e)
+		private void Upload_KeyUp()
 		{
 			OpenFileDialog OPF = new OpenFileDialog();
 			OPF.Filter = "Файлы txt|*.txt|Файлы csv|*.csv|Файлы doc|*.doc|Файлы docx|*.docx|Файлы xls|*.xls|Файлы xlsx|*.xlsx|Файлы tiff|*.tiff";
@@ -202,12 +268,22 @@ namespace contact_center_application
 
 		}
 
+		/// <summary>
+		/// Обработчик события, вызывается по изменению ComboBox.
+		/// По указанному combobox получает содержимое файловой системы
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void ComboboxFileSystem_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
-
 			getContentFileSystem();
 		}
 
+		/// <summary>
+		/// Обработчик события, запускается по двойному щелчку мыши по treeView. Запускает 
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void selectFile(object sender, RoutedEventArgs e)
 		{
 			Tuple<bool, TreeViewItem> selectedItem = searchSelectedItem();
@@ -219,48 +295,72 @@ namespace contact_center_application
 				this.openFile = "tmp" + relativeWay;
 
 				int index = Int32.Parse(this.alianceAndId[ComboboxFileSystem.SelectedItem.ToString()]);
-				//byte[] contentFile = null;
-
 				DownloadWindow download = new DownloadWindow(index.ToString(),
 					relativeWay);
-				download.getContentFileAndWriteToFile(this.openFile);
+				try
+				{
+					download.getContentFileAndWriteToFile(this.openFile);
 
-				//writeToFile(this.openFile, contentFile);
-				//Array.Clear(contentFile, 0, contentFile.Length);
-				LoadToViewer(this.openFile);
+					//writeToFile(this.openFile, contentFile);
+					//Array.Clear(contentFile, 0, contentFile.Length);
+					LoadToViewer(this.openFile);
+				}
+				catch(Exception exp)
+				{
+
+				}
+
 			}
 		}
 
+		/// <summary>
+		/// Загружает данные в DocumentViewer viewer
+		/// </summary>
+		/// <param name="way"></param>
+		/// <param name="viewWay"></param>
 		private void LoadToViewer(string way, string viewWay = "view/temp")
 		{
 			string extension = Path.GetExtension(way);
 
 			if (extension.Equals(".txt") || extension.Equals(".csv"))
 			{
-				/*
-				 * string strFile = way;
-				Paragraph flowParagraph = new Paragraph();
-				flowParagraph.Inlines.Add(File.ReadAllText(strFile));
-				FlowDocument flowDoc = new FlowDocument(flowParagraph);
-				IDocumentPaginatorSource idpSource = flowDoc;
-				DocumentPaginator docPaginator = idpSource.DocumentPaginator;
+				this.tabControl.SelectedItem = this.textboxTab;
+				displayTextbox(way);
+			}
+			else if (extension.Equals(".jpeg") || extension.Equals(".tiff") || extension.Equals(".jpg"))
+			{
+				bitmap = new BitmapImage();
+				string fullWay = Path.Combine(Path.GetDirectoryName(
+								Assembly.GetExecutingAssembly().Locati‌​on), way);
+				bitmap.BeginInit();
+				bitmap.UriSource = new Uri(fullWay);
+				bitmap.EndInit();
+				bitmap.Freeze();
+				image.Source = bitmap;
 
-				//richTextBox.Document.Blocks.Clear();
-				//richTextBox.Document.Blocks.Add(new Paragraph(new Run(contentFile)));
-				*/
+				tabControl.SelectedItem = imageTab;
 			}
 			else if (extension.Equals(".doc") || extension.Equals(".docx"))
 			{
-				this.viewer.Document = null;
-				this.viewer.DataContext = null;
-				if (doc != null)
+				if ((bool)swtichModeView.IsChecked)
 				{
-					this.doc.Close();
-				}
+					this.tabControl.SelectedItem = this.viewerTab;
+					this.viewer.Document = null;
+					this.viewer.DataContext = null;
+					if (doc != null)
+					{
+						this.doc.Close();
+					}
 
-				convertDocxDocToXps(way, viewWay);
-				this.doc = new XpsDocument(viewWay, FileAccess.Read);
-				viewer.Document = doc.GetFixedDocumentSequence();
+					convertDocxDocToXps(way, viewWay);
+					this.doc = new XpsDocument(viewWay, FileAccess.Read);
+					viewer.Document = doc.GetFixedDocumentSequence();
+				}
+				else
+				{
+					this.tabControl.SelectedItem = this.textboxTab;
+					displayTextbox(way);
+				}
 			}
 			else if (extension.Equals(".xlsx") || extension.Equals(".xls"))
 			{
@@ -278,6 +378,24 @@ namespace contact_center_application
 			}
 		}
 
+		private void displayTextbox(string viewWay)
+		{
+			textbox.Document.Blocks.Clear();
+			var sr = new StreamReader(viewWay, Encoding.UTF8);
+			string text = sr.ReadToEnd();
+
+			var document = new FlowDocument();
+			var paragraph = new Paragraph();
+			paragraph.Inlines.Add(text);
+			document.Blocks.Add(paragraph);
+			textbox.Document = document;
+		}
+
+		/// <summary>
+		/// Функция осуществляет побайтовую запись в файл
+		/// </summary>
+		/// <param name="relativeWay"></param>
+		/// <param name="contentFile"></param>
 		private static void writeToFile(string relativeWay, byte[] contentFile)
 		{
 			string directoryWay = Path.GetDirectoryName(relativeWay);
@@ -289,6 +407,10 @@ namespace contact_center_application
 			File.WriteAllBytes(relativeWay, contentFile);
 		}
 
+		/// <summary>
+		/// Поиск и возврат элемента TreeViewItem, который в текущий момент выделен
+		/// </summary>
+		/// <returns></returns>
 		private Tuple<bool, TreeViewItem> searchSelectedItem()
 		{
 			foreach (var item in this.listTreeView)
@@ -301,6 +423,11 @@ namespace contact_center_application
 			return new Tuple<bool, TreeViewItem>(false, new TreeViewItem());
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="way"></param>
+		/// <param name="viewWay"></param>
 		public static void convertDocxDocToXps(string way, string viewWay)
 		{
 			try
@@ -335,6 +462,12 @@ namespace contact_center_application
 			}
 		}
 
+		/// <summary>
+		/// Функция конвертирует из XLS формата в XPS формат для дальнейшего показа
+		/// 
+		/// </summary>
+		/// <param name="way"></param>
+		/// <param name="viewWay"></param>
 		public static void convertXlsToXps(string way, string viewWay)
 		{
 			try
@@ -358,43 +491,74 @@ namespace contact_center_application
 			}
 		}
 
+		/// <summary>
+		/// Запуск загрузки содержимого файла с сервера и открытия в documentViewer либо 
+		/// textReach
+		/// 
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void Button_Click(object sender, RoutedEventArgs e)
 		{
 			Process.Start(this.openFile);
 		}
 
-
+		/// <summary>
+		/// Получение содержимого файловой системы, вызывается при нажатии
+		/// на кнопку обновление каталогов
+		/// 
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void ButtonUpdateCatalogs_Click(object sender, RoutedEventArgs e)
 		{
 			getContentFileSystem();
 		}
 
+		/// <summary>
+		/// buttonRefresh_Click
+		/// Запуск повторного подключения к серверу
+		/// 
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void buttonRefresh_Click(object sender, RoutedEventArgs e)
 		{
 			SynchronizationContext uiContext = SynchronizationContext.Current;
 			Thread thread = new Thread(Run);
-			// Запустим поток и установим ему контекст синхронизации,
-			// таким образом этот поток сможет обновлять UI
 			thread.Start(uiContext);
 		}
 
+		/// <summary>
+		/// Window_SizeChanged
+		/// Событие вызывается при изменении окна
+		/// 
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
 		{
-			viewer.Height = window.ActualHeight - 195;
-
+			viewer.Height = window.ActualHeight - 200;
 		}
 
+		/// <summary>
+		/// CheckBox_Click
+		/// Обновление графического интерфейса осуществляющего показ содердимого документа
+		/// 
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void CheckBox_Click(object sender, RoutedEventArgs e)
 		{
 			if ((bool) swtichModeView.IsChecked)
 			{
 				swtichModeView.Content = "Нагруженный интерфейс";
-				viewer.Visibility = Visibility.Visible;
+				this.tabControl.SelectedItem = this.viewerTab;
 			}
 			else
 			{
 				swtichModeView.Content = "Простой интерфейс";
-				viewer.Visibility = Visibility.Hidden;
+				this.tabControl.SelectedItem = this.textboxTab;
 			}
 		}
 	}

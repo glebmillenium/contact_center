@@ -3,12 +3,11 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:contact_center_application"
+        xmlns:local="clr-namespace:contact_center_application.form"
         mc:Ignorable="d"
         Title="Информационный портал ЕЭИСЦ" MinWidth="800" MinHeight="600" SizeChanged="Window_SizeChanged" x:Name="window">
 
-
-	<Grid >
+	<Grid>
 		<Grid.RowDefinitions>
 			<RowDefinition Height="45"></RowDefinition>
 			<RowDefinition Height="26"></RowDefinition>
@@ -26,30 +25,40 @@
 			<Label Content="Файловый ресурс: " Height="30" HorizontalAlignment="Left" VerticalAlignment="Top"/>
 			<ComboBox x:Name="ComboboxFileSystem" Height="23"
 						SelectionChanged="ComboboxFileSystem_SelectionChanged" HorizontalAlignment="Left" VerticalAlignment="Top" Width="300"/>
-			<Button x:Name="buttonRefresh" Width="60" Height="20" ToolTip="Button" HorizontalAlignment="Left" VerticalAlignment="Top" TextOptions.TextFormattingMode="Display" Click="buttonRefresh_Click">
+			<Button x:Name="buttonRefresh" Width="150" Height="20" ToolTip="Button" HorizontalAlignment="Left" VerticalAlignment="Top" TextOptions.TextFormattingMode="Display" Click="buttonRefresh_Click">
 				<TextBlock x:Name="buttonRetryConnection" Text="Повторить соединение" TextAlignment="Center" TextWrapping="Wrap" Height="15" Width="132"/>
 			</Button>
 		</StackPanel>
 
 		<StackPanel Grid.Row="2" Orientation="Horizontal">
-			<TextBlock x:Name="UpdateCatalogs" Margin="5" TextWrapping="Wrap" TextAlignment="Center" VerticalAlignment="Bottom">Меню просмотра каталогов  "</TextBlock>
+			<TextBlock x:Name="UpdateCatalogs" Margin="5" TextWrapping="Wrap" TextAlignment="Center" VerticalAlignment="Bottom">Меню просмотра каталогов    </TextBlock>
 			<Button x:Name="ButtonUpdateCatalogs" VerticalAlignment="Bottom"  Width="60" Height="20" Content="Обновить" Click="ButtonUpdateCatalogs_Click"/>
 		</StackPanel>
 
 
 		<DockPanel Grid.Row="3">
 			<TreeView x:Name="treeViewCatalog" Margin="5" MinWidth="200" MaxWidth="400" DockPanel.Dock="Left"/>
-			<StackPanel x:Name="stackPanelView">
+			<StackPanel x:Name="stackPanelView" DockPanel.Dock="Right" Orientation="Vertical">
 				<StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Width="550">
 					<CheckBox x:Name="swtichModeView"  Click="CheckBox_Click" Content="Нагруженный интерфейс" IsChecked="True" Margin="0,0,10,0" UseLayoutRounding="True" HorizontalAlignment="Left" VerticalAlignment="Bottom" Style="{DynamicResource CheckBoxSwitcher}"/>
 					<Button Content="Открыть во внешнем приложении" Height="20" Margin="0,0,5,0" VerticalAlignment="Top" Click="Button_Click" Width="208" />
 					<Button x:Name="swtichInterface" Content="Сохранить изменения" Height="20" Margin="0,0,5,0" VerticalAlignment="Top" Width="141"/>
 				</StackPanel>
-				<DocumentViewer Margin="5" x:Name="viewer" DockPanel.Dock="Right"/>
+				
+				<TabControl x:Name="tabControl">
+					<TabItem x:Name="viewerTab" Visibility="Collapsed">
+						<DocumentViewer Margin="5" x:Name="viewer"/>
+					</TabItem>
+					<TabItem x:Name="textboxTab" Visibility="Collapsed">
+						<RichTextBox Height="Auto" x:Name="textbox" AcceptsReturn="True"/>
+					</TabItem>
+					<TabItem x:Name="imageTab" Visibility="Collapsed">
+						<Image x:Name="image" Height="Auto"/>
+					</TabItem>
+				</TabControl>
+
 			</StackPanel>
 		</DockPanel>
-
-
 
 		<StackPanel Margin="5" Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right" >
 

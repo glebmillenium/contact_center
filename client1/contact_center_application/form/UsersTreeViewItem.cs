@@ -67,11 +67,7 @@ namespace contact_center_application.form
 			if (isFile)
 			{
 				string extension = Path.GetExtension(nameFile);
-				if (extension.Equals(".txt") || extension.Equals(".csv"))
-				{
-
-				}
-				else if (extension.Equals(".doc"))
+				if (extension.Equals(".doc"))
 				{
 					path = @"resources/doc.png";
 				}
@@ -102,6 +98,10 @@ namespace contact_center_application.form
 				else if (extension.Equals(".pdf"))
 				{
 					path = @"resources/pdf.png";
+				}
+				else if (extension.Equals(".txt"))
+				{
+					path = @"resources/txt.png";
 				}
 				else
 				{
