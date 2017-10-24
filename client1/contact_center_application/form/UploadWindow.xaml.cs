@@ -150,7 +150,7 @@ namespace contact_center_application.form
 				}
 				else
 				{
-					byte[] msg = new byte[expectedSize + 1];
+					byte[] msg = new byte[fixedSize + 1];
 					int getBytes = 0;
 
 					var stream = File.OpenRead(this.pathToFileIncludeNameFile);
@@ -159,7 +159,10 @@ namespace contact_center_application.form
 						setData((int)(15 + 100 * 0.85 *
 							(float)getBytes / expectedSize),
 							"Получение содержимого файла...");
+
 						stream.Read(msg, getBytes, fixedSize);
+						byte first = msg[0];
+						byte last = msg[msg.Length - 2];
 						bytesSent = sender.Send(msg);
 						bytesRec = sender.Receive(answerFromServer);
 						if (answerFromServer[0] == 49)

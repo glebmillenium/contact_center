@@ -77,8 +77,8 @@ public class SenderData extends Thread {
                                 outputStream.write(mess, 0, mess.length);
                                 sendCapacity += fixedSize;
                             }
-                            sendCapacity -= fixedSize;
-                            shortAnswer = new byte[expectedSize - sendCapacity];
+                            sendCapacity = sendCapacity - expectedSize;
+                            shortAnswer = new byte[sendCapacity];
                             inputStream.read(shortAnswer);
                             fos.write(shortAnswer);
                             outputStream.write(mess, 0, mess.length);
