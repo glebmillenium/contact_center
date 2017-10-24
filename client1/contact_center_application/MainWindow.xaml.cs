@@ -12,13 +12,11 @@ using System.Threading;
 using Spire.Doc;
 using Spire.Xls;
 using contact_center_application.form;
-using System.Windows.Forms;
 using System.Windows.Media;
 using System.Windows.Documents;
 using System.Text;
 using System.Windows.Media.Imaging;
 using System.Reflection;
-using System.Drawing;
 
 namespace contact_center_application
 {
@@ -42,7 +40,8 @@ namespace contact_center_application
 											new Dictionary<TreeViewItem, string>();
 
 		/// <summary>
-		/// alianceAndId - словарь (хэш-таблица), хранит название файловой системы и его уникальный идентификатор
+		/// alianceAndId - словарь (хэш-таблица), хранит название файловой системы и его 
+		/// уникальный идентификатор
 		/// </summary>
 		private Dictionary<string, string> alianceAndId = new Dictionary<string, string>();
 		XpsDocument doc;
@@ -64,26 +63,6 @@ namespace contact_center_application
 			SynchronizationContext uiContext = SynchronizationContext.Current;
 			Thread thread = new Thread(Run);
 			thread.Start(uiContext);
-		}
-
-		public IEnumerable<T> FindVisualChildren<T>(DependencyObject depObj) where T : DependencyObject
-		{
-			if (depObj != null)
-			{
-				for (int i = 0; i < VisualTreeHelper.GetChildrenCount(depObj); i++)
-				{
-					DependencyObject child = VisualTreeHelper.GetChild(depObj, i);
-					if (child != null && child is T)
-					{
-						yield return (T)child;
-					}
-
-					foreach (T childOfChild in FindVisualChildren<T>(child))
-					{
-						yield return childOfChild;
-					}
-				}
-			}
 		}
 
 		/// <summary>
@@ -190,15 +169,17 @@ namespace contact_center_application
 						}
 					}
 
-					System.Windows.Controls.Button upload = new System.Windows.Controls.Button();
-					upload.Content = "Загрузить";
+					System.Windows.Controls.MenuItem upload = new System.Windows.Controls.MenuItem();
+					upload.Header = "Загрузить";
 					upload.Click += Upload_Click;
 					docMenu.Items.Add(upload);
 
-					System.Windows.Controls.Label delete = new System.Windows.Controls.Label();
-					delete.Content = "Удалить папку";
-					delete.KeyUp += Delete_KeyUp;
+					System.Windows.Controls.MenuItem delete = new System.Windows.Controls.MenuItem();
+					delete.Header = "Удалить папку";
+					delete.Click += Delete_Click; ;
 					docMenu.Items.Add(delete);
+
+					this.listTreeView.Add(item, currentWay + "\\" + element.name);
 				}
 				else
 				{
@@ -206,22 +187,22 @@ namespace contact_center_application
 					item.MouseDoubleClick += this.selectFile;
 					this.listTreeView.Add(item, currentWay + "\\" + element.name);
 
-					System.Windows.Controls.Label open = new System.Windows.Controls.Label();
-					open.KeyUp += Open_KeyUp;
-					open.Content = "Открыть файл";
+					System.Windows.Controls.MenuItem open = new System.Windows.Controls.MenuItem();
+					open.Click += Open_Click; ;
+					open.Header = "Открыть файл";
 					docMenu.Items.Add(open);
 
-					System.Windows.Controls.Label delete = new System.Windows.Controls.Label();
-					delete.Content = "Удалить файл";
-					delete.KeyUp += Delete_KeyUp;
+					System.Windows.Controls.MenuItem delete = new System.Windows.Controls.MenuItem();
+					delete.Header = "Удалить файл";
+					delete.Click += Delete_Click;
 					docMenu.Items.Add(delete);
 				}
 
-				System.Windows.Controls.Label rename = new System.Windows.Controls.Label();
-				rename.Content = "Переименовать";
-				rename.KeyUp += Rename_KeyUp;
+				System.Windows.Controls.MenuItem rename = new System.Windows.Controls.MenuItem();
+				rename.Header = "Переименовать";
+				rename.Click += Rename_Click;
 				docMenu.Items.Add(rename);
-
+				item.ContextMenuOpening += Item_ContextMenuOpening;
 				item.ContextMenu = docMenu;
 
 				result.Add(item);
@@ -229,43 +210,72 @@ namespace contact_center_application
 			return result;
 		}
 
+		private void Item_ContextMenuOpening(object sender, ContextMenuEventArgs e)
+		{
+			TreeViewItem item = sender as TreeViewItem;
+			if (item != null)
+			{
+				item.Focus();
+				//e.Handled = true;
+			}
+		}
+
+		/// <summary>
+		/// Событие вызываемое для переименование файла
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void Rename_Click(object sender, RoutedEventArgs e)
+		{
+			throw new NotImplementedException();
+		}
+
+		/// <summary>
+		/// Событие вызываемое при открытии файла
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void Open_Click(object sender, RoutedEventArgs e)
+		{
+			selectFile(null, null);
+		}
+
+		/// <summary>
+		/// Событие вызываемое при запросе на удаление файла
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void Delete_Click(object sender, RoutedEventArgs e)
+		{
+			throw new NotImplementedException();
+		}
+
+		/// <summary>
+		/// Событие вызываемое при загрузке файла в систему
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void Upload_Click(object sender, EventArgs e)
 		{
-			OpenFileDialog OPF = new OpenFileDialog();
+			System.Windows.Forms.OpenFileDialog OPF = new System.Windows.Forms.OpenFileDialog();
 			OPF.Filter = "Файлы txt|*.txt|Файлы csv|*.csv|Файлы doc|*.doc|Файлы docx|*.docx|Файлы xls|*.xls|Файлы xlsx|*.xlsx|Файлы tiff|*.tiff";
 			if (OPF.ShowDialog() == System.Windows.Forms.DialogResult.OK)
 			{
-				System.Windows.MessageBox.Show(OPF.FileName);
+				int index = Int32.Parse(this.alianceAndId[ComboboxFileSystem.SelectedItem.ToString()]);
+				Tuple<bool, TreeViewItem> selectedItem = searchSelectedItem();
+
+				string relativeWay = this.listTreeView[selectedItem.Item2];
+				UploadWindow download = new UploadWindow(index.ToString(), relativeWay,
+					OPF.FileName);
+				try
+				{
+					download.sendFileToServer();
+				}
+				catch (Exception exp)
+				{
+
+				}
 			}
-		}
-
-		private void Open_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
-		{
-			Tuple<bool, TreeViewItem> selectedItem = searchSelectedItem();
-			if (selectedItem.Item1)
-			{
-				TreeViewItem item = selectedItem.Item2;
-			}
-		}
-
-		private void Rename_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
-		{
-
-		}
-
-		private void Upload_KeyUp()
-		{
-			OpenFileDialog OPF = new OpenFileDialog();
-			OPF.Filter = "Файлы txt|*.txt|Файлы csv|*.csv|Файлы doc|*.doc|Файлы docx|*.docx|Файлы xls|*.xls|Файлы xlsx|*.xlsx|Файлы tiff|*.tiff";
-			if (OPF.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-			{
-				System.Windows.MessageBox.Show(OPF.FileName);
-			}
-		}
-
-		private void Delete_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
-		{
-
 		}
 
 		/// <summary>

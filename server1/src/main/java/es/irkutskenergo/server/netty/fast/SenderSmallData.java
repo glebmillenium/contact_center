@@ -463,11 +463,13 @@ public class SenderSmallData extends Thread {
      */
     private String setupToUpload(ObjectForSerialization obj) throws IOException
     {
-        String strPathToFile = this.aliance.get(obj.param2).param2 + obj.param4_array;
+        String strPathToFile = this.aliance.get(obj.param2).param2 + (new String(obj.param4_array, "UTF-8")) + "\\" + (new String(obj.param5_array, "UTF-8"));
         byte[] bytePathToFile = strPathToFile.getBytes("UTF-8");
+        String query = sendToStorageInFtpServer(true, obj.command, 
+                                bytePathToFile, obj.param1.getBytes("UTF-8"));
         return this.mapper.writeValueAsString(
                 new ObjectForSerialization("upload",
-                        sendToStorageInFtpServer(true, obj.command, 
-                                bytePathToFile, new byte[]{ })));
+                        query, "1"));
+        
     }
 }

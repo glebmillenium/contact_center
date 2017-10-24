@@ -77,23 +77,22 @@ public class FtpServer extends Thread {
                             byte[] message = obj.param3;
                             if (obj.param1)
                             {
-                                Logging.log("Запрос на отправку данных клиенту: "
-                                        + socket.getInetAddress() + " По запросу №"
-                                        + key + " Объем файла: "
-                                        + message.length + "байт", 2);
-                                if(obj.param2.equals("get_content_file"))
-                                {
-                                    SenderData tcpSessionLocal = new SenderData(socket, message);
-                                    tcpSessionLocal.start();
-                                } else {
-                                    
-                                }
-                            } else
-                            {
                                 Logging.log("Запрос на прием данных от клиента: "
                                     + socket.getInetAddress() + " По запросу №"
                                     + key + " Объем файла: "
                                     + message.length + "байт", 2);
+
+                                SenderData tcpSessionLocal = new SenderData(socket, 
+                                        new String(obj.param3, "UTF-8"), 
+                                        Integer.parseInt(new String(obj.param4, 
+                                                "UTF-8")));
+                                tcpSessionLocal.start();
+                            } else
+                            {
+                                Logging.log("Запрос на отправку данных клиенту: "
+                                        + socket.getInetAddress() + " По запросу №"
+                                        + key + " Объем файла: "
+                                        + message.length + "байт", 2);
                                 ReceiveData rdSession = new ReceiveData(socket, message);
                                 rdSession.start();
                             }

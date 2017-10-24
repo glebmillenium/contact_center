@@ -10,11 +10,11 @@ none
 false
 DEBUG;TRACE
 C:\contact_center\client1\contact_center_application\App.xaml
-9-157206766
+9-910121742
 
-17-699594299
+171912422685
 34-362243564
-Authorization.xaml;CommonWindow.xaml;DownloadWindow.xaml;form\ConfirmationChooseDialog.xaml;MainWindow.xaml;ProcessDownloadFile.xaml;ThemesSoft\MoonUICore.xaml;Themes\Brushes.xaml;Themes\Core.xaml;
+Authorization.xaml;form\DownloadWindow.xaml;form\ConfirmationChooseDialog.xaml;form\UploadWindow.xaml;MainWindow.xaml;ProcessDownloadFile.xaml;ThemesSoft\MoonUICore.xaml;Themes\Brushes.xaml;Themes\Core.xaml;
 
 False
 

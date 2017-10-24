@@ -135,17 +135,17 @@
     <Compile Include="Authorization.xaml.cs">
       <DependentUpon>Authorization.xaml</DependentUpon>
     </Compile>
-    <Compile Include="CommonWindow.xaml.cs">
-      <DependentUpon>CommonWindow.xaml</DependentUpon>
-    </Compile>
     <Compile Include="core\ConnectWithFtpSocket.cs" />
-    <Compile Include="DownloadWindow.xaml.cs">
+    <Compile Include="form\DownloadWindow.xaml.cs">
       <DependentUpon>DownloadWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="form\ConfirmationChooseDialog.xaml.cs">
       <DependentUpon>ConfirmationChooseDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="form\TemplateSelector.cs" />
+    <Compile Include="form\UploadWindow.xaml.cs">
+      <DependentUpon>UploadWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="form\UsersTreeViewItem.cs" />
     <Compile Include="ProcessDownloadFile.xaml.cs">
       <DependentUpon>ProcessDownloadFile.xaml</DependentUpon>
@@ -156,15 +156,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="CommonWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="DownloadWindow.xaml">
+    <Page Include="form\DownloadWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="form\ConfirmationChooseDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="form\UploadWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

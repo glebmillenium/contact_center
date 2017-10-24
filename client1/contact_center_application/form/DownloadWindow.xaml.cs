@@ -30,7 +30,6 @@ namespace contact_center_application
 	{
 		private string aliance;
 		private string relativeWay;
-		private byte[] contentFile;
 
 		public DownloadWindow()
 		{
@@ -42,7 +41,6 @@ namespace contact_center_application
 			InitializeComponent();
 			this.aliance = aliance;
 			this.relativeWay = relativeWay;
-			this.contentFile = null;
 		}
 
 		public void getContentFileAndWriteToFile(string relativeWay)
