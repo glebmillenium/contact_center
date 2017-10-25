@@ -25,16 +25,25 @@ public class EqualsStr {
         try
         {
             FileInputStream fin;
-            fin = new FileInputStream(
-                    "C:\\Users\\admin\\Desktop\\Инструкции\\Новая папка\\РП.docx"
-                    );
+            String path1, path2;
+            if (args.length == 2)
+            {
+                path1 = args[0];
+                path2 = args[1];
+            }
+            else 
+            {
+                path1 = "C:\\Users\\admin\\Desktop\\log\\client.log";
+                path2 = "C:\\Users\\admin\\Desktop\\log\\server.log";
+            }
+            fin = new FileInputStream(path1);
             byte[] buffer_server = new byte[fin.available()];
             fin.read(buffer_server, 0, fin.available());
             fin.close();
             
             FileInputStream fin1;
             fin1 = new FileInputStream(
-                    "C:\\Users\\admin\\Desktop\\РП.docx");
+                    path2);
             byte[] buffer_client = new byte[fin1.available()];
             fin1.read(buffer_client, 0, fin1.available());
             fin1.close();

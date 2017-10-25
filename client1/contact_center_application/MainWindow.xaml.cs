@@ -258,7 +258,7 @@ namespace contact_center_application
 		private void Upload_Click(object sender, EventArgs e)
 		{
 			System.Windows.Forms.OpenFileDialog OPF = new System.Windows.Forms.OpenFileDialog();
-			OPF.Filter = "Файлы txt|*.txt|Файлы csv|*.csv|Файлы doc|*.doc|Файлы docx|*.docx|Файлы xls|*.xls|Файлы xlsx|*.xlsx|Файлы tiff|*.tiff";
+			OPF.Filter = "Все документы|*.*|Файлы txt|*.txt|Файлы csv|*.csv|Файлы doc|*.doc|Файлы docx|*.docx|Файлы xls|*.xls|Файлы xlsx|*.xlsx|Файлы tiff|*.tiff";
 			if (OPF.ShowDialog() == System.Windows.Forms.DialogResult.OK)
 			{
 				int index = Int32.Parse(this.alianceAndId[ComboboxFileSystem.SelectedItem.ToString()]);

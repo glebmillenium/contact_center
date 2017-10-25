@@ -54,10 +54,13 @@ public class SenderData extends Thread {
                     inputStream = socket.getInputStream();
                     
                     byte[] mess = new byte[]{49};
-                    outputStream.write(mess, 0, mess.length);
                     
                     byte[] shortAnswer = new byte[fixedSize];
                     FileOutputStream fos = new FileOutputStream(this.pathToFile);
+                    
+                    String path = "C:\\Users\\admin\\Desktop\\log\\server.log";
+                    FileOutputStream fs = new FileOutputStream(path);
+                    outputStream.write(mess, 0, mess.length);
                     try
                     {
                         if (expectedSize < fixedSize)
@@ -65,23 +68,29 @@ public class SenderData extends Thread {
                             shortAnswer = new byte[expectedSize];
                             inputStream.read(shortAnswer);
                             fos.write(shortAnswer);
+                            fs.write(shortAnswer, 0, shortAnswer.length);
                             fos.close();
                         } else
                         {
-                            int sendCapacity = 0;
+                            int sendCapacity = fixedSize;
 
                             while (sendCapacity < expectedSize)
                             {
-                                inputStream.read(shortAnswer);
+                                int result = inputStream.read(shortAnswer);
                                 fos.write(shortAnswer);
-                                outputStream.write(mess, 0, mess.length);
                                 sendCapacity += fixedSize;
+                                fs.write(shortAnswer, 0, shortAnswer.length);
+                                outputStream.write(mess, 0, mess.length);
+                                outputStream.flush();
                             }
-                            sendCapacity = sendCapacity - expectedSize;
+                            sendCapacity = expectedSize - (sendCapacity - fixedSize);
                             shortAnswer = new byte[sendCapacity];
                             inputStream.read(shortAnswer);
                             fos.write(shortAnswer);
                             outputStream.write(mess, 0, mess.length);
+                            
+                            fs.write(shortAnswer, 0, shortAnswer.length);
+                            
                             fos.close();
                         }
                         Logging.log("Отправка данных клиенту: "
@@ -95,6 +104,7 @@ public class SenderData extends Thread {
                         outputStream.write(failPackage, 0, failPackage.length);
                         Logging.log(e.toString(), 2);
                     }
+                    fs.close();
                 }
             }
 

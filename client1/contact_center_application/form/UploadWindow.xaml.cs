@@ -124,63 +124,63 @@ namespace contact_center_application.form
 			long expectedSize, string relativeWay)
 		{
 			message += "\0";
-			byte[] answerFromServer = new byte[expectedSize + 1];
+			byte[] answerFromServer = new byte[1];
 			int fixedSize = 50 * 1024;
 
 			if (realization)
 			{
 				int bytesSent = sender.Send(Encoding.UTF8.GetBytes(message));
 				int bytesRec = sender.Receive(answerFromServer);
-
-				if (expectedSize < fixedSize)
+				if (answerFromServer[0] == 49)
 				{
-					setData(55, "Получение содержимого файла...");
-					byte[] msg = new byte[expectedSize + 1];
-					msg = File.ReadAllBytes(this.pathToFileIncludeNameFile);
-					bytesSent = sender.Send(msg);
-					bytesRec = sender.Receive(answerFromServer);
-					if (answerFromServer[0] == 49)
+					if (expectedSize < fixedSize)
 					{
-						setData(90, "Запись файла...");
-					}
-					else
-					{
-						throw new Exception();
-					}
-				}
-				else
-				{
-					byte[] msg = new byte[fixedSize + 1];
-					int getBytes = 0;
-
-					var stream = File.OpenRead(this.pathToFileIncludeNameFile);
-					do
-					{
-						setData((int)(15 + 100 * 0.85 *
-							(float)getBytes / expectedSize),
-							"Получение содержимого файла...");
-
-						stream.Read(msg, getBytes, fixedSize);
-						byte first = msg[0];
-						byte last = msg[msg.Length - 2];
+						setData(55, "Получение содержимого файла...");
+						byte[] msg = new byte[expectedSize + 1];
+						msg = File.ReadAllBytes(this.pathToFileIncludeNameFile);
 						bytesSent = sender.Send(msg);
 						bytesRec = sender.Receive(answerFromServer);
 						if (answerFromServer[0] == 49)
 						{
-							//ошибка?
+							setData(90, "Запись файла...");
 						}
-						getBytes += fixedSize;
-					} while (getBytes + fixedSize < expectedSize);
-
-					stream.Read(msg, getBytes, (int)(expectedSize - getBytes));
-					bytesSent = sender.Send(msg);
-					bytesRec = sender.Receive(answerFromServer);
-					if (answerFromServer[0] == 49)
-					{
-						//ошибка?
+						else
+						{
+							throw new Exception();
+						}
 					}
-					stream.Close();
-					stream.Dispose();
+					else
+					{
+						byte[] msg = new byte[fixedSize];
+						int getBytes = 0;
+
+						var streamFileRead = File.OpenRead(this.pathToFileIncludeNameFile);
+						do
+						{
+							setData((int)(15 + 100 * 0.85 *
+								(float)getBytes / expectedSize),
+								"Получение содержимого файла...");
+
+							streamFileRead.Read(msg, 0, msg.Length);
+							bytesSent = sender.Send(msg);
+							bytesRec = sender.Receive(answerFromServer);
+							if (answerFromServer[0] == 49)
+							{
+								
+							}
+							getBytes += fixedSize;
+						} while (getBytes + fixedSize < expectedSize);
+
+						streamFileRead.Read(msg, 0, (int)(expectedSize - getBytes));
+						bytesSent = sender.Send(msg);
+						bytesRec = sender.Receive(answerFromServer);
+						if (answerFromServer[0] == 49)
+						{
+
+						}
+						streamFileRead.Close();
+						streamFileRead.Dispose();
+					}
 				}
 			}
 		}
