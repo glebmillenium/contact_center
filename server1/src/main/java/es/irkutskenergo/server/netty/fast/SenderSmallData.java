@@ -19,6 +19,10 @@ import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.io.FileInputStream;
+import java.io.UnsupportedEncodingException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 /**
  * SenderSmallData - класс, предназначенный для ответа на первичный запрос от
@@ -226,11 +230,17 @@ public class SenderSmallData extends Thread {
                 result = getCatalog(obj);
             } else if (obj.command.equals("get_content_file"))
             {
+                Logging.log("Обработка запроса на получение содержимого файла "
+                        + this.channel.toString() + ") Номер запроса: "
+                        + this.numberConnect, 1);
                 result = getContentFile(obj);
             }
             else if (obj.command.equals("try_remove"))
             {
-                
+                Logging.log("Обработка запроса на удаление файла из файловой "
+                        + "системы " + this.channel.toString() + 
+                        ") Номер запроса: " + this.numberConnect, 1);
+                result = tryRemoveFile(obj);
             }
             else if (obj.command.equals("try_create_dir"))
             {
@@ -238,10 +248,16 @@ public class SenderSmallData extends Thread {
             }
             else if (obj.command.equals("try_rename"))
             {
-                
+                Logging.log("Обработка запроса на переименование ресурса "
+                        + "файловой системы" + this.channel.toString() + 
+                        ") Номер запроса: " + this.numberConnect, 1);
+                result = tryRenameFile(obj);
             }
             else if (obj.command.equals("try_upload"))
             {
+                Logging.log("Обработка запроса на загрузку нового файла в "
+                        + "файловую систему " + this.channel.toString() + 
+                        ") Номер запроса: " + this.numberConnect, 1);
                 result = setupToUpload(obj);
             }
             Logging.log("Запрос успешно выполнен, отправление данных: "
@@ -430,7 +446,6 @@ public class SenderSmallData extends Thread {
         {
 
         }
-        
         return new byte[]
         {
         };
@@ -463,13 +478,74 @@ public class SenderSmallData extends Thread {
      */
     private String setupToUpload(ObjectForSerialization obj) throws IOException
     {
-        String strPathToFile = this.aliance.get(obj.param2).param2 + (new String(obj.param4_array, "UTF-8")) + "\\" + (new String(obj.param5_array, "UTF-8"));
+        String strPathToFile = this.aliance.get(obj.param2).param2 + 
+                (new String(obj.param4_array, "UTF-8")) + "\\" + 
+                (new String(obj.param5_array, "UTF-8"));
         byte[] bytePathToFile = strPathToFile.getBytes("UTF-8");
         String query = sendToStorageInFtpServer(true, obj.command, 
                                 bytePathToFile, obj.param1.getBytes("UTF-8"));
         return this.mapper.writeValueAsString(
                 new ObjectForSerialization("upload",
                         query, "1"));
-        
+    }
+
+    /**
+     * Переименовывает файл в указанной подсистеме
+     * @param obj
+     * @return
+     * @throws IOException 
+     */
+    private String tryRenameFile(ObjectForSerialization obj) throws IOException
+    {
+        String result = "";
+        try
+        {
+            String newName = new String(obj.param5_array, "UTF-8");
+            String ftpPath = this.aliance.get(obj.param1).param2;
+            String relativeOldPath = (new String(obj.param4_array, "UTF-8"));
+            String relativeWay = ftpPath + relativeOldPath;
+            Path source = Paths.get(relativeWay);
+            Logging.log("Переименовывание ресурса по пути: " + relativeWay
+                + " Канал " + this.channel.toString() + ") Номер запроса: "
+                + this.numberConnect, 1);
+            Files.move(source, source.resolveSibling(newName));
+            result = this.mapper.writeValueAsString(
+                new ObjectForSerialization("rename", "1"));
+        } catch (UnsupportedEncodingException ex)
+        {
+            result = this.mapper.writeValueAsString(
+                new ObjectForSerialization("error", "0"));
+        }
+        return result;
+    }
+    
+    /**
+     * Удаляет файл из указанной подсистемы
+     * 
+     * @param obj
+     * @return
+     * @throws IOException 
+     */
+    private String tryRemoveFile(ObjectForSerialization obj) throws IOException
+    {
+        String result = "";
+        try
+        {
+            String ftpPath = this.aliance.get(obj.param1).param2;
+            String relativePath = (new String(obj.param4_array, "UTF-8"));
+            String relativeWay = ftpPath + relativePath;
+            Path source = Paths.get(relativeWay);
+            Files.delete(source);
+            Logging.log("Удаление ресурса по пути: " + relativeWay
+                + " Канал " + this.channel.toString() + ") Номер запроса: "
+                + this.numberConnect, 1);
+            result = this.mapper.writeValueAsString(
+                new ObjectForSerialization("remove", "1"));
+        } catch (UnsupportedEncodingException ex)
+        {
+            result = this.mapper.writeValueAsString(
+                new ObjectForSerialization("error", "0"));
+        }
+        return result;
     }
 }

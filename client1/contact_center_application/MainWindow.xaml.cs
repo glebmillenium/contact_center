@@ -12,11 +12,11 @@ using System.Threading;
 using Spire.Doc;
 using Spire.Xls;
 using contact_center_application.form;
-using System.Windows.Media;
 using System.Windows.Documents;
 using System.Text;
 using System.Windows.Media.Imaging;
 using System.Reflection;
+using System.Windows.Input;
 
 namespace contact_center_application
 {
@@ -29,6 +29,8 @@ namespace contact_center_application
 		/// openFile - хранит путь открытого файла в приложении
 		/// </summary>
 		string openFile = "";
+
+		List<TreeViewItem> basisListItems = new List<TreeViewItem>();
 
 		/// <summary>
 		/// listTreeView - словарь (хэш-таблица), хранит относительный путь в 
@@ -123,12 +125,12 @@ namespace contact_center_application
 		private void fullingTreeView(string json)
 		{
 			this.listTreeView.Clear();
-			List<TreeViewItem> listItems = getItemsCatalogsFromJson(json, "");
+			basisListItems = getItemsCatalogsFromJson(json, "");
 
-			if (listItems.Count != 0)
+			if (basisListItems.Count != 0)
 			{
 				this.treeViewCatalog.Items.Clear();
-				foreach (var category in listItems)
+				foreach (var category in basisListItems)
 				{
 					this.treeViewCatalog.Items.Add(category);
 				}
@@ -170,7 +172,7 @@ namespace contact_center_application
 					}
 
 					System.Windows.Controls.MenuItem upload = new System.Windows.Controls.MenuItem();
-					upload.Header = "Загрузить";
+					upload.Header = "Загрузить файлы в папку";
 					upload.Click += Upload_Click;
 					docMenu.Items.Add(upload);
 
@@ -203,6 +205,8 @@ namespace contact_center_application
 				rename.Click += Rename_Click;
 				docMenu.Items.Add(rename);
 				item.ContextMenuOpening += Item_ContextMenuOpening;
+
+
 				item.ContextMenu = docMenu;
 
 				result.Add(item);
@@ -210,13 +214,24 @@ namespace contact_center_application
 			return result;
 		}
 
+
+
+
+
+		/// <summary>
+		/// Событие вызываемое при открытии контекстного меню, осуществляет выделение treeviewitem
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void Item_ContextMenuOpening(object sender, ContextMenuEventArgs e)
 		{
+			bool value = e.Handled;
 			TreeViewItem item = sender as TreeViewItem;
 			if (item != null)
 			{
 				item.Focus();
-				//e.Handled = true;
+				item.ContextMenu.IsOpen = true;
+				e.Handled = true;
 			}
 		}
 
@@ -227,7 +242,16 @@ namespace contact_center_application
 		/// <param name="e"></param>
 		private void Rename_Click(object sender, RoutedEventArgs e)
 		{
-			throw new NotImplementedException();
+			RenameUnitFileSystem dialog = new RenameUnitFileSystem();
+			dialog.ShowDialog();
+			if ((bool)dialog.DialogResult)
+			{
+				string index = this.alianceAndId[ComboboxFileSystem.SelectedItem.ToString()];
+				Tuple<bool, TreeViewItem> selectedItem = searchSelectedItem();
+				string relativeWay = this.listTreeView[selectedItem.Item2];
+				string nameFile = dialog.getNameFile();
+				RequestDataFromServer.sendToRenameObjectFileSystem(index, relativeWay, nameFile);
+			}
 		}
 
 		/// <summary>
@@ -315,7 +339,7 @@ namespace contact_center_application
 					//Array.Clear(contentFile, 0, contentFile.Length);
 					LoadToViewer(this.openFile);
 				}
-				catch(Exception exp)
+				catch (Exception exp)
 				{
 
 				}
@@ -324,36 +348,45 @@ namespace contact_center_application
 		}
 
 		/// <summary>
-		/// Загружает данные в DocumentViewer viewer
+		/// Загружает данные в правую часть окна
 		/// </summary>
 		/// <param name="way"></param>
 		/// <param name="viewWay"></param>
 		private void LoadToViewer(string way, string viewWay = "view/temp")
 		{
-			string extension = Path.GetExtension(way);
-
-			if (extension.Equals(".txt") || extension.Equals(".csv"))
+			FileInfo fi = new FileInfo(viewWay);
+			if (fi.Length > 500 * 1024 * 1024)
 			{
-				this.tabControl.SelectedItem = this.textboxTab;
-				displayTextbox(way);
+				System.Windows.MessageBox.Show("Размер файла слишком большой для показа в текущем приложении",
+					"Слишком большой размер файла");
 			}
-			else if (extension.Equals(".jpeg") || extension.Equals(".tiff") || extension.Equals(".jpg"))
+			else
 			{
-				bitmap = new BitmapImage();
-				string fullWay = Path.Combine(Path.GetDirectoryName(
-								Assembly.GetExecutingAssembly().Locati‌​on), way);
-				bitmap.BeginInit();
-				bitmap.UriSource = new Uri(fullWay);
-				bitmap.EndInit();
-				bitmap.Freeze();
-				image.Source = bitmap;
-
-				tabControl.SelectedItem = imageTab;
-			}
-			else if (extension.Equals(".doc") || extension.Equals(".docx"))
-			{
-				if ((bool)swtichModeView.IsChecked)
+				string extension = Path.GetExtension(way);
+				this.Cursor = Cursors.Wait;
+				if (extension.Equals(".txt") || extension.Equals(".csv"))
 				{
+					this.tabControl.SelectedItem = this.textboxTab;
+					displayTextbox(way);
+				}
+				else if (extension.Equals(".jpeg") || extension.Equals(".tiff") || extension.Equals(".jpg"))
+				{
+					bitmap = new BitmapImage();
+					string fullWay = Path.Combine(Path.GetDirectoryName(
+									Assembly.GetExecutingAssembly().Locati‌​on), way);
+					bitmap.BeginInit();
+					bitmap.UriSource = new Uri(fullWay);
+					bitmap.EndInit();
+					bitmap.Freeze();
+					image.Source = bitmap;
+
+					tabControl.SelectedItem = imageTab;
+				}
+				else if (extension.Equals(".doc") || extension.Equals(".docx"))
+				{
+					//if ((bool)swtichModeView.IsChecked)
+					//{
+
 					this.tabControl.SelectedItem = this.viewerTab;
 					this.viewer.Document = null;
 					this.viewer.DataContext = null;
@@ -365,31 +398,41 @@ namespace contact_center_application
 					convertDocxDocToXps(way, viewWay);
 					this.doc = new XpsDocument(viewWay, FileAccess.Read);
 					viewer.Document = doc.GetFixedDocumentSequence();
-				}
-				else
-				{
-					this.tabControl.SelectedItem = this.textboxTab;
-					displayTextbox(way);
-				}
-			}
-			else if (extension.Equals(".xlsx") || extension.Equals(".xls"))
-			{
-				this.viewer.Document = null;
-				this.viewer.DataContext = null;
-				if (doc != null)
-				{
-					this.doc.Close();
-				}
-				this.doc = null;
 
-				convertXlsToXps(way, viewWay);
-				this.doc = new XpsDocument(viewWay, FileAccess.Read);
-				viewer.Document = doc.GetFixedDocumentSequence();
+					/*}
+					else
+					{
+						this.tabControl.SelectedItem = this.textboxTab;
+						displayTextbox(way);
+					}*/
+				}
+				else if (extension.Equals(".xlsx") || extension.Equals(".xls"))
+				{
+					this.tabControl.SelectedItem = this.viewerTab;
+					this.viewer.Document = null;
+					this.viewer.DataContext = null;
+					if (doc != null)
+					{
+						this.doc.Close();
+					}
+					this.doc = null;
+
+					convertXlsToXps(way, viewWay);
+					this.doc = new XpsDocument(viewWay, FileAccess.Read);
+					viewer.Document = doc.GetFixedDocumentSequence();
+				}
+				this.Cursor = Cursors.Arrow;
 			}
 		}
 
+		/// <summary>
+		/// Отображает содержимое файла (текстового) в RichTextBox textbox
+		/// </summary>
+		/// <param name="viewWay"></param>
 		private void displayTextbox(string viewWay)
 		{
+			textbox.Height = viewer.Height;
+			textbox.Width = viewer.Width;
 			textbox.Document.Blocks.Clear();
 			var sr = new StreamReader(viewWay, Encoding.UTF8);
 			string text = sr.ReadToEnd();
@@ -549,18 +592,21 @@ namespace contact_center_application
 		private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
 		{
 			viewer.Height = window.ActualHeight - 200;
+			textbox.Height = viewer.Height;
+			textbox.Width = viewer.Width;
+			//this.treeViewCatalog.Height = this.window.Height - 155;
 		}
 
 		/// <summary>
 		/// CheckBox_Click
-		/// Обновление графического интерфейса осуществляющего показ содердимого документа
+		/// Обновление графического интерфейса осуществляющего показ содержимого документа
 		/// 
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
 		private void CheckBox_Click(object sender, RoutedEventArgs e)
 		{
-			if ((bool) swtichModeView.IsChecked)
+			if ((bool)swtichModeView.IsChecked)
 			{
 				swtichModeView.Content = "Нагруженный интерфейс";
 				this.tabControl.SelectedItem = this.viewerTab;
@@ -569,6 +615,95 @@ namespace contact_center_application
 			{
 				swtichModeView.Content = "Простой интерфейс";
 				this.tabControl.SelectedItem = this.textboxTab;
+			}
+		}
+
+		private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
+		{
+			setVisibleOnText((sender as TextBox).Text);
+		}
+
+		void setVisibleOnText(string text)
+		{
+			List<TreeViewItem> newListItems = new List<TreeViewItem>();
+			foreach (TreeViewItem elem in basisListItems)
+			{
+				bool newElem = setVisibleOnTextForTreeView(elem, text);
+			}
+		}
+
+		bool setVisibleOnTextForTreeView(TreeViewItem item, string text, bool mandatory = false)
+		{
+			if (mandatory)
+			{
+				if (item.Items.Count > 0)
+				{
+					foreach (TreeViewItem elem in item.Items)
+					{
+						elem.Visibility = Visibility.Visible;
+						setVisibleOnTextForTreeView(elem, text, true);
+					}
+				}
+				item.Visibility = Visibility.Visible;
+				return true;
+			}
+			else
+			{
+				string temp = this.listTreeView[item];
+				if (item.Items.Count > 0)
+				{
+					if (temp.IndexOf(text) > -1)
+					{
+						item.Visibility = Visibility.Visible;
+						foreach (TreeViewItem elem in item.Items)
+						{
+							setVisibleOnTextForTreeView(elem, text, true);
+						}
+						return true;
+					}
+					else
+					{
+						TreeViewItem newItem = new TreeViewItem();
+						int changeVisible = 0;
+						foreach (TreeViewItem elem in item.Items)
+						{
+							bool res = setVisibleOnTextForTreeView(elem, text);
+							if (res)
+							{
+								elem.Visibility = Visibility.Visible;
+								changeVisible++;
+							}
+							else
+							{
+								elem.Visibility = Visibility.Collapsed;
+							}
+						}
+
+						if (changeVisible > 0)
+						{
+							item.Visibility = Visibility.Visible;
+							return true;
+						}
+						else
+						{
+							item.Visibility = Visibility.Collapsed;
+							return false;
+						}
+					}
+				}
+				else
+				{
+					if (temp.IndexOf(text) > -1)
+					{
+						item.Visibility = Visibility.Visible;
+						return true;
+					}
+					else
+					{
+						item.Visibility = Visibility.Collapsed;
+						return false;
+					}
+				}
 			}
 		}
 	}

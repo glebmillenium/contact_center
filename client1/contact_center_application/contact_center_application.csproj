@@ -142,6 +142,9 @@
     <Compile Include="form\ConfirmationChooseDialog.xaml.cs">
       <DependentUpon>ConfirmationChooseDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="form\RenameUnitFileSystem.xaml.cs">
+      <DependentUpon>RenameUnitFileSystem.xaml</DependentUpon>
+    </Compile>
     <Compile Include="form\TemplateSelector.cs" />
     <Compile Include="form\UploadWindow.xaml.cs">
       <DependentUpon>UploadWindow.xaml</DependentUpon>
@@ -161,6 +164,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="form\ConfirmationChooseDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="form\RenameUnitFileSystem.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

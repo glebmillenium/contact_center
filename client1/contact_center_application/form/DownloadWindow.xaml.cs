@@ -2,23 +2,13 @@
 using contact_center_application.serialization;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using System.Windows.Threading;
 
 namespace contact_center_application
@@ -162,6 +152,9 @@ namespace contact_center_application
 					//Array.ConstrainedCopy(sourceArray, 0, answer,
 					//		getBytes, sourceArray.Length);
 				}
+				Thread.Sleep(2500);
+				setData(99, "Загрузка файла из удаленного файлового ресурса прошла успешно!");
+				Thread.Sleep(1800);
 			}
 		}
 

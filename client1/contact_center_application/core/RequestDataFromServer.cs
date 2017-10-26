@@ -214,5 +214,45 @@ namespace contact_center_application.core
 		{
 			return portFast;
 		}
+
+		public static bool sendToRenameObjectFileSystem(string aliance, string relativeWay, string newName)
+		{
+			ObjectForSerialization objForSendToFastSocket = new ObjectForSerialization
+			{
+				command = "try_rename",
+				param1 = aliance,
+				param2 = "", param3 = "",
+				param4_array = System.Text.Encoding.UTF8.GetBytes(relativeWay),
+				param5_array = System.Text.Encoding.UTF8.GetBytes(newName)
+			};
+			string resultJson = JsonConvert.SerializeObject(objForSendToFastSocket);
+			string answer = ConnectWithFastSocket.sendMessage(resultJson, 1024);
+			ObjectForSerialization objResponseFromFastSocket =
+				JsonConvert.DeserializeObject<ObjectForSerialization>(answer);
+			if (objResponseFromFastSocket.param1.Equals("1"))
+				return true;
+			else
+				return false;
+		}
+
+		public static bool sendToDeleteObjectFileSystem(string aliance, string relativeWay)
+		{
+			ObjectForSerialization objForSendToFastSocket = new ObjectForSerialization
+			{
+				command = "try_remove",
+				param1 = aliance,
+				param2 = "",
+				param3 = "",
+				param4_array = System.Text.Encoding.UTF8.GetBytes(relativeWay),
+			};
+			string resultJson = JsonConvert.SerializeObject(objForSendToFastSocket);
+			string answer = ConnectWithFastSocket.sendMessage(resultJson, 1024);
+			ObjectForSerialization objResponseFromFastSocket =
+				JsonConvert.DeserializeObject<ObjectForSerialization>(answer);
+			if (objResponseFromFastSocket.param1.Equals("1"))
+				return true;
+			else
+				return false;
+		}
 	}
 }

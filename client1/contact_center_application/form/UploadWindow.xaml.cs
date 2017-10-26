@@ -48,7 +48,7 @@ namespace contact_center_application.form
 				{
 					long expectedSizeFile = (new FileInfo(this.pathToFileIncludeNameFile)).Length;
 
-					setData(10, "Сбор сведений о файле");
+					setData(10, "Загрузка сведений об отправляемом ресурсе");
 					string fileName = Path.GetFileName(pathToFileIncludeNameFile);
 					ObjectForSerialization objForSendToFastSocket = new ObjectForSerialization
 					{
@@ -135,14 +135,14 @@ namespace contact_center_application.form
 				{
 					if (expectedSize < fixedSize)
 					{
-						setData(55, "Получение содержимого файла...");
+						setData(55, "Отправка содержимого файла...");
 						byte[] msg = new byte[expectedSize + 1];
 						msg = File.ReadAllBytes(this.pathToFileIncludeNameFile);
 						bytesSent = sender.Send(msg);
 						bytesRec = sender.Receive(answerFromServer);
 						if (answerFromServer[0] == 49)
 						{
-							setData(90, "Запись файла...");
+							setData(90, "Запись файла на сервере...");
 						}
 						else
 						{
@@ -159,14 +159,14 @@ namespace contact_center_application.form
 						{
 							setData((int)(15 + 100 * 0.85 *
 								(float)getBytes / expectedSize),
-								"Получение содержимого файла...");
+								"Отправка содержимого файла...");
 
 							streamFileRead.Read(msg, 0, msg.Length);
 							bytesSent = sender.Send(msg);
 							bytesRec = sender.Receive(answerFromServer);
 							if (answerFromServer[0] == 49)
 							{
-								
+								setData(90, "Запись файла на сервере...");
 							}
 							getBytes += fixedSize;
 						} while (getBytes + fixedSize < expectedSize);
@@ -176,12 +176,15 @@ namespace contact_center_application.form
 						bytesRec = sender.Receive(answerFromServer);
 						if (answerFromServer[0] == 49)
 						{
-
+							setData(90, "Запись файла на сервере...");
 						}
 						streamFileRead.Close();
 						streamFileRead.Dispose();
 					}
 				}
+				Thread.Sleep(2500);
+				setData(99, "Загрузка файла на сервер прошла успешно!");
+				Thread.Sleep(1800);
 			}
 		}
 

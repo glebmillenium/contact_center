@@ -3,7 +3,8 @@ FC:\contact_center\client1\contact_center_application\App.xaml;;
 FC:\contact_center\client1\contact_center_application\Authorization.xaml;;
 FC:\contact_center\client1\contact_center_application\form\DownloadWindow.xaml;;
 FC:\contact_center\client1\contact_center_application\form\ConfirmationChooseDialog.xaml;;
+FC:\contact_center\client1\contact_center_application\form\RenameUnitFileSystem.xaml;;
+FC:\contact_center\client1\contact_center_application\form\UploadWindow.xaml;;
 FC:\contact_center\client1\contact_center_application\MainWindow.xaml;;
 FC:\contact_center\client1\contact_center_application\ProcessDownloadFile.xaml;;
-FC:\contact_center\client1\contact_center_application\form\UploadWindow.xaml;;
 
