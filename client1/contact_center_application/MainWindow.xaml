@@ -57,7 +57,7 @@
 						<DocumentViewer Margin="5" x:Name="viewer"/>
 					</TabItem>
 					<TabItem x:Name="textboxTab" Visibility="Collapsed">
-						<RichTextBox x:Name="textbox" Height="200" AcceptsReturn="True" VerticalScrollBarVisibility="Auto"/>
+						<RichTextBox IsReadOnly="True" x:Name="textbox" Height="200" AcceptsReturn="True" VerticalScrollBarVisibility="Auto"/>
 					</TabItem>
 					<TabItem x:Name="imageTab" Visibility="Collapsed">
 						<Image x:Name="image" Height="Auto"/>

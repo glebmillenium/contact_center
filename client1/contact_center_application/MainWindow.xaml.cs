@@ -97,7 +97,16 @@ namespace contact_center_application
 		{
 			try
 			{
-				string[] aliance = RequestDataFromServer.primaryExchangeWithSocket();
+				string address = "";
+				try
+				{
+					address = File.ReadAllText(@"settings\ip_connect");
+				}
+				catch (Exception e)
+				{
+					address = "localhost";
+				}
+				string[] aliance = RequestDataFromServer.primaryExchangeWithSocket(address);
 				alianceAndId.Clear();
 				ComboboxFileSystem.Items.Clear();
 				for (int i = 0; i < aliance.Length; i++)
@@ -214,10 +223,6 @@ namespace contact_center_application
 			return result;
 		}
 
-
-
-
-
 		/// <summary>
 		/// Событие вызываемое при открытии контекстного меню, осуществляет выделение treeviewitem
 		/// </summary>
@@ -271,7 +276,11 @@ namespace contact_center_application
 		/// <param name="e"></param>
 		private void Delete_Click(object sender, RoutedEventArgs e)
 		{
-			throw new NotImplementedException();
+			string index = this.alianceAndId[ComboboxFileSystem.SelectedItem.ToString()];
+			Tuple<bool, TreeViewItem> selectedItem = searchSelectedItem();
+			string relativeWay = this.listTreeView[selectedItem.Item2];
+
+			RequestDataFromServer.sendToDeleteObjectFileSystem(index, relativeWay);
 		}
 
 		/// <summary>
@@ -314,7 +323,8 @@ namespace contact_center_application
 		}
 
 		/// <summary>
-		/// Обработчик события, запускается по двойному щелчку мыши по treeView. Запускает 
+		/// Обработчик события, запускается по двойному щелчку мыши по treeView. 
+		/// Запускает процесс загрузки содержимого файла с удаленного сервера
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
@@ -327,23 +337,34 @@ namespace contact_center_application
 				string relativeWay = this.listTreeView[selectedItem.Item2];
 				string selected = ComboboxFileSystem.SelectedItem.ToString();
 				this.openFile = "tmp" + relativeWay;
+				if (Path.GetExtension(relativeWay).Equals(".link"))
+				{
+					openWeb(Path.GetFileNameWithoutExtension(relativeWay));
+				} else
+				{
+					int index = Int32.Parse(this.alianceAndId[ComboboxFileSystem.SelectedItem.ToString()]);
+					DownloadWindow download = new DownloadWindow(index.ToString(),
+						relativeWay);
 
-				int index = Int32.Parse(this.alianceAndId[ComboboxFileSystem.SelectedItem.ToString()]);
-				DownloadWindow download = new DownloadWindow(index.ToString(),
-					relativeWay);
+
+
 				try
 				{
-					download.getContentFileAndWriteToFile(this.openFile);
-
-					//writeToFile(this.openFile, contentFile);
-					//Array.Clear(contentFile, 0, contentFile.Length);
-					LoadToViewer(this.openFile);
+						UpdateLayout();
+						GC.Collect();
+						GC.WaitForPendingFinalizers();
+						download.getContentFileAndWriteToFile(this.openFile);
 				}
-				catch (Exception exp)
+					catch (Exception ex)
 				{
+					int i = 0;
+				}
+				//writeToFile(this.openFile, contentFile);
+				//Array.Clear(contentFile, 0, contentFile.Length);
+
+						LoadToViewer(this.openFile);
 
 				}
-
 			}
 		}
 
@@ -371,14 +392,25 @@ namespace contact_center_application
 				}
 				else if (extension.Equals(".jpeg") || extension.Equals(".tiff") || extension.Equals(".jpg"))
 				{
-					bitmap = new BitmapImage();
 					string fullWay = Path.Combine(Path.GetDirectoryName(
 									Assembly.GetExecutingAssembly().Locati‌​on), way);
-					bitmap.BeginInit();
-					bitmap.UriSource = new Uri(fullWay);
-					bitmap.EndInit();
-					bitmap.Freeze();
-					image.Source = bitmap;
+
+					UpdateLayout();
+					GC.Collect();
+					GC.WaitForPendingFinalizers();
+					byte[] buffer = System.IO.File.ReadAllBytes(fullWay);//сюда подставляются image
+					MemoryStream ms = new MemoryStream(buffer);
+					BitmapImage bitmap33 = new BitmapImage();
+					bitmap33.BeginInit();
+					bitmap33.StreamSource = ms;
+					bitmap33.EndInit();
+					bitmap33.Freeze();
+					image.Source = bitmap33; // img это Image лежащая на холсте 
+
+					
+
+					
+
 
 					tabControl.SelectedItem = imageTab;
 				}
@@ -703,6 +735,27 @@ namespace contact_center_application
 						item.Visibility = Visibility.Collapsed;
 						return false;
 					}
+				}
+			}
+		}
+
+		void openWeb(string url)
+		{
+			string messageBoxText = "Вы уверены, что хотите перейти по этой ссылке: " + url + "?";
+			string caption = "Переход по ссылке";
+			MessageBoxButton button = MessageBoxButton.YesNoCancel;
+			MessageBoxImage icon = MessageBoxImage.Question;
+			MessageBoxResult result = MessageBox.Show(messageBoxText, caption, button, icon);
+			if (result == MessageBoxResult.Yes)
+			{
+				try
+				{
+					System.Diagnostics.Process.Start(url);
+				}
+				catch (System.ComponentModel.Win32Exception e)
+				{
+					System.Windows.MessageBox.Show("Ошибка",
+					"Не удалось открыть ссылку");
 				}
 			}
 		}

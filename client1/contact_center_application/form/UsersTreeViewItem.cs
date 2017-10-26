@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -64,9 +65,10 @@ namespace contact_center_application.form
 			TreeViewItem newItem = new TreeViewItem();
 
 			string path = "";
+			string extension = Path.GetExtension(nameFile);
 			if (isFile)
 			{
-				string extension = Path.GetExtension(nameFile);
+
 				if (extension.Equals(".doc"))
 				{
 					path = @"resources/doc.png";
@@ -103,6 +105,10 @@ namespace contact_center_application.form
 				{
 					path = @"resources/txt.png";
 				}
+				else if (extension.Equals(".link") || extension.Equals(".url"))
+				{
+					path = @"resources/link.png";
+				}
 				else
 				{
 					path = @"resources/unknown.png";
@@ -121,7 +127,17 @@ namespace contact_center_application.form
 
 			TextBlock tempTextBlock = new TextBlock();
 			tempTextBlock.Inlines.Add(tempImage);
-			tempTextBlock.Inlines.Add("  " + nameFile);
+			if (extension.Equals(".link") || extension.Equals(".url"))
+			{
+				tempTextBlock.Foreground = Brushes.Blue;
+				tempTextBlock.TextDecorations = TextDecorations.Underline; ;
+				tempTextBlock.Inlines.Add("  " + Path.GetFileNameWithoutExtension(nameFile));
+			}
+			else
+			{
+				tempTextBlock.Inlines.Add("  " + nameFile);
+			}
+			
 			newItem.Header = tempTextBlock;
 			return newItem;
 		}
