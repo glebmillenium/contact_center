@@ -60,7 +60,9 @@
 						<RichTextBox IsReadOnly="True" x:Name="textbox" Height="200" AcceptsReturn="True" VerticalScrollBarVisibility="Auto"/>
 					</TabItem>
 					<TabItem x:Name="imageTab" Visibility="Collapsed">
-						<Image x:Name="image" Height="Auto"/>
+						<ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+							<Image x:Name="image"/>
+						</ScrollViewer>
 					</TabItem>
 				</TabControl>
 

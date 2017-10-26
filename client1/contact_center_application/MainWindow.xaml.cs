@@ -626,6 +626,8 @@ namespace contact_center_application
 			viewer.Height = window.ActualHeight - 200;
 			textbox.Height = viewer.Height;
 			textbox.Width = viewer.Width;
+			image.Height = viewer.Height;
+			image.Width = viewer.Width;
 			//this.treeViewCatalog.Height = this.window.Height - 155;
 		}
 

@@ -109,6 +109,14 @@ namespace contact_center_application.form
 				{
 					path = @"resources/link.png";
 				}
+				else if (extension.Equals(".tiff") || extension.Equals(".tiff"))
+				{
+					path = @"resources/tiff.png";
+				}
+				else if (extension.Equals(".jpg") || extension.Equals(".jpeg"))
+				{
+					path = @"resources/jpeg.png";
+				}
 				else
 				{
 					path = @"resources/unknown.png";
