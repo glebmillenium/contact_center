@@ -94,10 +94,14 @@ public class SenderSmallData extends Thread {
         this.commandFromClient = commandFromClient;
         this.mapper = new ObjectMapper();
         this.aliance = new HashMap<String, Tuple<String, String>>();
+        aliance.put("0", new Tuple<String, String>("Тестовый каталог для контакт "
+                + "центра",
+                "\\\\172.16.48.62\\группа программного обеспечения\\Ан\\контакт_центр"));
+        /*
         aliance.put("0", new Tuple<String, String>("Инструкции по АСРН",
                 "C:\\Users\\admin\\Desktop\\Инструкции"));
         aliance.put("1", new Tuple<String, String>("Обычный каталог для тестирования",
-                "C:\\Users\\admin\\Desktop\\cat"));
+                "C:\\Users\\admin\\Desktop\\cat"));*/
 
         query++;
         if (query >= 65536)
