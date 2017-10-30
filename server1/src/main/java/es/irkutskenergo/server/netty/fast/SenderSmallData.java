@@ -96,7 +96,7 @@ public class SenderSmallData extends Thread {
         this.aliance = new HashMap<String, Tuple<String, String>>();
         aliance.put("0", new Tuple<String, String>("Тестовый каталог для контакт "
                 + "центра",
-                "\\\\172.16.48.62\\группа программного обеспечения\\Ан\\контакт_центр"));
+                "C:\\Users\\admin\\Desktop\\Инструкции\\"));
         /*
         aliance.put("0", new Tuple<String, String>("Инструкции по АСРН",
                 "C:\\Users\\admin\\Desktop\\Инструкции"));

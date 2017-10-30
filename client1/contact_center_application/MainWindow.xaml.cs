@@ -61,7 +61,7 @@ namespace contact_center_application
 			}
 
 			InitializeComponent();
-
+			//this.tabControl.SelectedItem = this.docViewerTab;
 			SynchronizationContext uiContext = SynchronizationContext.Current;
 			Thread thread = new Thread(Run);
 			thread.Start(uiContext);
@@ -345,9 +345,6 @@ namespace contact_center_application
 					int index = Int32.Parse(this.alianceAndId[ComboboxFileSystem.SelectedItem.ToString()]);
 					DownloadWindow download = new DownloadWindow(index.ToString(),
 						relativeWay);
-
-
-
 				try
 				{
 						UpdateLayout();
@@ -405,53 +402,64 @@ namespace contact_center_application
 					bitmap33.StreamSource = ms;
 					bitmap33.EndInit();
 					bitmap33.Freeze();
-					image.Source = bitmap33; // img это Image лежащая на холсте 
-
-					
-
-					
-
-
+					image.Source = bitmap33;
 					tabControl.SelectedItem = imageTab;
 				}
 				else if (extension.Equals(".doc") || extension.Equals(".docx"))
 				{
-					//if ((bool)swtichModeView.IsChecked)
-					//{
-
-					this.tabControl.SelectedItem = this.viewerTab;
-					this.viewer.Document = null;
-					this.viewer.DataContext = null;
-					if (doc != null)
+					if ((bool) this.swtichModeView.IsChecked)
 					{
-						this.doc.Close();
+						this.tabControl.SelectedItem = this.viewerTab;
+						this.viewer.Document = null;
+						this.viewer.DataContext = null;
+						if (doc != null)
+						{
+							this.doc.Close();
+						}
+
+						convertDocxDocToXps(way, viewWay);
+						this.doc = new XpsDocument(viewWay, FileAccess.Read);
+						viewer.Document = doc.GetFixedDocumentSequence();
 					}
-
-					convertDocxDocToXps(way, viewWay);
-					this.doc = new XpsDocument(viewWay, FileAccess.Read);
-					viewer.Document = doc.GetFixedDocumentSequence();
-
-					/*}
 					else
 					{
-						this.tabControl.SelectedItem = this.textboxTab;
-						displayTextbox(way);
-					}*/
+						this.docViewer.CloseDocument();
+						this.docViewer.LoadFromFile(way);
+						tabControl.SelectedItem = this.docViewerTab;
+					}
 				}
 				else if (extension.Equals(".xlsx") || extension.Equals(".xls"))
 				{
-					this.tabControl.SelectedItem = this.viewerTab;
-					this.viewer.Document = null;
-					this.viewer.DataContext = null;
-					if (doc != null)
+					if ((bool)this.swtichModeView.IsChecked)
 					{
-						this.doc.Close();
-					}
-					this.doc = null;
+						this.tabControl.SelectedItem = this.viewerTab;
+						this.viewer.Document = null;
+						this.viewer.DataContext = null;
+						if (doc != null)
+						{
+							this.doc.Close();
+						}
+						this.doc = null;
 
-					convertXlsToXps(way, viewWay);
-					this.doc = new XpsDocument(viewWay, FileAccess.Read);
-					viewer.Document = doc.GetFixedDocumentSequence();
+						convertXlsToXps(way, viewWay);
+						this.doc = new XpsDocument(viewWay, FileAccess.Read);
+						viewer.Document = doc.GetFixedDocumentSequence();
+					}
+					else
+					{
+						//this.docViewer.CloseDocument();
+						//this.docViewer.LoadFromFile(way);
+						//tabControl.SelectedItem = this.docViewerTab;
+					}
+				}
+				else if (extension.Equals(".pdf"))
+				{
+					/*this.pdfViewer.CloseDocument();
+					tabControl.SelectedItem = this.pdfViewerTab;
+					this.pdfViewer.LoadFromFile(way);*/
+					//this.docViewer.CloseDocument();
+					//this.docViewer.LoadFromFile(way);
+					//tabControl.SelectedItem = this.docViewerTab;
 				}
 				this.Cursor = Cursors.Arrow;
 			}
@@ -628,6 +636,10 @@ namespace contact_center_application
 			textbox.Width = viewer.Width;
 			image.Height = viewer.Height;
 			image.Width = viewer.Width;
+			docViewer.Height = viewer.Height;
+			docViewer.Width = viewer.Width;
+			//pdfViewer.Height = viewer.Height;
+			//pdfViewer.Width = viewer.Width;
 			//this.treeViewCatalog.Height = this.window.Height - 155;
 		}
 

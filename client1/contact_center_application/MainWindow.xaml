@@ -3,8 +3,9 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:contact_center_application.form"
-        mc:Ignorable="d"
+        xmlns:local="clr-namespace:contact_center_application.form"	
+		xmlns:my="clr-namespace:Spire.DocViewer.Wpf;assembly=Spire.DocViewer.Wpf" WindowStartupLocation="CenterScreen"
+		mc:Ignorable="d"
         Title="Информационный портал ЕЭИСЦ" MinWidth="800" MinHeight="600" SizeChanged="Window_SizeChanged" x:Name="window">
 
 	<Grid>
@@ -47,7 +48,7 @@
 			</DockPanel>
 			<StackPanel x:Name="stackPanelView" DockPanel.Dock="Right" Orientation="Vertical">
 				<StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Width="550">
-					<CheckBox x:Name="swtichModeView"  Click="CheckBox_Click" Content="Нагруженный интерфейс" IsChecked="True" Margin="0,0,10,0" UseLayoutRounding="True" HorizontalAlignment="Left" VerticalAlignment="Bottom" Style="{DynamicResource CheckBoxSwitcher}"/>
+					<CheckBox IsChecked="False" x:Name="swtichModeView"  Click="CheckBox_Click" Content="Простой интерфейс" Margin="0,0,10,0" UseLayoutRounding="True" HorizontalAlignment="Left" VerticalAlignment="Bottom" Style="{DynamicResource CheckBoxSwitcher}"/>
 					<Button Content="Открыть во внешнем приложении" Height="20" Margin="0,0,5,0" VerticalAlignment="Top" Click="Button_Click" Width="208" />
 					<Button x:Name="swtichInterface" Content="Сохранить изменения" Height="20" Margin="0,0,5,0" VerticalAlignment="Top" Width="141"/>
 				</StackPanel>
@@ -56,9 +57,20 @@
 					<TabItem x:Name="viewerTab" Visibility="Collapsed">
 						<DocumentViewer Margin="5" x:Name="viewer"/>
 					</TabItem>
+
 					<TabItem x:Name="textboxTab" Visibility="Collapsed">
 						<RichTextBox IsReadOnly="True" x:Name="textbox" Height="200" AcceptsReturn="True" VerticalScrollBarVisibility="Auto"/>
 					</TabItem>
+
+					<TabItem x:Name="docViewerTab" Visibility="Collapsed">
+						<my:DocViewer Height="Auto" 
+									  HorizontalAlignment="Stretch" 
+									  Margin="0,0,0,0" 
+									  VerticalAlignment="Stretch" 
+									  Width="Auto"
+									  x:Name="docViewer"/>
+					</TabItem>
+
 					<TabItem x:Name="imageTab" Visibility="Collapsed">
 						<ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
 							<Image x:Name="image"/>
