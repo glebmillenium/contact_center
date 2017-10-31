@@ -17,14 +17,19 @@ using System.Text;
 using System.Windows.Media.Imaging;
 using System.Reflection;
 using System.Windows.Input;
+using MoonPdfLib.MuPdf;
+using System.Runtime.InteropServices;
+
 
 namespace contact_center_application
 {
+
 	/// <summary>
 	/// Класс, формирующий графический интерфейс отображения содержимое файловой системы.
 	/// </summary>
 	public partial class MainWindow : Window
 	{
+
 		/// <summary>
 		/// openFile - хранит путь открытого файла в приложении
 		/// </summary>
@@ -47,7 +52,6 @@ namespace contact_center_application
 		/// </summary>
 		private Dictionary<string, string> alianceAndId = new Dictionary<string, string>();
 		XpsDocument doc;
-		BitmapImage bitmap;
 
 		/// <summary>
 		/// Конструктор, осуществляет чистку папки временных файлов
@@ -59,8 +63,8 @@ namespace contact_center_application
 				Directory.Delete("tmp", true);
 				Directory.CreateDirectory("tmp");
 			}
-
 			InitializeComponent();
+			
 			//this.tabControl.SelectedItem = this.docViewerTab;
 			SynchronizationContext uiContext = SynchronizationContext.Current;
 			Thread thread = new Thread(Run);
@@ -454,6 +458,15 @@ namespace contact_center_application
 				}
 				else if (extension.Equals(".pdf"))
 				{
+					this.tabControl.SelectedItem = this.pdfViewerTab;
+					byte[] bytes = File.ReadAllBytes(way);
+					var source = new MemorySource(bytes);
+
+					moonPdfPanel.Open(source);
+					moonPdfPanel.PageRowDisplay = MoonPdfLib.PageRowDisplayType.ContinuousPageRows;
+					//moonPdfPanel.OpenFile(way);
+
+
 					/*this.pdfViewer.CloseDocument();
 					tabControl.SelectedItem = this.pdfViewerTab;
 					this.pdfViewer.LoadFromFile(way);*/
@@ -638,6 +651,8 @@ namespace contact_center_application
 			image.Width = viewer.Width;
 			docViewer.Height = viewer.Height;
 			docViewer.Width = viewer.Width;
+			moonPdfPanel.Height = viewer.Height;
+			moonPdfPanel.Width = viewer.Width;
 			//pdfViewer.Height = viewer.Height;
 			//pdfViewer.Width = viewer.Width;
 			//this.treeViewCatalog.Height = this.window.Height - 155;

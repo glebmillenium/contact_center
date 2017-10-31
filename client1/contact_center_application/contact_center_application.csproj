@@ -59,77 +59,35 @@
     <NoWin32Manifest>true</NoWin32Manifest>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="MoonPdfLib">
+      <HintPath>..\..\..\Users\admin\Desktop\MoonPdf-0.3.0-x86\MoonPdf-0.3.0-x86\MoonPdfLib.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="presentationframework.aero" />
     <Reference Include="ReachFramework" />
-    <Reference Include="Spire.Barcode, Version=1.4.8.11040, Culture=neutral, PublicKeyToken=663f351905198cb3, processorArchitecture=MSIL">
+    <Reference Include="Spire.Doc.Wpf, Version=6.0.23.14240, Culture=neutral, PublicKeyToken=663f351905198cb3, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Spire.Office.2.16.18\lib\net40\Spire.Barcode.dll</HintPath>
+      <HintPath>..\packages\docviewer\Spire.Doc.Wpf.dll</HintPath>
     </Reference>
-    <Reference Include="Spire.Common, Version=1.2.730.14040, Culture=neutral, PublicKeyToken=663f351905198cb3, processorArchitecture=MSIL">
+    <Reference Include="Spire.DocViewer.Wpf, Version=2.4.24.14240, Culture=neutral, PublicKeyToken=663f351905198cb3, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Spire.Office.2.16.18\lib\net40\Spire.Common.dll</HintPath>
+      <HintPath>..\packages\docviewer\Spire.DocViewer.Wpf.dll</HintPath>
     </Reference>
-    <Reference Include="Spire.DataExport, Version=3.5.133.4040, Culture=neutral, PublicKeyToken=663f351905198cb3, processorArchitecture=MSIL">
+    <Reference Include="Spire.License, Version=1.3.6.41, Culture=neutral, PublicKeyToken=b1144360237c8b3f, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Spire.Office.2.16.18\lib\net40\Spire.DataExport.dll</HintPath>
+      <HintPath>..\packages\docviewer\Spire.License.dll</HintPath>
     </Reference>
-    <Reference Include="Spire.DataExport.ResourceMgr, Version=1.6.71.4040, Culture=neutral, PublicKeyToken=4bc1500157862925, processorArchitecture=MSIL">
+    <Reference Include="Spire.Pdf.Wpf, Version=2.5.11.10240, Culture=neutral, PublicKeyToken=663f351905198cb3, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Spire.Office.2.16.18\lib\net40\Spire.DataExport.ResourceMgr.dll</HintPath>
+      <HintPath>..\packages\docviewer\Spire.Pdf.Wpf.dll</HintPath>
     </Reference>
-    <Reference Include="Spire.Doc.Wpf, Version=6.0.32.5241, Culture=neutral, PublicKeyToken=663f351905198cb3, processorArchitecture=MSIL">
+    <Reference Include="Spire.PdfViewer.Wpf, Version=2.12.38.3240, Culture=neutral, PublicKeyToken=663f351905198cb3, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Users\admin\Downloads\spire.docviewer_2.4.25\BIN\WPF4.0 ClientProfile\Spire.Doc.Wpf.dll</HintPath>
+      <HintPath>..\packages\pdfviewer\Spire.PdfViewer.Wpf.dll</HintPath>
     </Reference>
-    <Reference Include="Spire.DocViewer.Forms, Version=2.4.24.14040, Culture=neutral, PublicKeyToken=663f351905198cb3, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Spire.Office.2.16.18\lib\net40\Spire.DocViewer.Forms.dll</HintPath>
-    </Reference>
-    <Reference Include="Spire.DocViewer.Wpf, Version=2.4.25.5241, Culture=neutral, PublicKeyToken=663f351905198cb3, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Users\admin\Downloads\spire.docviewer_2.4.25\BIN\WPF4.0 ClientProfile\Spire.DocViewer.Wpf.dll</HintPath>
-    </Reference>
-    <Reference Include="Spire.Email, Version=1.1.9.14040, Culture=neutral, PublicKeyToken=663f351905198cb3, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Spire.Office.2.16.18\lib\net40\Spire.Email.dll</HintPath>
-    </Reference>
-    <Reference Include="Spire.License, Version=1.3.6.40, Culture=neutral, PublicKeyToken=b1144360237c8b3f, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Users\admin\Downloads\spire.docviewer_2.4.25\BIN\WPF4.0 ClientProfile\Spire.License.dll</HintPath>
-    </Reference>
-    <Reference Include="Spire.OfficeViewer.Forms, Version=2.16.18.14040, Culture=neutral, PublicKeyToken=663f351905198cb3, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Spire.Office.2.16.18\lib\net40\Spire.OfficeViewer.Forms.dll</HintPath>
-    </Reference>
-    <Reference Include="Spire.Pdf, Version=3.9.375.14040, Culture=neutral, PublicKeyToken=663f351905198cb3, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Spire.Office.2.16.18\lib\net40\Spire.Pdf.dll</HintPath>
-    </Reference>
-    <Reference Include="Spire.Pdf.Wpf, Version=2.5.11.10241, Culture=neutral, PublicKeyToken=663f351905198cb3, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Users\admin\Downloads\spire.docviewer_2.4.25\BIN\WPF4.0 ClientProfile\Spire.Pdf.Wpf.dll</HintPath>
-    </Reference>
-    <Reference Include="Spire.PdfViewer.Asp, Version=2.12.36.14340, Culture=neutral, PublicKeyToken=663f351905198cb3, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Spire.Office.2.16.18\lib\net40\Spire.PdfViewer.Asp.dll</HintPath>
-    </Reference>
-    <Reference Include="Spire.PdfViewer.Forms, Version=2.12.36.14340, Culture=neutral, PublicKeyToken=663f351905198cb3, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Spire.Office.2.16.18\lib\net40\Spire.PdfViewer.Forms.dll</HintPath>
-    </Reference>
-    <Reference Include="Spire.Presentation, Version=2.8.61.14040, Culture=neutral, PublicKeyToken=663f351905198cb3, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Spire.Office.2.16.18\lib\net40\Spire.Presentation.dll</HintPath>
-    </Reference>
-    <Reference Include="Spire.Spreadsheet, Version=2.2.42.14040, Culture=neutral, PublicKeyToken=663f351905198cb3, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Spire.Office.2.16.18\lib\net40\Spire.Spreadsheet.dll</HintPath>
-    </Reference>
-    <Reference Include="Spire.XLS, Version=7.12.92.14040, Culture=neutral, PublicKeyToken=663f351905198cb3, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="Spire.XLS">
       <HintPath>..\packages\Spire.Office.2.16.18\lib\net40\Spire.XLS.dll</HintPath>
     </Reference>
     <Reference Include="System" />
@@ -289,6 +247,12 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="..\..\..\Users\admin\Desktop\MoonPdf-0.3.0-x86\MoonPdf-0.3.0-x86\libmupdf.dll">
+      <Link>libmupdf.dll</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:contact_center_application.form"	
+		xmlns:mpp="clr-namespace:MoonPdfLib;assembly=MoonPdfLib"
 		xmlns:my="clr-namespace:Spire.DocViewer.Wpf;assembly=Spire.DocViewer.Wpf" WindowStartupLocation="CenterScreen"
 		mc:Ignorable="d"
         Title="Информационный портал ЕЭИСЦ" MinWidth="800" MinHeight="600" SizeChanged="Window_SizeChanged" x:Name="window">
@@ -71,6 +72,11 @@
 									  x:Name="docViewer"/>
 					</TabItem>
 
+					<TabItem x:Name="pdfViewerTab" Visibility="Collapsed">
+						<mpp:MoonPdfPanel x:Name="moonPdfPanel" 
+							Background="LightGray"/>
+					</TabItem>
+					
 					<TabItem x:Name="imageTab" Visibility="Collapsed">
 						<ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
 							<Image x:Name="image"/>
