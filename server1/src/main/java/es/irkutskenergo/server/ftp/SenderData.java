@@ -46,7 +46,7 @@ public class SenderData extends Thread {
                 if (!socket.isClosed())
                 {
                     int fixedSize = 50 * 1024;
-                    Logging.log("Началась отправка данных клиенту: "
+                    Logging.log("Начался прием данных от клиента: "
                             + socket.getInetAddress() + " Номер сеанса: " + numberConnect, 2);
                     OutputStream outputStream;
                     outputStream = socket.getOutputStream();
@@ -57,31 +57,33 @@ public class SenderData extends Thread {
                     
                     byte[] shortAnswer = new byte[fixedSize];
                     FileOutputStream fos = new FileOutputStream(this.pathToFile);
-                    
-                    String path = "C:\\Users\\admin\\Desktop\\log\\server.log";
-                    FileOutputStream fs = new FileOutputStream(path);
                     outputStream.write(mess, 0, mess.length);
                     try
                     {
                         if (expectedSize < fixedSize)
                         {
+                            Logging.log("Цельный прием данных от клиента: "
+                            + socket.getInetAddress() + " Номер сеанса: " + numberConnect, 2);
                             shortAnswer = new byte[expectedSize];
                             inputStream.read(shortAnswer);
                             fos.write(shortAnswer);
-                            fs.write(shortAnswer, 0, shortAnswer.length);
                             fos.close();
                         } else
                         {
                             int sendCapacity = fixedSize;
-
+                            Logging.log("Кусочный прием данных от клиента: "
+                            + socket.getInetAddress() + " Номер сеанса: " + numberConnect, 2);
                             while (sendCapacity < expectedSize)
                             {
+                                
                                 int result = inputStream.read(shortAnswer);
                                 fos.write(shortAnswer);
                                 sendCapacity += fixedSize;
-                                fs.write(shortAnswer, 0, shortAnswer.length);
                                 outputStream.write(mess, 0, mess.length);
                                 outputStream.flush();
+                                Logging.log("Получено " + (sendCapacity - fixedSize)
+                                        + " байт: " + socket.getInetAddress() + 
+                                        " Номер сеанса: " + numberConnect, 2);
                             }
                             sendCapacity = expectedSize - (sendCapacity - fixedSize);
                             shortAnswer = new byte[sendCapacity];
@@ -89,13 +91,13 @@ public class SenderData extends Thread {
                             fos.write(shortAnswer);
                             outputStream.write(mess, 0, mess.length);
                             
-                            fs.write(shortAnswer, 0, shortAnswer.length);
-                            
                             fos.close();
+                            Logging.log("Получена последняя пачка данных от клиента: "
+                            + socket.getInetAddress() + " Номер сеанса: " + numberConnect, 2);
                         }
-                        Logging.log("Отправка данных клиенту: "
+                        Logging.log("Получение данных от клиента: "
                                 + socket.getInetAddress()
-                                + " успешно завершена!", 2);
+                                + " успешно завершено!", 2);
                     } catch (IOException e)
                     {
                         byte[] failPackage = new byte[]
@@ -104,7 +106,6 @@ public class SenderData extends Thread {
                         outputStream.write(failPackage, 0, failPackage.length);
                         Logging.log(e.toString(), 2);
                     }
-                    fs.close();
                 }
             }
 

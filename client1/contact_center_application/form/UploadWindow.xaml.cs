@@ -25,14 +25,16 @@ namespace contact_center_application.form
 		private string aliance;
 		private string relativeWay;
 		private string pathToFileIncludeNameFile;
+		private string typeUpload;
 
-		public UploadWindow(string aliance, string relativeWay, string pathToFileIncludeNameFile)
+		public UploadWindow(string aliance, string relativeWay, string pathToFileIncludeNameFile, string typeUpload)
 		{
 			InitializeComponent();
 
 			this.aliance = aliance;
 			this.relativeWay = relativeWay;
 			this.pathToFileIncludeNameFile = pathToFileIncludeNameFile;
+			this.typeUpload = typeUpload;
 		}
 
 		/// <summary>
@@ -55,7 +57,7 @@ namespace contact_center_application.form
 						command = "try_upload",
 						param1 = expectedSizeFile.ToString(),
 						param2 = aliance,
-						param3 = "",
+						param3 = this.typeUpload,
 						param4_array = System.Text.Encoding.UTF8.GetBytes(relativeWay),
 						param5_array = System.Text.Encoding.UTF8.GetBytes(fileName)
 					};

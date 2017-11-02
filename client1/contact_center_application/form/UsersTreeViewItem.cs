@@ -63,7 +63,12 @@ namespace contact_center_application.form
 		public static TreeViewItem getTreeViewItem(string nameFile, bool isFile)
 		{
 			TreeViewItem newItem = new TreeViewItem();
+			newItem.Header = createTextBlockForObjectFromFileSystem(nameFile, isFile);
+			return newItem;
+		}
 
+		public static Image getImageOnNameFile(string nameFile, bool isFile)
+		{
 			string path = "";
 			string extension = Path.GetExtension(nameFile);
 			if (isFile)
@@ -128,7 +133,172 @@ namespace contact_center_application.form
 			}
 
 			Image tempImage = new Image();
-			BitmapImage bitmapImage = new BitmapImage(new Uri(path, 
+			BitmapImage bitmapImage = new BitmapImage(new Uri(path,
+				UriKind.Relative));
+			tempImage.Source = bitmapImage;
+			return tempImage;
+		}
+
+		public static TextBlock createTextBlockForObjectFromFileSystem(System.Windows.Controls.Label textBlock,
+			string nameFile, bool isFile)
+		{
+			if (!isFile)
+			{
+				int i = 0;
+			}
+			string path = "";
+			string extension = Path.GetExtension(nameFile);
+			if (isFile)
+			{
+
+				if (extension.Equals(".doc"))
+				{
+					path = @"resources/doc.png";
+				}
+				else if (extension.Equals(".docx"))
+				{
+					path = @"resources/docx.png";
+				}
+				else if (extension.Equals(".xlsx"))
+				{
+					path = @"resources/xlsx.png";
+				}
+				else if (extension.Equals(".xls"))
+				{
+					path = @"resources/xls.png";
+				}
+				else if (extension.Equals(".html") || extension.Equals(".htm"))
+				{
+					path = @"resources/html.png";
+				}
+				else if (extension.Equals(".htm"))
+				{
+					path = @"resources/htm.png";
+				}
+				else if (extension.Equals(".csv"))
+				{
+					path = @"resources/csv.png";
+				}
+				else if (extension.Equals(".pdf"))
+				{
+					path = @"resources/pdf.png";
+				}
+				else if (extension.Equals(".txt"))
+				{
+					path = @"resources/txt.png";
+				}
+				else if (extension.Equals(".link") || extension.Equals(".url"))
+				{
+					path = @"resources/link.png";
+				}
+				else if (extension.Equals(".tiff") || extension.Equals(".tiff"))
+				{
+					path = @"resources/tiff.png";
+				}
+				else if (extension.Equals(".jpg") || extension.Equals(".jpeg"))
+				{
+					path = @"resources/jpeg.png";
+				}
+				else
+				{
+					path = @"resources/unknown.png";
+				}
+			}
+			else
+			{
+				path = @"resources/catalog.png";
+			}
+
+			Image tempImage = new Image();
+			BitmapImage bitmapImage = new BitmapImage(new Uri(path,
+				UriKind.Relative));
+			tempImage.Source = bitmapImage;
+
+
+			TextBlock tempTextBlock = new TextBlock();
+			tempTextBlock.Inlines.Add(tempImage);
+			if (extension.Equals(".link") || extension.Equals(".url"))
+			{
+				tempTextBlock.Foreground = Brushes.Blue;
+				tempTextBlock.TextDecorations = TextDecorations.Underline; ;
+				tempTextBlock.Inlines.Add("  " + Path.GetFileNameWithoutExtension(nameFile));
+			}
+			else
+			{
+				tempTextBlock.Inlines.Add("  ");
+				tempTextBlock.Inlines.Add(textBlock);
+			}
+
+			return tempTextBlock;
+		}
+
+		public static TextBlock createTextBlockForObjectFromFileSystem(string nameFile, bool isFile)
+		{
+			string path = "";
+			string extension = Path.GetExtension(nameFile);
+			if (isFile)
+			{
+
+				if (extension.Equals(".doc"))
+				{
+					path = @"resources/doc.png";
+				}
+				else if (extension.Equals(".docx"))
+				{
+					path = @"resources/docx.png";
+				}
+				else if (extension.Equals(".xlsx"))
+				{
+					path = @"resources/xlsx.png";
+				}
+				else if (extension.Equals(".xls"))
+				{
+					path = @"resources/xls.png";
+				}
+				else if (extension.Equals(".html") || extension.Equals(".htm"))
+				{
+					path = @"resources/html.png";
+				}
+				else if (extension.Equals(".htm"))
+				{
+					path = @"resources/htm.png";
+				}
+				else if (extension.Equals(".csv"))
+				{
+					path = @"resources/csv.png";
+				}
+				else if (extension.Equals(".pdf"))
+				{
+					path = @"resources/pdf.png";
+				}
+				else if (extension.Equals(".txt"))
+				{
+					path = @"resources/txt.png";
+				}
+				else if (extension.Equals(".link") || extension.Equals(".url"))
+				{
+					path = @"resources/link.png";
+				}
+				else if (extension.Equals(".tiff") || extension.Equals(".tiff"))
+				{
+					path = @"resources/tiff.png";
+				}
+				else if (extension.Equals(".jpg") || extension.Equals(".jpeg"))
+				{
+					path = @"resources/jpeg.png";
+				}
+				else
+				{
+					path = @"resources/unknown.png";
+				}
+			}
+			else
+			{
+				path = @"resources/catalog.png";
+			}
+
+			Image tempImage = new Image();
+			BitmapImage bitmapImage = new BitmapImage(new Uri(path,
 				UriKind.Relative));
 			tempImage.Source = bitmapImage;
 
@@ -145,9 +315,7 @@ namespace contact_center_application.form
 			{
 				tempTextBlock.Inlines.Add("  " + nameFile);
 			}
-			
-			newItem.Header = tempTextBlock;
-			return newItem;
+			return tempTextBlock;
 		}
 	}
 }

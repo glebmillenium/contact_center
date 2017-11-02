@@ -2,13 +2,11 @@ C:\contact_center\client1\contact_center_application\bin\Release\contact_center_
 C:\contact_center\client1\contact_center_application\bin\Release\contact_center_application.exe
 C:\contact_center\client1\contact_center_application\bin\Release\contact_center_application.pdb
 C:\contact_center\client1\contact_center_application\bin\Release\Newtonsoft.Json.dll
-C:\contact_center\client1\contact_center_application\bin\Release\Spire.Common.Wpf.dll
 C:\contact_center\client1\contact_center_application\bin\Release\Spire.Doc.Wpf.dll
 C:\contact_center\client1\contact_center_application\bin\Release\Spire.DocViewer.Wpf.dll
 C:\contact_center\client1\contact_center_application\bin\Release\Spire.License.dll
 C:\contact_center\client1\contact_center_application\bin\Release\Spire.Pdf.Wpf.dll
 C:\contact_center\client1\contact_center_application\bin\Release\Spire.PdfViewer.Wpf.dll
-C:\contact_center\client1\contact_center_application\bin\Release\Spire.XLS.Wpf.dll
 C:\contact_center\client1\contact_center_application\bin\Release\Microsoft.mshtml.dll
 C:\contact_center\client1\contact_center_application\bin\Release\Newtonsoft.Json.xml
 C:\contact_center\client1\contact_center_application\obj\Release\contact_center_application.csproj.contact_center_application.exe.config
@@ -41,3 +39,11 @@ C:\contact_center\client1\contact_center_application\obj\Release\contact_center_
 C:\contact_center\client1\contact_center_application\obj\Release\contact_center_application.exe
 C:\contact_center\client1\contact_center_application\obj\Release\contact_center_application.pdb
 C:\contact_center\client1\contact_center_application\obj\Release\contact_center_application.csprojResolveAssemblyReference.cache
+C:\contact_center\client1\contact_center_application\bin\Release\libmupdf.dll
+C:\contact_center\client1\contact_center_application\bin\Release\MoonPdfLib.dll
+C:\contact_center\client1\contact_center_application\bin\Release\Spire.XLS.dll
+C:\contact_center\client1\contact_center_application\bin\Release\MouseKeyboardActivityMonitor.dll
+C:\contact_center\client1\contact_center_application\bin\Release\Spire.Pdf.dll
+C:\contact_center\client1\contact_center_application\bin\Release\Spire.XLS.xml
+C:\contact_center\client1\contact_center_application\bin\Release\Spire.Pdf.xml
+C:\contact_center\client1\contact_center_application\obj\Release\contact_center_application_Content.g.cs

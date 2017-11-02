@@ -9,6 +9,7 @@ import es.irkutskenergo.serialization.ObjectForSerialization;
 import java.io.IOException;
 import org.codehaus.jackson.map.ObjectMapper;
 import es.irkutskenergo.serialization.CatalogForSerialization;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -19,6 +20,7 @@ import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -94,9 +96,8 @@ public class SenderSmallData extends Thread {
         this.commandFromClient = commandFromClient;
         this.mapper = new ObjectMapper();
         this.aliance = new HashMap<String, Tuple<String, String>>();
-        aliance.put("0", new Tuple<String, String>("Тестовый каталог для контакт "
-                + "центра",
-                "C:\\Users\\admin\\Desktop\\Инструкции\\"));
+        this.aliance = getRootAliance();
+        
         /*
         aliance.put("0", new Tuple<String, String>("Инструкции по АСРН",
                 "C:\\Users\\admin\\Desktop\\Инструкции"));
@@ -248,7 +249,10 @@ public class SenderSmallData extends Thread {
             }
             else if (obj.command.equals("try_create_dir"))
             {
-                
+                Logging.log("Обработка запроса на создание каталога в системе "
+                        + "файловой системы" + this.channel.toString() + 
+                        ") Номер запроса: " + this.numberConnect, 1);
+                result = tryCreateDir(obj);
             }
             else if (obj.command.equals("try_rename"))
             {
@@ -523,6 +527,36 @@ public class SenderSmallData extends Thread {
         return result;
     }
     
+    private String tryCreateDir(ObjectForSerialization obj) throws IOException
+    {
+        String result = "";
+        try
+        {
+            String ftpPath = this.aliance.get(obj.param1).param2;
+            String relativePath = (new String(obj.param4_array, "UTF-8")) + "\\"
+                    + (new String(obj.param5_array, "UTF-8"));
+            String relativeWay = ftpPath + relativePath;
+            
+            File folder = new File(relativeWay);
+            if (!folder.exists()) {
+                folder.mkdir();
+                Logging.log("Создание каталога по пути: " + relativeWay
+                + " Канал " + this.channel.toString() + ") Номер запроса: "
+                + this.numberConnect, 1);
+            result = this.mapper.writeValueAsString(
+                new ObjectForSerialization("create_dir", "1"));
+            } else {
+                result = this.mapper.writeValueAsString(
+                new ObjectForSerialization("create_dir", "0"));
+            }
+        } catch (UnsupportedEncodingException ex)
+        {
+            result = this.mapper.writeValueAsString(
+                new ObjectForSerialization("error", "0"));
+        }
+        return result;
+    }
+    
     /**
      * Удаляет файл из указанной подсистемы
      * 
@@ -551,5 +585,34 @@ public class SenderSmallData extends Thread {
                 new ObjectForSerialization("error", "0"));
         }
         return result;
+    }
+
+    private Map<String, Tuple<String, String>> getRootAliance()
+    {
+        Map<String, Tuple<String, String>> result = new HashMap<String, 
+                Tuple<String, String>>();
+        BufferedReader reader = null;
+        try
+        {
+            reader = new BufferedReader(new FileReader("list_connect"));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] temp = line.split(";");
+                if(temp.length != 3)
+                {
+                    throw new FileNotFoundException();
+                }
+                result.put(temp[0], new Tuple<String, String>(temp[1], temp[2]));
+            }
+        } catch (FileNotFoundException ex)
+        {
+            result.clear();
+            result.put("0", new Tuple<String, String>("Тестовый каталог для контакт "
+                    + "центра",
+                    "C:\\Users\\admin\\Desktop\\Инструкции\\"));
+        } finally
+        {
+            return result;
+        }
     }
 }

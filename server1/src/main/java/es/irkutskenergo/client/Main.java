@@ -18,6 +18,7 @@ public class Main {
         try
         {
             Logging.clear();
+            Logging.writeToConsole = true;
             int portFast = 6500;
             int portFtp = 6502;
             FastServer NT = new FastServer(portFast);

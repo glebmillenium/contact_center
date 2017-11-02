@@ -14,6 +14,8 @@ import java.util.logging.Logger;
  */
 public class Logging {
 
+    public static boolean writeToConsole = false; 
+    
     /**
      * log Метод для журналирования действий в системе
      *
@@ -26,58 +28,68 @@ public class Logging {
      */
     public static boolean log(String message, int typeMessage)
     {
+        
         FileWriter writer;
         Date date = new Date();
         try
         {
+            String output = "";
             switch (typeMessage)
             {
                 case 0:
                     writer = new FileWriter("logs/server.log", true);
-                    writer.append(date.toString() + message + "\n");
+                    output = date.toString() + message + "\r\n";
+                    writer.append(output);
                     writer.flush();
                     writer.close();
 
                     writer = new FileWriter("logs/netty.log", true);
-                    writer.append(date.toString() + message + "\n");
+                    writer.append(output);
                     writer.flush();
                     writer.close();
 
                     writer = new FileWriter("logs/ftp.log", true);
-                    writer.append(date.toString() + message + "\n");
+                    writer.append(output);
                     writer.flush();
                     writer.close();
 
-                    return true;
+                    break;
                 case 1:
+                    output = date.toString() + ". FAST SERVER. " + message + "\r\n";
                     writer = new FileWriter("logs/server.log", true);
-                    writer.append(date.toString() + ". FAST SERVER. " + message + "\n");
+                    writer.append(output);
                     writer.flush();
                     writer.close();
 
                     writer = new FileWriter("logs/netty.log", true);
-                    writer.append(date.toString() + ". FAST SERVER. " + message + "\n");
+                    writer.append(output);
                     writer.flush();
                     writer.close();
 
-                    return true;
+                    break;
                 case 2:
+                    output = date.toString() + ". FTP SERVER. " + message + "\r\n";
                     writer = new FileWriter("logs/server.log", true);
-                    writer.append(date.toString() + ". FTP SERVER. " + message + "\n");
+                    writer.append(output);
                     writer.flush();
                     writer.close();
 
                     writer = new FileWriter("logs/ftp.log", true);
-                    writer.append(date.toString() + ". FTP SERVER. " + message + "\n");
+                    writer.append(output);
                     writer.flush();
                     writer.close();
 
-                    return true;
+                    break;
                 default:
                     System.out.println("Неверный параметр журналирования: "
                             + typeMessage + "\nСообщение: " + message);
                     return false;
             }
+            if(writeToConsole)
+            {
+                System.out.println(output);
+            }
+            return true;
         } catch (Exception e)
         {
             System.out.println("Модуль журналирования не работает!");

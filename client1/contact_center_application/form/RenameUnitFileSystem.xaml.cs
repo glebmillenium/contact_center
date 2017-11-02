@@ -24,6 +24,16 @@ namespace contact_center_application.form
 			InitializeComponent();
 		}
 
+		public RenameUnitFileSystem(bool create)
+		{
+			InitializeComponent();
+			if (create)
+			{
+				this.activeButton.Content = "Создать";
+				this.textView.Text = "Введите имя папки";
+			}
+		}
+
 		private void Button_Click(object sender, RoutedEventArgs e)
 		{
 			this.DialogResult = true;

@@ -19,7 +19,9 @@ using System.Reflection;
 using System.Windows.Input;
 using MoonPdfLib.MuPdf;
 using System.Runtime.InteropServices;
-
+using Spire.DocViewer.Wpf;
+using MoonPdfLib;
+using System.Windows.Media;
 
 namespace contact_center_application
 {
@@ -43,14 +45,18 @@ namespace contact_center_application
 		/// 
 		/// @param Dictionary<TreeView, string>
 		/// </summary>
-		private Dictionary<TreeViewItem, string> listTreeView =
-											new Dictionary<TreeViewItem, string>();
+		private Dictionary<TreeViewItem, Tuple<bool, string>> listTreeView =
+											new Dictionary<TreeViewItem, Tuple<bool, string>>();
 
 		/// <summary>
 		/// alianceAndId - словарь (хэш-таблица), хранит название файловой системы и его 
 		/// уникальный идентификатор
 		/// </summary>
 		private Dictionary<string, string> alianceAndId = new Dictionary<string, string>();
+		private DocumentViewer viewer = new DocumentViewer(); //viewerTab
+		private MoonPdfPanel moonPdfPanel = new MoonPdfPanel(); //background light-gray
+		private DocViewer docViewer = new DocViewer();
+		private Image image = new Image();
 		XpsDocument doc;
 
 		/// <summary>
@@ -64,8 +70,8 @@ namespace contact_center_application
 				Directory.CreateDirectory("tmp");
 			}
 			InitializeComponent();
-			
-			//this.tabControl.SelectedItem = this.docViewerTab;
+
+			//callGarbage();
 			SynchronizationContext uiContext = SynchronizationContext.Current;
 			Thread thread = new Thread(Run);
 			thread.Start(uiContext);
@@ -92,6 +98,9 @@ namespace contact_center_application
 			fullingTreeView(answer);
 			buttonRefresh.Visibility = Visibility.Hidden;
 		}
+
+
+
 
 		/// <summary>
 		/// Метод запускается при включении приложения
@@ -185,22 +194,29 @@ namespace contact_center_application
 					}
 
 					System.Windows.Controls.MenuItem upload = new System.Windows.Controls.MenuItem();
-					upload.Header = "Загрузить файлы в папку";
+					upload.Header = "Загрузить файл в папку";
 					upload.Click += Upload_Click;
 					docMenu.Items.Add(upload);
+
+					System.Windows.Controls.MenuItem createDir = new System.Windows.Controls.MenuItem();
+					createDir.Header = "Создать новую папку в " + element.name;
+					createDir.Click += CreateDir_Click; ;
+					docMenu.Items.Add(createDir);
 
 					System.Windows.Controls.MenuItem delete = new System.Windows.Controls.MenuItem();
 					delete.Header = "Удалить папку";
 					delete.Click += Delete_Click; ;
 					docMenu.Items.Add(delete);
 
-					this.listTreeView.Add(item, currentWay + "\\" + element.name);
+					this.listTreeView.Add(item, new Tuple<bool, string>
+						(element.file, currentWay + "\\" + element.name));
 				}
 				else
 				{
 					item = UsersTreeViewItem.getTreeViewItem(element.name, true);
 					item.MouseDoubleClick += this.selectFile;
-					this.listTreeView.Add(item, currentWay + "\\" + element.name);
+					this.listTreeView.Add(item, new Tuple<bool, string>(element.file, 
+						currentWay + "\\" + element.name));
 
 					System.Windows.Controls.MenuItem open = new System.Windows.Controls.MenuItem();
 					open.Click += Open_Click; ;
@@ -225,6 +241,20 @@ namespace contact_center_application
 				result.Add(item);
 			}
 			return result;
+		}
+
+		private void CreateDir_Click(object sender, RoutedEventArgs e)
+		{
+			RenameUnitFileSystem dialog = new RenameUnitFileSystem(true);
+			dialog.ShowDialog();
+			if ((bool)dialog.DialogResult)
+			{
+				string nameDirectory = dialog.getNameFile();
+				string index = this.alianceAndId[ComboboxFileSystem.SelectedItem.ToString()];
+				Tuple<bool, TreeViewItem> selectedItem = searchSelectedItem();
+				string relativeWay = this.listTreeView[selectedItem.Item2].Item2;
+				RequestDataFromServer.sendToCreateCatalogFileSystem(index, relativeWay, nameDirectory);
+			}
 		}
 
 		/// <summary>
@@ -257,7 +287,7 @@ namespace contact_center_application
 			{
 				string index = this.alianceAndId[ComboboxFileSystem.SelectedItem.ToString()];
 				Tuple<bool, TreeViewItem> selectedItem = searchSelectedItem();
-				string relativeWay = this.listTreeView[selectedItem.Item2];
+				string relativeWay = this.listTreeView[selectedItem.Item2].Item2;
 				string nameFile = dialog.getNameFile();
 				RequestDataFromServer.sendToRenameObjectFileSystem(index, relativeWay, nameFile);
 			}
@@ -282,7 +312,7 @@ namespace contact_center_application
 		{
 			string index = this.alianceAndId[ComboboxFileSystem.SelectedItem.ToString()];
 			Tuple<bool, TreeViewItem> selectedItem = searchSelectedItem();
-			string relativeWay = this.listTreeView[selectedItem.Item2];
+			string relativeWay = this.listTreeView[selectedItem.Item2].Item2;
 
 			RequestDataFromServer.sendToDeleteObjectFileSystem(index, relativeWay);
 		}
@@ -301,9 +331,9 @@ namespace contact_center_application
 				int index = Int32.Parse(this.alianceAndId[ComboboxFileSystem.SelectedItem.ToString()]);
 				Tuple<bool, TreeViewItem> selectedItem = searchSelectedItem();
 
-				string relativeWay = this.listTreeView[selectedItem.Item2];
+				string relativeWay = this.listTreeView[selectedItem.Item2].Item2;
 				UploadWindow download = new UploadWindow(index.ToString(), relativeWay,
-					OPF.FileName);
+					OPF.FileName, "0");
 				try
 				{
 					download.sendFileToServer();
@@ -326,6 +356,45 @@ namespace contact_center_application
 			getContentFileSystem();
 		}
 
+		private bool lastLoadPicture = false;
+
+		private void callGarbage()
+		{
+			image = null;
+			docViewer = null;
+			viewer = null;
+			moonPdfPanel = null;
+			doc = null;
+
+			UpdateLayout();
+			GC.Collect();
+			GC.WaitForPendingFinalizers();
+
+			viewer = new DocumentViewer(); //viewerTab
+			moonPdfPanel = new MoonPdfPanel(); //background light-gray
+			docViewer = new DocViewer();
+			image = new Image();
+
+			this.docViewerStackPanel.Children.Clear();
+			this.docViewerStackPanel.Children.Add(this.docViewer);
+
+			this.viewerStackPanel.Children.Clear();
+			this.viewerStackPanel.Children.Add(this.viewer);
+
+			this.pdfViewerStackPanel.Children.Clear();
+			this.pdfViewerStackPanel.Children.Add(this.moonPdfPanel);
+
+			this.iamgeStackPanel.Children.Clear();
+			this.iamgeStackPanel.Children.Add(this.image);
+
+			if (File.Exists("view/temp"))
+			{
+				File.Delete("view/temp");
+			}
+
+			Window_SizeChanged(null, null);
+		}
+
 		/// <summary>
 		/// Обработчик события, запускается по двойному щелчку мыши по treeView. 
 		/// Запускает процесс загрузки содержимого файла с удаленного сервера
@@ -337,8 +406,12 @@ namespace contact_center_application
 			Tuple<bool, TreeViewItem> selectedItem = searchSelectedItem();
 			if (selectedItem.Item1)
 			{
+				this.Cursor = Cursors.Wait;
+
+				callGarbage();
+
 				string aliance = ComboboxFileSystem.SelectedItem.ToString();
-				string relativeWay = this.listTreeView[selectedItem.Item2];
+				string relativeWay = this.listTreeView[selectedItem.Item2].Item2;
 				string selected = ComboboxFileSystem.SelectedItem.ToString();
 				this.openFile = "tmp" + relativeWay;
 				if (Path.GetExtension(relativeWay).Equals(".link"))
@@ -349,24 +422,23 @@ namespace contact_center_application
 					int index = Int32.Parse(this.alianceAndId[ComboboxFileSystem.SelectedItem.ToString()]);
 					DownloadWindow download = new DownloadWindow(index.ToString(),
 						relativeWay);
-				try
-				{
-						UpdateLayout();
-						GC.Collect();
-						GC.WaitForPendingFinalizers();
-						download.getContentFileAndWriteToFile(this.openFile);
-				}
-					catch (Exception ex)
-				{
-					int i = 0;
-				}
-				//writeToFile(this.openFile, contentFile);
-				//Array.Clear(contentFile, 0, contentFile.Length);
-
-						LoadToViewer(this.openFile);
+					download.getContentFileAndWriteToFile(this.openFile);
+					LoadToViewer(this.openFile);
 
 				}
+				this.Cursor = Cursors.Arrow;
 			}
+		}
+		
+		/// <summary>
+		/// Метод для журналирования действий пользователя
+		/// </summary>
+		/// <param name="message">Сообщение которое будет отправлено пользователю</param>
+		public void logger(string message)
+		{
+			StreamWriter writer = File.AppendText("log/log.txt");
+			writer.Write(message + "\r\n");
+			writer.Close();
 		}
 
 		/// <summary>
@@ -376,6 +448,13 @@ namespace contact_center_application
 		/// <param name="viewWay"></param>
 		private void LoadToViewer(string way, string viewWay = "view/temp")
 		{
+			logger(new DateTime() + " Обработка файла: " + way);
+
+			if (!Directory.Exists(Path.GetDirectoryName(viewWay)))
+			{
+				Directory.CreateDirectory(Path.GetDirectoryName(viewWay));
+			}
+			File.Copy(way, viewWay, true);
 			FileInfo fi = new FileInfo(viewWay);
 			if (fi.Length > 500 * 1024 * 1024)
 			{
@@ -385,20 +464,18 @@ namespace contact_center_application
 			else
 			{
 				string extension = Path.GetExtension(way);
-				this.Cursor = Cursors.Wait;
+
 				if (extension.Equals(".txt") || extension.Equals(".csv"))
 				{
+					logger(new DateTime() + "Отображение файла будет в TextBox");
 					this.tabControl.SelectedItem = this.textboxTab;
 					displayTextbox(way);
 				}
 				else if (extension.Equals(".jpeg") || extension.Equals(".tiff") || extension.Equals(".jpg"))
 				{
+					logger(new DateTime() + "Отображение файла будет в Image");
 					string fullWay = Path.Combine(Path.GetDirectoryName(
 									Assembly.GetExecutingAssembly().Locati‌​on), way);
-
-					UpdateLayout();
-					GC.Collect();
-					GC.WaitForPendingFinalizers();
 					byte[] buffer = System.IO.File.ReadAllBytes(fullWay);//сюда подставляются image
 					MemoryStream ms = new MemoryStream(buffer);
 					BitmapImage bitmap33 = new BitmapImage();
@@ -408,12 +485,15 @@ namespace contact_center_application
 					bitmap33.Freeze();
 					image.Source = bitmap33;
 					tabControl.SelectedItem = imageTab;
+					lastLoadPicture = true;
 				}
 				else if (extension.Equals(".doc") || extension.Equals(".docx"))
 				{
 					if ((bool) this.swtichModeView.IsChecked)
 					{
+						logger(new DateTime() + "Отображение файла будет в DocumentViewer");
 						this.tabControl.SelectedItem = this.viewerTab;
+						
 						this.viewer.Document = null;
 						this.viewer.DataContext = null;
 						if (doc != null)
@@ -424,9 +504,11 @@ namespace contact_center_application
 						convertDocxDocToXps(way, viewWay);
 						this.doc = new XpsDocument(viewWay, FileAccess.Read);
 						viewer.Document = doc.GetFixedDocumentSequence();
+						doc.Close();
 					}
 					else
 					{
+						logger(new DateTime() + "Отображение файла будет в docViewer");
 						this.docViewer.CloseDocument();
 						this.docViewer.LoadFromFile(way);
 						tabControl.SelectedItem = this.docViewerTab;
@@ -434,47 +516,41 @@ namespace contact_center_application
 				}
 				else if (extension.Equals(".xlsx") || extension.Equals(".xls"))
 				{
-					if ((bool)this.swtichModeView.IsChecked)
+					logger(new DateTime() + "Отображение файла будет в viewer");
+					this.tabControl.SelectedItem = this.viewerTab;
+					this.viewer.Document = null;
+					this.viewer.DataContext = null;
+					if (doc != null)
 					{
-						this.tabControl.SelectedItem = this.viewerTab;
-						this.viewer.Document = null;
-						this.viewer.DataContext = null;
-						if (doc != null)
-						{
-							this.doc.Close();
-						}
-						this.doc = null;
+						this.doc.Close();
+					}
+					this.doc = null;
 
+					try
+					{
 						convertXlsToXps(way, viewWay);
 						this.doc = new XpsDocument(viewWay, FileAccess.Read);
 						viewer.Document = doc.GetFixedDocumentSequence();
+						this.doc.Close();
 					}
-					else
+					catch (Exception exp)
 					{
-						//this.docViewer.CloseDocument();
-						//this.docViewer.LoadFromFile(way);
-						//tabControl.SelectedItem = this.docViewerTab;
+						this.doc = null;
+						this.viewer.Document = null;
+						this.viewer.DataContext = null;
 					}
 				}
 				else if (extension.Equals(".pdf"))
 				{
+					logger(new DateTime() + "Отображение файла будет в pdfviewer");
 					this.tabControl.SelectedItem = this.pdfViewerTab;
 					byte[] bytes = File.ReadAllBytes(way);
 					var source = new MemorySource(bytes);
 
 					moonPdfPanel.Open(source);
 					moonPdfPanel.PageRowDisplay = MoonPdfLib.PageRowDisplayType.ContinuousPageRows;
-					//moonPdfPanel.OpenFile(way);
-
-
-					/*this.pdfViewer.CloseDocument();
-					tabControl.SelectedItem = this.pdfViewerTab;
-					this.pdfViewer.LoadFromFile(way);*/
-					//this.docViewer.CloseDocument();
-					//this.docViewer.LoadFromFile(way);
-					//tabControl.SelectedItem = this.docViewerTab;
 				}
-				this.Cursor = Cursors.Arrow;
+
 			}
 		}
 
@@ -489,12 +565,14 @@ namespace contact_center_application
 			textbox.Document.Blocks.Clear();
 			var sr = new StreamReader(viewWay, Encoding.UTF8);
 			string text = sr.ReadToEnd();
-
+			sr.Close();
+			sr.Dispose();
 			var document = new FlowDocument();
 			var paragraph = new Paragraph();
 			paragraph.Inlines.Add(text);
 			document.Blocks.Add(paragraph);
 			textbox.Document = document;
+
 		}
 
 		/// <summary>
@@ -594,7 +672,14 @@ namespace contact_center_application
 			{
 				System.Windows.MessageBox.Show("Не удалось выполнить преобразование документа," +
 					" скорее всего файл поврежден и нуждается в восстановлении");
+					throw new Exception();
 			}
+			catch (System.ArgumentOutOfRangeException e)
+			{
+				System.Windows.MessageBox.Show("Не удалось выполнить преобразование документа," +
+					" скорее всего файл поврежден и нуждается в восстановлении");
+					throw new Exception();
+				}
 		}
 
 		/// <summary>
@@ -606,7 +691,36 @@ namespace contact_center_application
 		/// <param name="e"></param>
 		private void Button_Click(object sender, RoutedEventArgs e)
 		{
-			Process.Start(this.openFile);
+			try
+			{
+				DateTime oldTime = File.GetLastWriteTime(this.openFile);
+				Process currProc = Process.Start(this.openFile);
+				currProc.WaitForExit();
+				currProc.Close();
+				if (!oldTime.Equals(File.GetLastWriteTime(this.openFile)))
+				{
+					if (MessageBox.Show("Отправить измененный файл на сервер?", "Файл был изменен", 
+						MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
+					{
+						int index = Int32.Parse(this.alianceAndId[
+							ComboboxFileSystem.SelectedItem.ToString()]);
+						Tuple<bool, TreeViewItem> selectedItem = searchSelectedItem();
+
+						string relativeWay = this.listTreeView[selectedItem.Item2].Item2;
+						UploadWindow download = new UploadWindow(index.ToString(), 
+							Path.GetDirectoryName(relativeWay),
+							Path.Combine(Path.GetDirectoryName(
+									Assembly.GetExecutingAssembly().Locati‌​on), 
+									this.openFile) , 
+							"1");
+						download.sendFileToServer();
+					}
+				}
+			}
+			catch (System.NullReferenceException exceptionWithOpenFile)
+			{
+
+			}
 		}
 
 		/// <summary>
@@ -653,9 +767,6 @@ namespace contact_center_application
 			docViewer.Width = viewer.Width;
 			moonPdfPanel.Height = viewer.Height;
 			moonPdfPanel.Width = viewer.Width;
-			//pdfViewer.Height = viewer.Height;
-			//pdfViewer.Width = viewer.Width;
-			//this.treeViewCatalog.Height = this.window.Height - 155;
 		}
 
 		/// <summary>
@@ -669,13 +780,11 @@ namespace contact_center_application
 		{
 			if ((bool)swtichModeView.IsChecked)
 			{
-				swtichModeView.Content = "Нагруженный интерфейс";
-				this.tabControl.SelectedItem = this.viewerTab;
+				swtichModeView.Content = "Преобразование в XPS формат";
 			}
 			else
 			{
-				swtichModeView.Content = "Простой интерфейс";
-				this.tabControl.SelectedItem = this.textboxTab;
+				swtichModeView.Content = "";
 			}
 		}
 
@@ -695,6 +804,8 @@ namespace contact_center_application
 
 		bool setVisibleOnTextForTreeView(TreeViewItem item, string text, bool mandatory = false)
 		{
+			string temp = this.listTreeView[item].Item2;
+			string nameElement = Path.GetFileName(temp);
 			if (mandatory)
 			{
 				if (item.Items.Count > 0)
@@ -702,29 +813,36 @@ namespace contact_center_application
 					foreach (TreeViewItem elem in item.Items)
 					{
 						elem.Visibility = Visibility.Visible;
-						setVisibleOnTextForTreeView(elem, text, true);
+						string temp1 = this.listTreeView[elem].Item2;
+						string nameElement1 = Path.GetFileName(temp1);
+						elem.Header = highlightText(nameElement1, text, this.listTreeView[elem].Item1);
 					}
 				}
+				item.Header = highlightText(nameElement, text, this.listTreeView[item].Item1);
 				item.Visibility = Visibility.Visible;
 				return true;
 			}
 			else
 			{
-				string temp = this.listTreeView[item];
 				if (item.Items.Count > 0)
 				{
 					if (temp.IndexOf(text) > -1)
 					{
 						item.Visibility = Visibility.Visible;
+						bool typeTreeView = listTreeView.ContainsKey(item);
+						item.Header = highlightText(nameElement, text, this.listTreeView[item].Item1);
 						foreach (TreeViewItem elem in item.Items)
 						{
+							elem.Visibility = Visibility.Visible;
+							string temp1 = this.listTreeView[elem].Item2;
+							string nameElement1 = Path.GetFileName(temp1);
+							elem.Header = highlightText(nameElement1, text, this.listTreeView[elem].Item1);
 							setVisibleOnTextForTreeView(elem, text, true);
 						}
 						return true;
 					}
 					else
 					{
-						TreeViewItem newItem = new TreeViewItem();
 						int changeVisible = 0;
 						foreach (TreeViewItem elem in item.Items)
 						{
@@ -732,6 +850,11 @@ namespace contact_center_application
 							if (res)
 							{
 								elem.Visibility = Visibility.Visible;
+
+								string temp1 = this.listTreeView[elem].Item2;
+								string nameElement1 = Path.GetFileName(temp1);
+								elem.Header = highlightText(nameElement1, text, this.listTreeView[elem].Item1);
+
 								changeVisible++;
 							}
 							else
@@ -742,6 +865,7 @@ namespace contact_center_application
 
 						if (changeVisible > 0)
 						{
+							item.Header = highlightText(nameElement, text, this.listTreeView[item].Item1);
 							item.Visibility = Visibility.Visible;
 							return true;
 						}
@@ -756,6 +880,7 @@ namespace contact_center_application
 				{
 					if (temp.IndexOf(text) > -1)
 					{
+						item.Header = highlightText(nameElement, text, this.listTreeView[item].Item1);
 						item.Visibility = Visibility.Visible;
 						return true;
 					}
@@ -787,6 +912,70 @@ namespace contact_center_application
 					"Не удалось открыть ссылку");
 				}
 			}
+		}
+
+		TextBlock highlightText(string source, string substring, bool isFile)
+		{
+			TextBlock result = new TextBlock();
+			result.Inlines.Add(UsersTreeViewItem.getImageOnNameFile(Path.GetFileName(source), isFile));
+			result.Inlines.Add("  ");
+			//result.Height = 10;
+			if (substring.Length != 0)
+			{
+				var indices = new List<int>();
+				int index = source.IndexOf(substring, 0);
+				while (index > -1)
+				{
+					indices.Add(index);
+					index = source.IndexOf(substring, index + substring.Length);
+				}
+
+				if (indices.Count > 0)
+				{
+					int lastSymbol = 0;
+					
+					string notCorrectiveName = "";
+					int currentPosition = 0;
+					int i = 0;
+
+					do
+					{
+						int position = indices[i];
+						if (position > currentPosition)
+						{
+							notCorrectiveName = source.Substring(currentPosition, position - currentPosition);
+						}
+						else
+						{
+							notCorrectiveName = "";
+						}
+
+						TextBlock correctiveName = new TextBlock();
+						correctiveName.Inlines.Add(source.Substring(position, substring.Length));
+						correctiveName.Foreground = Brushes.Blue;
+						correctiveName.TextDecorations = TextDecorations.Underline;
+
+						result.Inlines.Add(notCorrectiveName);
+						result.Inlines.Add(correctiveName);
+
+						currentPosition = position + substring.Length;
+						i++;
+					} while (i < indices.Count);
+					if (currentPosition < source.Length)
+					{
+						result.Inlines.Add(source.Substring(currentPosition, source.Length - currentPosition));
+					}
+				}
+				else
+				{
+					result.Inlines.Add(source);
+				}
+			}
+			else
+			{
+				result.Inlines.Add(source);
+			}
+			return result;
 		}
 	}
 }

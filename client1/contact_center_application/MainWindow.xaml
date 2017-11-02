@@ -35,6 +35,7 @@
 		<StackPanel Grid.Row="2" Orientation="Horizontal">
 			<TextBlock x:Name="UpdateCatalogs" Margin="5" TextWrapping="Wrap" TextAlignment="Center" VerticalAlignment="Bottom">Меню просмотра каталогов</TextBlock>
 			<Button x:Name="ButtonUpdateCatalogs" VerticalAlignment="Bottom"  Width="60" Height="20" Content="Обновить" Click="ButtonUpdateCatalogs_Click"/>
+			<CheckBox IsChecked="False" x:Name="swtichModeView"  Click="CheckBox_Click" Content="" Margin="0,0,10,0" UseLayoutRounding="True" HorizontalAlignment="Left" VerticalAlignment="Bottom" Style="{DynamicResource CheckBoxSwitcher}"/>
 		</StackPanel>
 
 
@@ -49,38 +50,40 @@
 			</DockPanel>
 			<StackPanel x:Name="stackPanelView" DockPanel.Dock="Right" Orientation="Vertical">
 				<StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Width="550">
-					<CheckBox IsChecked="False" x:Name="swtichModeView"  Click="CheckBox_Click" Content="Простой интерфейс" Margin="0,0,10,0" UseLayoutRounding="True" HorizontalAlignment="Left" VerticalAlignment="Bottom" Style="{DynamicResource CheckBoxSwitcher}"/>
 					<Button Content="Открыть во внешнем приложении" Height="20" Margin="0,0,5,0" VerticalAlignment="Top" Click="Button_Click" Width="208" />
 					<Button x:Name="swtichInterface" Content="Сохранить изменения" Height="20" Margin="0,0,5,0" VerticalAlignment="Top" Width="141"/>
 				</StackPanel>
-				
+
 				<TabControl x:Name="tabControl">
 					<TabItem x:Name="viewerTab" Visibility="Collapsed">
-						<DocumentViewer Margin="5" x:Name="viewer"/>
+						<StackPanel x:Name="viewerStackPanel"></StackPanel>
 					</TabItem>
 
 					<TabItem x:Name="textboxTab" Visibility="Collapsed">
-						<RichTextBox IsReadOnly="True" x:Name="textbox" Height="200" AcceptsReturn="True" VerticalScrollBarVisibility="Auto"/>
+						<RichTextBox 
+							IsReadOnly="True" 
+							x:Name="textbox" 
+							Height="200" 
+							AcceptsReturn="True"
+							VerticalScrollBarVisibility="Auto"/>
 					</TabItem>
 
 					<TabItem x:Name="docViewerTab" Visibility="Collapsed">
-						<my:DocViewer Height="Auto" 
-									  HorizontalAlignment="Stretch" 
-									  Margin="0,0,0,0" 
-									  VerticalAlignment="Stretch" 
-									  Width="Auto"
-									  x:Name="docViewer"/>
+						<StackPanel  x:Name="docViewerStackPanel"></StackPanel>
 					</TabItem>
 
-					<TabItem x:Name="pdfViewerTab" Visibility="Collapsed">
-						<mpp:MoonPdfPanel x:Name="moonPdfPanel" 
-							Background="LightGray"/>
+					<TabItem  x:Name="pdfViewerTab" Visibility="Collapsed">
+						<StackPanel x:Name="pdfViewerStackPanel"></StackPanel>
 					</TabItem>
-					
+
 					<TabItem x:Name="imageTab" Visibility="Collapsed">
-						<ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-							<Image x:Name="image"/>
-						</ScrollViewer>
+						<StackPanel x:Name="iamgeStackPanel">
+							<ScrollViewer 
+							HorizontalScrollBarVisibility="Auto" 
+							VerticalScrollBarVisibility="Auto">
+
+							</ScrollViewer>
+						</StackPanel>
 					</TabItem>
 				</TabControl>
 
