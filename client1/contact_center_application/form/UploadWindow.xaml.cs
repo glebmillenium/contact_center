@@ -84,7 +84,7 @@ namespace contact_center_application.form
 
 					sendMessageGetContentFile(resultJson, expectedSizeFile, pathToFileIncludeNameFile);
 					closeSocket();
-					Thread.Sleep(1500);
+
 					this.Close();
 				}
 				else
@@ -184,9 +184,8 @@ namespace contact_center_application.form
 						streamFileRead.Dispose();
 					}
 				}
-				Thread.Sleep(2500);
+
 				setData(99, "Загрузка файла на сервер прошла успешно!");
-				Thread.Sleep(1800);
 			}
 		}
 

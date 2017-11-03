@@ -9,9 +9,8 @@ import java.net.Socket;
 import java.util.Arrays;
 
 /**
- * ReceiveData
- * Класс, осуществляющий отправку/прием большого объема данных
- * 
+ * ReceiveData Класс, осуществляющий отправку/прием большого объема данных
+ *
  * @author admin
  */
 public class ReceiveData extends Thread {
@@ -39,7 +38,7 @@ public class ReceiveData extends Thread {
         }
         numberConnect = query;
     }
-    
+
     @Override
     public void run()
     {
@@ -49,7 +48,7 @@ public class ReceiveData extends Thread {
             {
                 if (!socket.isClosed())
                 {
-                    Logging.log("Запущен процесс приема данных от клиента: "
+                    Logging.log("Запущен процесс отправки данных клиенту: "
                             + socket.getInetAddress() + " Номер сеанса: " + numberConnect, 2);
                     OutputStream outputStream;
                     outputStream = socket.getOutputStream();

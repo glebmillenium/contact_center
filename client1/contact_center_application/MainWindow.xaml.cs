@@ -70,7 +70,13 @@ namespace contact_center_application
 				Directory.CreateDirectory("tmp");
 			}
 			InitializeComponent();
+			System.Windows.Controls.ContextMenu docMenu = new System.Windows.Controls.ContextMenu();
+			System.Windows.Controls.MenuItem createDir = new System.Windows.Controls.MenuItem();
+			createDir.Header = "Создать новую категорию";
+			createDir.Click += CreateCategory_Click;
+			docMenu.Items.Add(createDir);
 
+			this.treeViewCatalog.ContextMenu = docMenu;
 			//callGarbage();
 			SynchronizationContext uiContext = SynchronizationContext.Current;
 			Thread thread = new Thread(Run);
@@ -200,7 +206,7 @@ namespace contact_center_application
 
 					System.Windows.Controls.MenuItem createDir = new System.Windows.Controls.MenuItem();
 					createDir.Header = "Создать новую папку в " + element.name;
-					createDir.Click += CreateDir_Click; ;
+					createDir.Click += CreateDir_Click;
 					docMenu.Items.Add(createDir);
 
 					System.Windows.Controls.MenuItem delete = new System.Windows.Controls.MenuItem();
@@ -252,8 +258,24 @@ namespace contact_center_application
 				string nameDirectory = dialog.getNameFile();
 				string index = this.alianceAndId[ComboboxFileSystem.SelectedItem.ToString()];
 				Tuple<bool, TreeViewItem> selectedItem = searchSelectedItem();
-				string relativeWay = this.listTreeView[selectedItem.Item2].Item2;
+				string relativeWay = "";
+				if (selectedItem.Item1)
+				{
+					relativeWay = this.listTreeView[selectedItem.Item2].Item2;
+				}
 				RequestDataFromServer.sendToCreateCatalogFileSystem(index, relativeWay, nameDirectory);
+			}
+		}
+
+		private void CreateCategory_Click(object sender, RoutedEventArgs e)
+		{
+			RenameUnitFileSystem dialog = new RenameUnitFileSystem(true);
+			dialog.ShowDialog();
+			if ((bool)dialog.DialogResult)
+			{
+				string nameDirectory = dialog.getNameFile();
+				string index = this.alianceAndId[ComboboxFileSystem.SelectedItem.ToString()];
+				RequestDataFromServer.sendToCreateCatalogFileSystem(index, "", nameDirectory);
 			}
 		}
 
@@ -423,7 +445,21 @@ namespace contact_center_application
 					DownloadWindow download = new DownloadWindow(index.ToString(),
 						relativeWay);
 					download.getContentFileAndWriteToFile(this.openFile);
-					LoadToViewer(this.openFile);
+					try
+					{
+						LoadToViewer(this.openFile);
+					}
+					catch (OutOfMemoryException exceptionMemory)
+					{
+						MessageBox.Show("Системных ресурсов вашей операционной системы оказалось " +
+							"недостаточно для отображения содрежимого файла(" + Path.GetFileName(this.openFile) +
+							") в данном приложении. " +
+							"Попытайтесь открыть файл во внешнем приложении", "Нехватка системных ресурсов");
+					}
+					catch (Exception exp)
+					{
+						MessageBox.Show("Неизвестная ошибка", "UNKNOWN");
+					}
 
 				}
 				this.Cursor = Cursors.Arrow;
@@ -952,8 +988,9 @@ namespace contact_center_application
 
 						TextBlock correctiveName = new TextBlock();
 						correctiveName.Inlines.Add(source.Substring(position, substring.Length));
-						correctiveName.Foreground = Brushes.Blue;
-						correctiveName.TextDecorations = TextDecorations.Underline;
+						correctiveName.Foreground = Brushes.BlueViolet;
+						correctiveName.Background = Brushes.BurlyWood;
+						
 
 						result.Inlines.Add(notCorrectiveName);
 						result.Inlines.Add(correctiveName);

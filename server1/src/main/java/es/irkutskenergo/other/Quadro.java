@@ -28,7 +28,7 @@ public class Quadro<Param1, Param2, Param3, Param4> {
     @Override
     public String toString()
     {
-        return "(" + param1 + ", " + param2 + ", " + param3 + ", " + param4 +")";
+        return "(" + param1 + ", " + param2 + ", " + param3 + ", " + param4 + ")";
     }
 
     @Override
@@ -46,7 +46,7 @@ public class Quadro<Param1, Param2, Param3, Param4> {
 
         Quadro<Param1, Param2, Param3, Param4> other_ = (Quadro<Param1, Param2, Param3, Param4>) other;
 
-        return other_.param1.equals(this.param1) 
+        return other_.param1.equals(this.param1)
                 && other_.param2.equals(this.param2)
                 && other_.param3.equals(this.param3)
                 && other_.param4.equals(this.param4);

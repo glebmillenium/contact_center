@@ -97,13 +97,12 @@ public class SenderSmallData extends Thread {
         this.mapper = new ObjectMapper();
         this.aliance = new HashMap<String, Tuple<String, String>>();
         this.aliance = getRootAliance();
-        
+
         /*
         aliance.put("0", new Tuple<String, String>("Инструкции по АСРН",
                 "C:\\Users\\admin\\Desktop\\Инструкции"));
         aliance.put("1", new Tuple<String, String>("Обычный каталог для тестирования",
                 "C:\\Users\\admin\\Desktop\\cat"));*/
-
         query++;
         if (query >= 65536)
         {
@@ -170,13 +169,13 @@ public class SenderSmallData extends Thread {
                 ObjectForSerialization.class);
     }
 
-     /**
-      * getResponseWhenError
-      * Метод генерирующий JSON ответ клиенту при возникновении ошибки 
-      *                 (Не поддерживается!)
-      * @return
-      * @throws IOException 
-      */
+    /**
+     * getResponseWhenError Метод генерирующий JSON ответ клиенту при
+     * возникновении ошибки (Не поддерживается!)
+     *
+     * @return
+     * @throws IOException
+     */
     private String getResponseWhenError() throws IOException
     {
         String result;
@@ -239,33 +238,29 @@ public class SenderSmallData extends Thread {
                         + this.channel.toString() + ") Номер запроса: "
                         + this.numberConnect, 1);
                 result = getContentFile(obj);
-            }
-            else if (obj.command.equals("try_remove"))
+            } else if (obj.command.equals("try_remove"))
             {
                 Logging.log("Обработка запроса на удаление файла из файловой "
-                        + "системы " + this.channel.toString() + 
-                        ") Номер запроса: " + this.numberConnect, 1);
+                        + "системы " + this.channel.toString()
+                        + ") Номер запроса: " + this.numberConnect, 1);
                 result = tryRemoveFile(obj);
-            }
-            else if (obj.command.equals("try_create_dir"))
+            } else if (obj.command.equals("try_create_dir"))
             {
                 Logging.log("Обработка запроса на создание каталога в системе "
-                        + "файловой системы" + this.channel.toString() + 
-                        ") Номер запроса: " + this.numberConnect, 1);
+                        + "файловой системы" + this.channel.toString()
+                        + ") Номер запроса: " + this.numberConnect, 1);
                 result = tryCreateDir(obj);
-            }
-            else if (obj.command.equals("try_rename"))
+            } else if (obj.command.equals("try_rename"))
             {
                 Logging.log("Обработка запроса на переименование ресурса "
-                        + "файловой системы" + this.channel.toString() + 
-                        ") Номер запроса: " + this.numberConnect, 1);
+                        + "файловой системы" + this.channel.toString()
+                        + ") Номер запроса: " + this.numberConnect, 1);
                 result = tryRenameFile(obj);
-            }
-            else if (obj.command.equals("try_upload"))
+            } else if (obj.command.equals("try_upload"))
             {
                 Logging.log("Обработка запроса на загрузку нового файла в "
-                        + "файловую систему " + this.channel.toString() + 
-                        ") Номер запроса: " + this.numberConnect, 1);
+                        + "файловую систему " + this.channel.toString()
+                        + ") Номер запроса: " + this.numberConnect, 1);
                 result = setupToUpload(obj);
             }
             Logging.log("Запрос успешно выполнен, отправление данных: "
@@ -281,13 +276,12 @@ public class SenderSmallData extends Thread {
     }
 
     /**
-     * getAliance
-     * Запускает процесс получения сведений о файловых системах
-     * 
+     * getAliance Запускает процесс получения сведений о файловых системах
+     *
      * @param obj Объект, не несет информативной нагрузки (AUTHORIZATION TODO!)
      * @return String засериализованная строка, которая хранит информацию о
      * файловых системах
-     * @throws IOException 
+     * @throws IOException
      */
     private String getAliance(ObjectForSerialization obj) throws IOException
     {
@@ -310,19 +304,20 @@ public class SenderSmallData extends Thread {
         String expectedSize = Integer.toString(resultInFtp.length);
         return this.mapper.writeValueAsString(
                 new ObjectForSerialization("aliance",
-                        expectedSize, sendToStorageInFtpServer(false, 
-                                obj.command, resultInFtp, new byte[]{ })));
+                        expectedSize, sendToStorageInFtpServer(false,
+                                obj.command, resultInFtp, new byte[]
+                                {
+                })));
     }
 
     /**
-     * getCatalog
-     * Метод, запускающий процесс получения всех каталогов в интересующей 
-     * файловой системе
-     * 
-     * @param  obj         Объект хранящий информацию о файловой системе
-     * @return String      Информация о содержимом каталога в засериализованном 
-     * JSON виде
-     * @throws IOException 
+     * getCatalog Метод, запускающий процесс получения всех каталогов в
+     * интересующей файловой системе
+     *
+     * @param obj Объект хранящий информацию о файловой системе
+     * @return String Информация о содержимом каталога в засериализованном JSON
+     * виде
+     * @throws IOException
      */
     private String getCatalog(ObjectForSerialization obj)
             throws IOException
@@ -335,8 +330,10 @@ public class SenderSmallData extends Thread {
                 resultInFtp.length);
         String result = this.mapper.writeValueAsString(
                 new ObjectForSerialization("catalog",
-                        expectedSize, sendToStorageInFtpServer(false, 
-                                obj.command, resultInFtp, new byte[] { })));
+                        expectedSize, sendToStorageInFtpServer(false,
+                                obj.command, resultInFtp, new byte[]
+                                {
+                })));
         return result;
     }
 
@@ -400,8 +397,10 @@ public class SenderSmallData extends Thread {
         String expectedSize = Integer.toString(resultInFtp.length);
         return this.mapper.writeValueAsString(
                 new ObjectForSerialization("content_file",
-                        expectedSize, sendToStorageInFtpServer(false, 
-                                obj.command, resultInFtp, new byte[] { })));
+                        expectedSize, sendToStorageInFtpServer(false,
+                                obj.command, resultInFtp, new byte[]
+                                {
+                })));
     }
 
     /**
@@ -469,29 +468,29 @@ public class SenderSmallData extends Thread {
      * @param typeQuery Тип заявки
      * @return String Идентификатор заявки
      */
-    private static String sendToStorageInFtpServer(boolean typeQuery, 
+    private static String sendToStorageInFtpServer(boolean typeQuery,
             String nameCommand, byte[] information, byte[] additionalInformation)
     {
-        int result = Storage.add(typeQuery, nameCommand, information, 
+        int result = Storage.add(typeQuery, nameCommand, information,
                 additionalInformation);
         return String.valueOf(result);
     }
-    
+
     /**
      * Создание заявки в FTP-сервере на прием данных
-     * 
+     *
      * @param ObjectForSerialization
      * @return String
-     * @throws IOException 
+     * @throws IOException
      */
     private String setupToUpload(ObjectForSerialization obj) throws IOException
     {
-        String strPathToFile = this.aliance.get(obj.param2).param2 + 
-                (new String(obj.param4_array, "UTF-8")) + "\\" + 
-                (new String(obj.param5_array, "UTF-8"));
+        String strPathToFile = this.aliance.get(obj.param2).param2
+                + (new String(obj.param4_array, "UTF-8")) + "\\"
+                + (new String(obj.param5_array, "UTF-8"));
         byte[] bytePathToFile = strPathToFile.getBytes("UTF-8");
-        String query = sendToStorageInFtpServer(true, obj.command, 
-                                bytePathToFile, obj.param1.getBytes("UTF-8"));
+        String query = sendToStorageInFtpServer(true, obj.command,
+                bytePathToFile, obj.param1.getBytes("UTF-8"));
         return this.mapper.writeValueAsString(
                 new ObjectForSerialization("upload",
                         query, "1"));
@@ -499,9 +498,10 @@ public class SenderSmallData extends Thread {
 
     /**
      * Переименовывает файл в указанной подсистеме
+     *
      * @param obj
      * @return
-     * @throws IOException 
+     * @throws IOException
      */
     private String tryRenameFile(ObjectForSerialization obj) throws IOException
     {
@@ -514,19 +514,19 @@ public class SenderSmallData extends Thread {
             String relativeWay = ftpPath + relativeOldPath;
             Path source = Paths.get(relativeWay);
             Logging.log("Переименовывание ресурса по пути: " + relativeWay
-                + " Канал " + this.channel.toString() + ") Номер запроса: "
-                + this.numberConnect, 1);
+                    + " Канал " + this.channel.toString() + ") Номер запроса: "
+                    + this.numberConnect, 1);
             Files.move(source, source.resolveSibling(newName));
             result = this.mapper.writeValueAsString(
-                new ObjectForSerialization("rename", "1"));
+                    new ObjectForSerialization("rename", "1"));
         } catch (UnsupportedEncodingException ex)
         {
             result = this.mapper.writeValueAsString(
-                new ObjectForSerialization("error", "0"));
+                    new ObjectForSerialization("error", "0"));
         }
         return result;
     }
-    
+
     private String tryCreateDir(ObjectForSerialization obj) throws IOException
     {
         String result = "";
@@ -536,33 +536,35 @@ public class SenderSmallData extends Thread {
             String relativePath = (new String(obj.param4_array, "UTF-8")) + "\\"
                     + (new String(obj.param5_array, "UTF-8"));
             String relativeWay = ftpPath + relativePath;
-            
+
             File folder = new File(relativeWay);
-            if (!folder.exists()) {
+            if (!folder.exists())
+            {
                 folder.mkdir();
                 Logging.log("Создание каталога по пути: " + relativeWay
-                + " Канал " + this.channel.toString() + ") Номер запроса: "
-                + this.numberConnect, 1);
-            result = this.mapper.writeValueAsString(
-                new ObjectForSerialization("create_dir", "1"));
-            } else {
+                        + " Канал " + this.channel.toString() + ") Номер запроса: "
+                        + this.numberConnect, 1);
                 result = this.mapper.writeValueAsString(
-                new ObjectForSerialization("create_dir", "0"));
+                        new ObjectForSerialization("create_dir", "1"));
+            } else
+            {
+                result = this.mapper.writeValueAsString(
+                        new ObjectForSerialization("create_dir", "0"));
             }
         } catch (UnsupportedEncodingException ex)
         {
             result = this.mapper.writeValueAsString(
-                new ObjectForSerialization("error", "0"));
+                    new ObjectForSerialization("error", "0"));
         }
         return result;
     }
-    
+
     /**
      * Удаляет файл из указанной подсистемы
-     * 
+     *
      * @param obj
      * @return
-     * @throws IOException 
+     * @throws IOException
      */
     private String tryRemoveFile(ObjectForSerialization obj) throws IOException
     {
@@ -575,30 +577,30 @@ public class SenderSmallData extends Thread {
             Path source = Paths.get(relativeWay);
             Files.delete(source);
             Logging.log("Удаление ресурса по пути: " + relativeWay
-                + " Канал " + this.channel.toString() + ") Номер запроса: "
-                + this.numberConnect, 1);
+                    + " Канал " + this.channel.toString() + ") Номер запроса: "
+                    + this.numberConnect, 1);
             result = this.mapper.writeValueAsString(
-                new ObjectForSerialization("remove", "1"));
+                    new ObjectForSerialization("remove", "1"));
         } catch (UnsupportedEncodingException ex)
         {
             result = this.mapper.writeValueAsString(
-                new ObjectForSerialization("error", "0"));
+                    new ObjectForSerialization("error", "0"));
         }
         return result;
     }
 
     private Map<String, Tuple<String, String>> getRootAliance()
     {
-        Map<String, Tuple<String, String>> result = new HashMap<String, 
-                Tuple<String, String>>();
+        Map<String, Tuple<String, String>> result = new HashMap<String, Tuple<String, String>>();
         BufferedReader reader = null;
         try
         {
             reader = new BufferedReader(new FileReader("list_connect"));
             String line;
-            while ((line = reader.readLine()) != null) {
+            while ((line = reader.readLine()) != null)
+            {
                 String[] temp = line.split(";");
-                if(temp.length != 3)
+                if (temp.length != 3)
                 {
                     throw new FileNotFoundException();
                 }

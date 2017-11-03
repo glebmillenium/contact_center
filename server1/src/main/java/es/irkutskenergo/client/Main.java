@@ -30,7 +30,7 @@ public class Main {
                     + "\r\nПорт файлового обмена - " + portFtp + "\r\n", 0);
         } catch (Exception ex)
         {
-            System.out.println("Сервер не удалось запустить");
+            System.out.println("Сервер не удалось запустить " + ex.getMessage());
         }
     }
 }

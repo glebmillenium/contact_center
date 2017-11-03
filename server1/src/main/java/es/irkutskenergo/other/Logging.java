@@ -14,8 +14,8 @@ import java.util.logging.Logger;
  */
 public class Logging {
 
-    public static boolean writeToConsole = false; 
-    
+    public static boolean writeToConsole = false;
+
     /**
      * log Метод для журналирования действий в системе
      *
@@ -28,7 +28,7 @@ public class Logging {
      */
     public static boolean log(String message, int typeMessage)
     {
-        
+
         FileWriter writer;
         Date date = new Date();
         try
@@ -85,7 +85,7 @@ public class Logging {
                             + typeMessage + "\nСообщение: " + message);
                     return false;
             }
-            if(writeToConsole)
+            if (writeToConsole)
             {
                 System.out.println(output);
             }
@@ -116,6 +116,7 @@ public class Logging {
         }
         return true;
     }
+
     public static void clear()
     {
         FileWriter writer = null;

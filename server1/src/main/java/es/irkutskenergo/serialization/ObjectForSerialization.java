@@ -79,8 +79,8 @@ public class ObjectForSerialization {
         this.param4_array = byteArray;
         this.param5_array = null;
     }
-    
-        public ObjectForSerialization(String command, String param1, String param2,
+
+    public ObjectForSerialization(String command, String param1, String param2,
             String param3, byte[] byteArray, byte[] byteArray2)
     {
         this.command = command;

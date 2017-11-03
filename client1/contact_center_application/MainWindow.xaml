@@ -32,11 +32,17 @@
 			</Button>
 		</StackPanel>
 
-		<StackPanel Grid.Row="2" Orientation="Horizontal">
-			<TextBlock x:Name="UpdateCatalogs" Margin="5" TextWrapping="Wrap" TextAlignment="Center" VerticalAlignment="Bottom">Меню просмотра каталогов</TextBlock>
-			<Button x:Name="ButtonUpdateCatalogs" VerticalAlignment="Bottom"  Width="60" Height="20" Content="Обновить" Click="ButtonUpdateCatalogs_Click"/>
-			<CheckBox IsChecked="False" x:Name="swtichModeView"  Click="CheckBox_Click" Content="" Margin="0,0,10,0" UseLayoutRounding="True" HorizontalAlignment="Left" VerticalAlignment="Bottom" Style="{DynamicResource CheckBoxSwitcher}"/>
-		</StackPanel>
+		<DockPanel Grid.Row="2">
+			<StackPanel DockPanel.Dock="Left" Orientation="Horizontal">
+				<TextBlock x:Name="UpdateCatalogs" Margin="5" TextWrapping="Wrap" TextAlignment="Center" VerticalAlignment="Bottom">Меню просмотра каталогов</TextBlock>
+				<Button x:Name="ButtonUpdateCatalogs" VerticalAlignment="Bottom"  Width="60" Height="20" Content="Обновить" Click="ButtonUpdateCatalogs_Click"/>
+			</StackPanel>
+			<CheckBox DockPanel.Dock="Right"
+						  IsChecked="False" x:Name="swtichModeView"  
+						  Click="CheckBox_Click" Margin="0,0,10,0" 
+						  UseLayoutRounding="True" HorizontalAlignment="Right" 
+						  VerticalAlignment="Bottom" Style="{DynamicResource CheckBoxSwitcher}"/>
+		</DockPanel>
 
 
 		<DockPanel Grid.Row="3">

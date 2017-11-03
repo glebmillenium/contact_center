@@ -152,9 +152,8 @@ namespace contact_center_application
 					//Array.ConstrainedCopy(sourceArray, 0, answer,
 					//		getBytes, sourceArray.Length);
 				}
-				Thread.Sleep(2500);
 				setData(99, "Загрузка файла из удаленного файлового ресурса прошла успешно!");
-				Thread.Sleep(1800);
+
 			}
 		}
 
@@ -233,7 +232,6 @@ namespace contact_center_application
 
 			sendMessageGetContentFile(resultJson, expectedSize, relativeWay);
 			closeSocket();
-			Thread.Sleep(1500);
 			this.Close();
 		}
 	}

@@ -52,9 +52,12 @@ public class SenderData extends Thread {
                     outputStream = socket.getOutputStream();
                     InputStream inputStream;
                     inputStream = socket.getInputStream();
-                    
-                    byte[] mess = new byte[]{49};
-                    
+
+                    byte[] mess = new byte[]
+                    {
+                        49
+                    };
+
                     byte[] shortAnswer = new byte[fixedSize];
                     FileOutputStream fos = new FileOutputStream(this.pathToFile);
                     outputStream.write(mess, 0, mess.length);
@@ -63,7 +66,7 @@ public class SenderData extends Thread {
                         if (expectedSize < fixedSize)
                         {
                             Logging.log("Цельный прием данных от клиента: "
-                            + socket.getInetAddress() + " Номер сеанса: " + numberConnect, 2);
+                                    + socket.getInetAddress() + " Номер сеанса: " + numberConnect, 2);
                             shortAnswer = new byte[expectedSize];
                             inputStream.read(shortAnswer);
                             fos.write(shortAnswer);
@@ -72,28 +75,28 @@ public class SenderData extends Thread {
                         {
                             int sendCapacity = fixedSize;
                             Logging.log("Кусочный прием данных от клиента: "
-                            + socket.getInetAddress() + " Номер сеанса: " + numberConnect, 2);
+                                    + socket.getInetAddress() + " Номер сеанса: " + numberConnect, 2);
                             while (sendCapacity < expectedSize)
                             {
-                                
+
                                 int result = inputStream.read(shortAnswer);
                                 fos.write(shortAnswer);
                                 sendCapacity += fixedSize;
                                 outputStream.write(mess, 0, mess.length);
                                 outputStream.flush();
                                 Logging.log("Получено " + (sendCapacity - fixedSize)
-                                        + " байт: " + socket.getInetAddress() + 
-                                        " Номер сеанса: " + numberConnect, 2);
+                                        + " байт: " + socket.getInetAddress()
+                                        + " Номер сеанса: " + numberConnect, 2);
                             }
                             sendCapacity = expectedSize - (sendCapacity - fixedSize);
                             shortAnswer = new byte[sendCapacity];
                             inputStream.read(shortAnswer);
                             fos.write(shortAnswer);
                             outputStream.write(mess, 0, mess.length);
-                            
+
                             fos.close();
                             Logging.log("Получена последняя пачка данных от клиента: "
-                            + socket.getInetAddress() + " Номер сеанса: " + numberConnect, 2);
+                                    + socket.getInetAddress() + " Номер сеанса: " + numberConnect, 2);
                         }
                         Logging.log("Получение данных от клиента: "
                                 + socket.getInetAddress()

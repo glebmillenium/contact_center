@@ -47,7 +47,7 @@ public class Triple<Param1, Param2, Param3> {
 
         Triple<Param1, Param2, Param3> other_ = (Triple<Param1, Param2, Param3>) other;
 
-        return other_.param1.equals(this.param1) 
+        return other_.param1.equals(this.param1)
                 && other_.param2.equals(this.param2)
                 && other_.param3.equals(this.param3);
     }
