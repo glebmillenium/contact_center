@@ -71,6 +71,13 @@ namespace contact_center_application
 				Directory.CreateDirectory("tmp");
 			}
 			InitializeComponent();
+
+			//  DispatcherTimer setup
+			System.Windows.Threading.DispatcherTimer dispatcherTimer = new System.Windows.Threading.DispatcherTimer();
+			dispatcherTimer.Tick += new EventHandler(dispatcherTimer_Tick);
+			dispatcherTimer.Interval = new TimeSpan(0, 0, 2);
+			dispatcherTimer.Start();
+
 			System.Windows.Controls.ContextMenu docMenu = new System.Windows.Controls.ContextMenu();
 			System.Windows.Controls.MenuItem createDir = new System.Windows.Controls.MenuItem();
 			createDir.Header = "Создать новую категорию";
@@ -82,6 +89,11 @@ namespace contact_center_application
 			SynchronizationContext uiContext = SynchronizationContext.Current;
 			Thread thread = new Thread(Run);
 			thread.Start(uiContext);
+		}
+
+		private void dispatcherTimer_Tick(object sender, EventArgs e)
+		{
+			ButtonUpdateCatalogs_Click(null, null);
 		}
 
 		/// <summary>
