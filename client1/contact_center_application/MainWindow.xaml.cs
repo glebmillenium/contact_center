@@ -18,7 +18,6 @@ using System.Windows.Media.Imaging;
 using System.Reflection;
 using System.Windows.Input;
 using MoonPdfLib.MuPdf;
-using System.Runtime.InteropServices;
 using Spire.DocViewer.Wpf;
 using MoonPdfLib;
 using System.Windows.Media;
@@ -43,10 +42,13 @@ namespace contact_center_application
 		/// listTreeView - словарь (хэш-таблица), хранит относительный путь в 
 		///				файловой системе, включая имя самого объекта, и значения всех TreeView
 		/// 
-		/// @param Dictionary<TreeView, string>
+		/// @param Dictionary<TreeView, Tuple<bool, string, bool>> - графический элемент; 
+		///						тип объекта, который отображает элемент - файл - true, или каталог - false;
+		///						string - относительный путь файла в системе;
+		///						bool - флаг обновления 
 		/// </summary>
-		private Dictionary<TreeViewItem, Tuple<bool, string>> listTreeView =
-											new Dictionary<TreeViewItem, Tuple<bool, string>>();
+		private Dictionary<TreeViewItem, Tuple<bool, string, bool>> listTreeView =
+											new Dictionary<TreeViewItem, Tuple<bool, string, bool>>();
 
 		/// <summary>
 		/// alianceAndId - словарь (хэш-таблица), хранит название файловой системы и его 
@@ -59,6 +61,7 @@ namespace contact_center_application
 		private Image image = new Image();
 		XpsDocument doc;
 		private bool updateCatalog = false;
+		string currentView = "view/temp1";
 
 		/// <summary>
 		/// Конструктор, осуществляет чистку папки временных файлов
@@ -71,7 +74,8 @@ namespace contact_center_application
 				Directory.CreateDirectory("tmp");
 			}
 			InitializeComponent();
-
+			progressConvertation.Visibility = Visibility.Hidden;
+			managerPanel.Visibility = Visibility.Collapsed;
 			//  DispatcherTimer setup
 			System.Windows.Threading.DispatcherTimer dispatcherTimer = new System.Windows.Threading.DispatcherTimer();
 			dispatcherTimer.Tick += new EventHandler(dispatcherTimer_Tick);
@@ -91,6 +95,11 @@ namespace contact_center_application
 			thread.Start(uiContext);
 		}
 
+		/// <summary>
+		/// Задается обновление текущей каталоговой системы
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void dispatcherTimer_Tick(object sender, EventArgs e)
 		{
 			ButtonUpdateCatalogs_Click(null, null);
@@ -117,9 +126,6 @@ namespace contact_center_application
 			fullingTreeView(answer);
 			buttonRefresh.Visibility = Visibility.Hidden;
 		}
-
-
-
 
 		/// <summary>
 		/// Метод запускается при включении приложения
@@ -185,46 +191,62 @@ namespace contact_center_application
 
 		private TreeViewItem getTreeViewItemForFile(CatalogForSerialization element, string currentWay)
 		{
-			TreeViewItem item = UsersTreeViewItem.getTreeViewItem(element.name, true);
-			System.Windows.Controls.ContextMenu docMenu = new System.Windows.Controls.ContextMenu();
-			item.MouseDoubleClick += this.selectFile;
-			this.listTreeView.Add(item, new Tuple<bool, string>(element.file,
-				currentWay + "\\" + element.name));
+			TreeViewItem item = getSearchItemOnCurrentWay(currentWay + "\\" + element.name);
+			if (item == null)
+			{
+				item = UsersTreeViewItem.getTreeViewItem(element.name, true);
+				System.Windows.Controls.ContextMenu docMenu = new System.Windows.Controls.ContextMenu();
+				item.MouseDoubleClick += this.selectFile;
+				this.listTreeView.Add(item, new Tuple<bool, string, bool>(element.file,
+					currentWay + "\\" + element.name, true));
 
-			System.Windows.Controls.MenuItem open = new System.Windows.Controls.MenuItem();
-			open.Click += Open_Click; ;
-			open.Header = "Открыть файл";
-			docMenu.Items.Add(open);
+				System.Windows.Controls.MenuItem open = new System.Windows.Controls.MenuItem();
+				open.Click += Open_Click; ;
+				open.Header = "Открыть файл";
+				docMenu.Items.Add(open);
 
-			System.Windows.Controls.MenuItem delete = new System.Windows.Controls.MenuItem();
-			delete.Header = "Удалить файл";
-			delete.Click += Delete_Click;
-			docMenu.Items.Add(delete);
+				System.Windows.Controls.MenuItem delete = new System.Windows.Controls.MenuItem();
+				delete.Header = "Удалить файл";
+				delete.Click += Delete_Click;
+				docMenu.Items.Add(delete);
 
-			System.Windows.Controls.MenuItem rename = new System.Windows.Controls.MenuItem();
-			rename.Header = "Переименовать";
-			rename.Click += Rename_Click;
-			docMenu.Items.Add(rename);
-			item.ContextMenuOpening += Item_ContextMenuOpening;
-			item.ContextMenu = docMenu;
+				System.Windows.Controls.MenuItem rename = new System.Windows.Controls.MenuItem();
+				rename.Header = "Переименовать";
+				rename.Click += Rename_Click;
+				docMenu.Items.Add(rename);
+				item.ContextMenuOpening += Item_ContextMenuOpening;
+				item.ContextMenu = docMenu;
+			}
+			else
+			{
+				listTreeView[item] = new Tuple<bool, string, bool>
+				(element.file, currentWay + "\\" + element.name, true);
+			}
 
 			return item;
 		}
 
 
-
+		/// <summary>
+		/// Получение 
+		/// </summary>
+		/// <param name="element"></param>
+		/// <param name="currentWay"></param>
+		/// <returns></returns>
 		private TreeViewItem getTreeViewItemForCatalog(CatalogForSerialization element, string currentWay)
 		{
 			TreeViewItem item = getSearchItemOnCurrentWay(currentWay + "\\" + element.name);
 			if (item != null)
 			{
 				item.Items.Clear();
+				listTreeView[item] = new Tuple<bool, string, bool>
+				(element.file, currentWay + "\\" + element.name, true);
 			}
 			else
 			{
 				item = UsersTreeViewItem.getTreeViewItem(element.name, false);
-				this.listTreeView.Add(item, new Tuple<bool, string>
-				(element.file, currentWay + "\\" + element.name));
+				this.listTreeView.Add(item, new Tuple<bool, string, bool>
+				(element.file, currentWay + "\\" + element.name, true));
 			}
 
 			System.Windows.Controls.ContextMenu docMenu = new System.Windows.Controls.ContextMenu();
@@ -278,7 +300,6 @@ namespace contact_center_application
 				   JsonConvert.DeserializeObject<List<string>>(json);
 			foreach (var catalog in listCatalog)
 			{
-				
 				CatalogForSerialization element =
 					JsonConvert.DeserializeObject<CatalogForSerialization>(catalog);
 
@@ -291,15 +312,18 @@ namespace contact_center_application
 				else
 				{
 					item = getTreeViewItemForFile(element, currentWay);
-					
 				}
-
 
 				result.Add(item);
 			}
 			return result;
 		}
 
+		/// <summary>
+		/// Событие вызываемое при создании директории
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void CreateDir_Click(object sender, RoutedEventArgs e)
 		{
 			RenameUnitFileSystem dialog = new RenameUnitFileSystem(true);
@@ -319,6 +343,11 @@ namespace contact_center_application
 			}
 		}
 
+		/// <summary>
+		/// Событие вызываемое при создании категории
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void CreateCategory_Click(object sender, RoutedEventArgs e)
 		{
 			RenameUnitFileSystem dialog = new RenameUnitFileSystem(true);
@@ -388,6 +417,7 @@ namespace contact_center_application
 		{
 			string index = this.alianceAndId[ComboboxFileSystem.SelectedItem.ToString()];
 			Tuple<bool, TreeViewItem> selectedItem = searchSelectedItem();
+			selectedItem.Item2.IsSelected = false;
 			string relativeWay = this.listTreeView[selectedItem.Item2].Item2;
 
 			RequestDataFromServer.sendToDeleteObjectFileSystem(index, relativeWay);
@@ -430,12 +460,11 @@ namespace contact_center_application
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
-		private void ComboboxFileSystem_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		private void ComboboxFileSystem_SelectionChanged(object sender, 
+			SelectionChangedEventArgs e)
 		{
 			getContentFileSystem();
 		}
-
-		private bool lastLoadPicture = false;
 
 		private void callGarbage()
 		{
@@ -466,9 +495,9 @@ namespace contact_center_application
 			this.iamgeStackPanel.Children.Clear();
 			this.iamgeStackPanel.Children.Add(this.image);
 
-			if (File.Exists("view/temp"))
+			if (File.Exists(currentView))
 			{
-				File.Delete("view/temp");
+				File.Delete(currentView);
 			}
 
 			Window_SizeChanged(null, null);
@@ -503,14 +532,15 @@ namespace contact_center_application
 					DownloadWindow download = new DownloadWindow(index.ToString(),
 						relativeWay);
 					download.getContentFileAndWriteToFile(this.openFile);
+					progressConvertation.Visibility = Visibility.Visible;
 					try
 					{
-						LoadToViewer(this.openFile);
+						LoadToViewer(this.openFile, this.currentView);
 					}
 					catch (OutOfMemoryException exceptionMemory)
 					{
 						MessageBox.Show("Системных ресурсов вашей операционной системы оказалось " +
-							"недостаточно для отображения содрежимого файла(" + Path.GetFileName(this.openFile) +
+							"недостаточно для отображения содержимого файла(" + Path.GetFileName(this.openFile) +
 							") в данном приложении. " +
 							"Попытайтесь открыть файл во внешнем приложении", "Нехватка системных ресурсов");
 					}
@@ -518,8 +548,20 @@ namespace contact_center_application
 					{
 						MessageBox.Show("Неизвестная ошибка", "UNKNOWN");
 					}
-
+					finally
+					{
+						if (this.currentView.Equals("view/temp1"))
+						{
+							this.currentView = "view/temp2";
+						}
+						else
+						{
+							this.currentView = "view/temp1";
+						}
+						progressConvertation.Visibility = Visibility.Hidden;
+					}
 				}
+				this.managerPanel.Visibility = Visibility.Visible;
 				this.Cursor = Cursors.Arrow;
 			}
 		}
@@ -540,7 +582,7 @@ namespace contact_center_application
 		/// </summary>
 		/// <param name="way"></param>
 		/// <param name="viewWay"></param>
-		private void LoadToViewer(string way, string viewWay = "view/temp")
+		private void LoadToViewer(string way, string viewWay)
 		{
 			logger(new DateTime() + " Обработка файла: " + way);
 
@@ -561,13 +603,13 @@ namespace contact_center_application
 
 				if (extension.Equals(".txt") || extension.Equals(".csv"))
 				{
-					logger(new DateTime() + "Отображение файла будет в TextBox");
+					logger(new DateTime() + " Отображение файла будет в TextBox");
 					this.tabControl.SelectedItem = this.textboxTab;
 					displayTextbox(way);
 				}
 				else if (extension.Equals(".jpeg") || extension.Equals(".tiff") || extension.Equals(".jpg"))
 				{
-					logger(new DateTime() + "Отображение файла будет в Image");
+					logger(new DateTime() + " Отображение файла будет в Image");
 					string fullWay = Path.Combine(Path.GetDirectoryName(
 									Assembly.GetExecutingAssembly().Locati‌​on), way);
 					byte[] buffer = System.IO.File.ReadAllBytes(fullWay);//сюда подставляются image
@@ -579,13 +621,12 @@ namespace contact_center_application
 					bitmap33.Freeze();
 					image.Source = bitmap33;
 					tabControl.SelectedItem = imageTab;
-					lastLoadPicture = true;
 				}
 				else if (extension.Equals(".doc") || extension.Equals(".docx"))
 				{
 					if ((bool)this.swtichModeView.IsChecked)
 					{
-						logger(new DateTime() + "Отображение файла будет в DocumentViewer");
+						logger(new DateTime() + " Отображение файла будет в DocumentViewer");
 						this.tabControl.SelectedItem = this.viewerTab;
 
 						this.viewer.Document = null;
@@ -602,7 +643,7 @@ namespace contact_center_application
 					}
 					else
 					{
-						logger(new DateTime() + "Отображение файла будет в docViewer");
+						logger(new DateTime() + " Отображение файла будет в docViewer");
 						this.docViewer.CloseDocument();
 						this.docViewer.LoadFromFile(way);
 						tabControl.SelectedItem = this.docViewerTab;
@@ -610,7 +651,7 @@ namespace contact_center_application
 				}
 				else if (extension.Equals(".xlsx") || extension.Equals(".xls"))
 				{
-					logger(new DateTime() + "Отображение файла будет в viewer");
+					logger(new DateTime() + " Отображение файла будет в viewer");
 					this.tabControl.SelectedItem = this.viewerTab;
 					this.viewer.Document = null;
 					this.viewer.DataContext = null;
@@ -636,7 +677,7 @@ namespace contact_center_application
 				}
 				else if (extension.Equals(".pdf"))
 				{
-					logger(new DateTime() + "Отображение файла будет в pdfviewer");
+					logger(new DateTime() + " Отображение файла будет в pdfviewer");
 					this.tabControl.SelectedItem = this.pdfViewerTab;
 					byte[] bytes = File.ReadAllBytes(way);
 					var source = new MemorySource(bytes);
@@ -666,7 +707,6 @@ namespace contact_center_application
 			paragraph.Inlines.Add(text);
 			document.Blocks.Add(paragraph);
 			textbox.Document = document;
-
 		}
 
 		/// <summary>
@@ -827,8 +867,38 @@ namespace contact_center_application
 		private void ButtonUpdateCatalogs_Click(object sender, RoutedEventArgs e)
 		{
 			this.updateCatalog = true;
+			TreeViewItem selectedItem = searchSelectedItem().Item2;
+			resetFlagsInTreeViewItem();
 			getContentFileSystem();
+			deleteNotNeedItemsInTreeViewItem(selectedItem);
+			selectedItem.IsSelected = true;
 			this.updateCatalog = false;
+		}
+
+		private void deleteNotNeedItemsInTreeViewItem(TreeViewItem equalItem)
+		{
+			var temporaryListTreeView = new Dictionary<TreeViewItem, Tuple<bool, string, bool>>();
+
+			foreach (var item in this.listTreeView)
+			{
+				if (item.Value.Item3 == true)
+				{
+					temporaryListTreeView.Add(item.Key, new Tuple<bool, string, bool>(
+						item.Value.Item1, item.Value.Item2, item.Value.Item3));
+				}
+			}
+			listTreeView = temporaryListTreeView;
+		}
+
+		private void resetFlagsInTreeViewItem()
+		{
+			var temporaryListTreeView = new Dictionary<TreeViewItem, Tuple<bool, string, bool>>();
+			foreach (var item in this.listTreeView)
+			{
+				temporaryListTreeView.Add(item.Key, new Tuple<bool, string, bool>(
+					item.Value.Item1, item.Value.Item2, false));
+			}
+			this.listTreeView = temporaryListTreeView;
 		}
 
 		/// <summary>
@@ -1088,5 +1158,9 @@ namespace contact_center_application
 			return result;
 		}
 
+		private void loadToFileToServer_Click(object sender, RoutedEventArgs e)
+		{
+
+		}
 	}
 }

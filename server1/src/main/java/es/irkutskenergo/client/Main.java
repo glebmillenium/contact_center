@@ -25,7 +25,7 @@ public class Main {
             FtpServer fs = new FtpServer(portFtp);
             fs.start();
 
-            Logging.log("Сервер ЕЭИСЦ успешно запущен:"
+            Logging.log(" Сервер ЕЭИСЦ успешно запущен:"
                     + "\r\nПорт обмена сообщений - " + portFast
                     + "\r\nПорт файлового обмена - " + portFtp + "\r\n", 0);
         } catch (Exception ex)

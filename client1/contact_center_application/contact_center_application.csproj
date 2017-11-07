@@ -270,6 +270,10 @@
       <Link>libmupdf.dll</Link>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <None Include="resources\xps.png" />
+    <None Include="resources\load.png" />
+    <None Include="resources\open.png" />
+    <None Include="resources\save.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

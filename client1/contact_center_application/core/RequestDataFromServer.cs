@@ -39,7 +39,7 @@ namespace contact_center_application.core
 				command = "get_aliance"
 			};
 			string resultJson = JsonConvert.SerializeObject(objForSendToFastSocket);
-			string answer = ConnectWithFastSocket.sendMessage(resultJson, 1024);
+			string answer = ConnectWithFastSocket.sendMessage(resultJson, 8192);
 			ObjectForSerialization objResponseFromFastSocket =
 				JsonConvert.DeserializeObject<ObjectForSerialization>(answer);
 			string[] result = null;
@@ -87,7 +87,7 @@ namespace contact_center_application.core
 				param4_array = System.Text.Encoding.UTF8.GetBytes(relativePathWithExistFileSystem)
 			};
 			string resultJson = JsonConvert.SerializeObject(objForSendToFastSocket);
-			string answer = ConnectWithFastSocket.sendMessage(resultJson, 1024);
+			string answer = ConnectWithFastSocket.sendMessage(resultJson, 8192);
 			ObjectForSerialization objResponseFromFastSocket =
 				JsonConvert.DeserializeObject<ObjectForSerialization>(answer);
 			if (objResponseFromFastSocket.param2.Equals("1"))
@@ -125,7 +125,7 @@ namespace contact_center_application.core
 				param1 = aliance
 			};
 			string resultJson = JsonConvert.SerializeObject(objForSendToFastSocket);
-			string answer = ConnectWithFastSocket.sendMessage(resultJson, 1024);
+			string answer = ConnectWithFastSocket.sendMessage(resultJson, 8192);
 			ObjectForSerialization objResponseFromFastSocket =
 				JsonConvert.DeserializeObject<ObjectForSerialization>(answer);
 			string result = null;
@@ -161,7 +161,7 @@ namespace contact_center_application.core
 				param4_array = System.Text.Encoding.UTF8.GetBytes(relativeWay)
 			};
 			string resultJson = JsonConvert.SerializeObject(objForSendToFastSocket);
-			string answer = ConnectWithFastSocket.sendMessage(resultJson, 1024);
+			string answer = ConnectWithFastSocket.sendMessage(resultJson, 8192);
 			ObjectForSerialization objResponseFromFastSocket =
 				JsonConvert.DeserializeObject<ObjectForSerialization>(answer);
 
@@ -226,7 +226,7 @@ namespace contact_center_application.core
 				param5_array = System.Text.Encoding.UTF8.GetBytes(newName)
 			};
 			string resultJson = JsonConvert.SerializeObject(objForSendToFastSocket);
-			string answer = ConnectWithFastSocket.sendMessage(resultJson, 1024);
+			string answer = ConnectWithFastSocket.sendMessage(resultJson, 8192);
 			ObjectForSerialization objResponseFromFastSocket =
 				JsonConvert.DeserializeObject<ObjectForSerialization>(answer);
 			if (objResponseFromFastSocket.param1.Equals("1"))
@@ -247,7 +247,7 @@ namespace contact_center_application.core
 				param5_array = System.Text.Encoding.UTF8.GetBytes(nameDirectory)
 			};
 			string resultJson = JsonConvert.SerializeObject(objForSendToFastSocket);
-			string answer = ConnectWithFastSocket.sendMessage(resultJson, 1024);
+			string answer = ConnectWithFastSocket.sendMessage(resultJson, 8192);
 			ObjectForSerialization objResponseFromFastSocket =
 				JsonConvert.DeserializeObject<ObjectForSerialization>(answer);
 			if (objResponseFromFastSocket.param1.Equals("1"))
@@ -267,7 +267,7 @@ namespace contact_center_application.core
 				param4_array = System.Text.Encoding.UTF8.GetBytes(relativeWay),
 			};
 			string resultJson = JsonConvert.SerializeObject(objForSendToFastSocket);
-			string answer = ConnectWithFastSocket.sendMessage(resultJson, 1024);
+			string answer = ConnectWithFastSocket.sendMessage(resultJson, 8192);
 			ObjectForSerialization objResponseFromFastSocket =
 				JsonConvert.DeserializeObject<ObjectForSerialization>(answer);
 			if (objResponseFromFastSocket.param1.Equals("1"))

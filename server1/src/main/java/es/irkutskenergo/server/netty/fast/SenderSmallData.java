@@ -75,6 +75,7 @@ public class SenderSmallData extends Thread {
      * @param int
      */
     private static int query = 0;
+
     /**
      * Переменная класса, хранит номер заявки
      */

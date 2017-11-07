@@ -41,7 +41,7 @@
 						  IsChecked="False" x:Name="swtichModeView"  
 						  Click="CheckBox_Click" Margin="0,0,10,0" 
 						  UseLayoutRounding="True" HorizontalAlignment="Right" 
-						  VerticalAlignment="Bottom" Style="{DynamicResource CheckBoxSwitcher}"/>
+						  VerticalAlignment="Bottom" Style="{DynamicResource CheckBoxSwitcher}" Width="220"/>
 		</DockPanel>
 
 
@@ -55,9 +55,28 @@
 				<TreeView DockPanel.Dock="Bottom" x:Name="treeViewCatalog" Margin="5" MinWidth="200" MaxWidth="400"/>
 			</DockPanel>
 			<StackPanel x:Name="stackPanelView" DockPanel.Dock="Right" Orientation="Vertical">
-				<StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Width="550">
-					<Button Content="Открыть во внешнем приложении" Height="20" Margin="0,0,5,0" VerticalAlignment="Top" Click="Button_Click" Width="208" />
-					<Button x:Name="swtichInterface" Content="Сохранить изменения" Height="20" Margin="0,0,5,0" VerticalAlignment="Top" Width="141"/>
+				<StackPanel x:Name="managerPanel" Orientation="Horizontal" >
+					<Button x:Name="openFileInExternalProgramm" 
+							Height="30" Margin="0,0,5,0" 
+							Click="Button_Click" Width="30"
+							ToolTip="Открыть файл во внешнем приложениий, которое установленно у вас на компьютере">
+						<Image Source="pack://siteoforigin:,,,/resources/open.png"/>
+					</Button>
+					<Button x:Name="loadToFileToServer" 
+							Margin="0,0,5,0" 
+							
+							Width="30" Height="30"
+							ToolTip="Отправить измененный файл на сервер" Click="loadToFileToServer_Click"
+							>
+						<Image Source="pack://siteoforigin:,,,/resources/load.png"/>
+					</Button>
+					<ToggleButton Width="30" Height="30">
+						<Image Source="pack://siteoforigin:,,,/resources/xps.png"/>
+					</ToggleButton>
+					<StackPanel x:Name="progressConvertation">
+						<TextBlock x:Name="progressConvertationText" Height="15" FontSize="10"/>
+						<ProgressBar Height="15" IsIndeterminate="True"/>
+					</StackPanel>
 				</StackPanel>
 
 				<TabControl x:Name="tabControl">
