@@ -3,6 +3,7 @@ package es.irkutskenergo.server.netty.fast;
 import es.irkutskenergo.other.ExceptionServer;
 import es.irkutskenergo.other.Logging;
 import es.irkutskenergo.other.Storage;
+import es.irkutskenergo.other.Triple;
 import es.irkutskenergo.other.Tuple;
 import org.jboss.netty.channel.Channel;
 import es.irkutskenergo.serialization.ObjectForSerialization;
@@ -67,7 +68,7 @@ public class SenderSmallData extends Thread {
      *
      * @param Map<String, Tuple<String, String>>
      */
-    private static Map<String, Tuple<String, String>> aliance;
+    private static Map<String, Triple<String, String, String>> aliance;
     /**
      * Косвенная переменная, необходима для операции нумерации пришедшей заявки,
      * отправки и идентификации на стороне ftp сервера
@@ -96,7 +97,7 @@ public class SenderSmallData extends Thread {
         this.channel = channel;
         this.commandFromClient = commandFromClient;
         this.mapper = new ObjectMapper();
-        this.aliance = new HashMap<String, Tuple<String, String>>();
+        this.aliance = new HashMap<String, Triple<String, String, String>>();
         this.aliance = getRootAliance();
 
         /*
@@ -288,13 +289,13 @@ public class SenderSmallData extends Thread {
     {
         String[] getAlianceForSend = new String[this.aliance.size()];
         int i = 0;
-        for (Map.Entry<String, Tuple<String, String>> value
+        for (Map.Entry<String, Triple<String, String, String>> value
                 : this.aliance.entrySet())
         {
             getAlianceForSend[i] = this.mapper.writeValueAsString(
                     new String[]
                     {
-                        value.getKey(), value.getValue().param1
+                        value.getKey(), value.getValue().param1, value.getValue().param3
                     });
             i++;
         }
@@ -590,9 +591,10 @@ public class SenderSmallData extends Thread {
         return result;
     }
 
-    private Map<String, Tuple<String, String>> getRootAliance()
+    private Map<String, Triple<String, String, String>> getRootAliance()
     {
-        Map<String, Tuple<String, String>> result = new HashMap<String, Tuple<String, String>>();
+        Map<String, Triple<String, String, String>> result = 
+                new HashMap<String, Triple<String, String, String>>();
         BufferedReader reader = null;
         try
         {
@@ -605,14 +607,14 @@ public class SenderSmallData extends Thread {
                 {
                     throw new FileNotFoundException();
                 }
-                result.put(temp[0], new Tuple<String, String>(temp[1], temp[2]));
+                result.put(temp[0], new Triple<String, String, String>(temp[1], temp[2], temp[3]));
             }
         } catch (FileNotFoundException ex)
         {
             result.clear();
-            result.put("0", new Tuple<String, String>("Тестовый каталог для контакт "
+            result.put("0", new Triple<String, String, String>("Тестовый каталог для контакт "
                     + "центра",
-                    "C:\\Users\\admin\\Desktop\\Инструкции\\"));
+                    "C:\\Users\\admin\\Desktop\\Инструкции\\", "1"));
         } finally
         {
             return result;

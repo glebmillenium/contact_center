@@ -131,50 +131,52 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Authorization.xaml.cs">
+    <Compile Include="graphic_user_interface\form\Authorization.xaml.cs">
       <DependentUpon>Authorization.xaml</DependentUpon>
     </Compile>
     <Compile Include="core\ConnectWithFtpSocket.cs" />
-    <Compile Include="form\DownloadWindow.xaml.cs">
+    <Compile Include="graphic_user_interface\form\DownloadWindow.xaml.cs">
       <DependentUpon>DownloadWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="form\ConfirmationChooseDialog.xaml.cs">
+    <Compile Include="graphic_user_interface\form\ConfirmationChooseDialog.xaml.cs">
       <DependentUpon>ConfirmationChooseDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="form\RenameUnitFileSystem.xaml.cs">
+    <Compile Include="graphic_user_interface\form\RenameUnitFileSystem.xaml.cs">
       <DependentUpon>RenameUnitFileSystem.xaml</DependentUpon>
     </Compile>
-    <Compile Include="form\TemplateSelector.cs" />
-    <Compile Include="form\UploadWindow.xaml.cs">
+    <Compile Include="graphic_user_interface\manage_graphical_component\EventContextMenuTreeView.cs" />
+    <Compile Include="graphic_user_interface\manage_graphical_component\TemplateSelector.cs" />
+    <Compile Include="graphic_user_interface\form\UploadWindow.xaml.cs">
       <DependentUpon>UploadWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="form\UsersTreeViewItem.cs" />
+    <Compile Include="graphic_user_interface\manage_graphical_component\UsersTreeViewItem.cs" />
+    <Compile Include="graphic_user_interface\manage_graphical_component\Viewer.cs" />
     <Compile Include="ProcessDownloadFile.xaml.cs">
       <DependentUpon>ProcessDownloadFile.xaml</DependentUpon>
     </Compile>
     <Compile Include="serialization\CatalogForSerialization.cs" />
     <Compile Include="serialization\ObjectForSerialization.cs" />
-    <Page Include="Authorization.xaml">
+    <Page Include="graphic_user_interface\form\Authorization.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="form\DownloadWindow.xaml">
+    <Page Include="graphic_user_interface\form\DownloadWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="form\ConfirmationChooseDialog.xaml">
+    <Page Include="graphic_user_interface\form\ConfirmationChooseDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="form\RenameUnitFileSystem.xaml">
+    <Page Include="graphic_user_interface\form\RenameUnitFileSystem.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="form\UploadWindow.xaml">
+    <Page Include="graphic_user_interface\form\UploadWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="MainWindow.xaml">
+    <Page Include="graphic_user_interface\form\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -184,7 +186,7 @@
     </Compile>
     <Compile Include="core\ConnectWithFastSocket.cs" />
     <Compile Include="core\RequestDataFromServer.cs" />
-    <Compile Include="MainWindow.xaml.cs">
+    <Compile Include="graphic_user_interface\form\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
@@ -270,6 +272,12 @@
       <Link>libmupdf.dll</Link>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Resource Include="resources\doc.png" />
+    <Resource Include="resources\docx.png" />
+    <Resource Include="resources\docx_tooltip.png" />
+    <Resource Include="resources\doc_tooltip.png" />
+    <None Include="bin\x86\Debug\resources\docx.png" />
+    <None Include="bin\x86\Debug\resources\doc.png" />
     <None Include="resources\xps.png" />
     <None Include="resources\load.png" />
     <None Include="resources\open.png" />
