@@ -5,11 +5,22 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:contact_center_application.graphic_user_interface.form"
         mc:Ignorable="d"
-        Title="RenameUnitFileSystem" Height="150" Width="200">
+        Title="Переименовать" Height="150" Width="220">
 	<Grid Margin="0,0,0,0">
+		<TextBlock x:Name="textView" Text="Введите новое название файла/папки" HorizontalAlignment="Left" Margin="10,10,0,0"  VerticalAlignment="Top" Width="164" TextWrapping="Wrap" Height="37"/>
+		<TextBox x:Name="newNameFile" 
+				 HorizontalAlignment="Left" 
+				 Height="23" 
+				 Margin="10,46,0,0" 
+				 TextWrapping="Wrap"
+				 VerticalAlignment="Top" 
+				 Width="192" PreviewTextInput="newNameFile_PreviewTextInput">
+		</TextBox>
+		<Popup x:Name="warningSymbols" StaysOpen="False">
+			<TextBlock Text="Имя папки/файла не может содержать символы: \, /, :, *, ?, '', &lt;, >, |"
+					   Background="WhiteSmoke"/>
+		</Popup>
 		<Button x:Name="activeButton" Content="Переименовать" HorizontalAlignment="Left" Margin="10,74,0,0" VerticalAlignment="Top" Width="98" Height="21" Click="Button_Click"/>
 		<Button Content="Отмена" HorizontalAlignment="Left" Margin="108,74,0,0" VerticalAlignment="Top" Width="66" Height="21" Click="Button_Click_1"/>
-		<TextBox x:Name="newNameFile" HorizontalAlignment="Left" Height="23" Margin="10,46,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="164"/>
-		<TextBlock x:Name="textView" Text="Введите новое название файла/папки" HorizontalAlignment="Left" Margin="10,10,0,0"  VerticalAlignment="Top" Width="164" TextWrapping="Wrap" Height="37"/>
 	</Grid>
 </Window>

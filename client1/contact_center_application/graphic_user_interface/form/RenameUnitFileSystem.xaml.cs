@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -11,17 +12,22 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace contact_center_application.graphic_user_interface.form
 {
 	/// <summary>
 	/// Логика взаимодействия для RenameUnitFileSystem.xaml
 	/// </summary>
-	public partial class RenameUnitFileSystem : Window
+	public partial class RenameUnitFileSystem
 	{
-		public RenameUnitFileSystem()
+		public RenameUnitFileSystem(string nameFile)
 		{
 			InitializeComponent();
+			this.newNameFile.Text = nameFile;
+			this.newNameFile.Focus();
+			this.newNameFile.SelectionStart = nameFile.Length;
+			this.newNameFile.SelectAll();
 		}
 
 		public RenameUnitFileSystem(bool create)
@@ -31,6 +37,7 @@ namespace contact_center_application.graphic_user_interface.form
 			{
 				this.activeButton.Content = "Создать";
 				this.textView.Text = "Введите имя папки";
+				this.newNameFile.Focus();
 			}
 		}
 
@@ -49,6 +56,17 @@ namespace contact_center_application.graphic_user_interface.form
 		public string getNameFile()
 		{
 			return this.newNameFile.Text;
+		}
+
+		private void newNameFile_PreviewTextInput(object sender, TextCompositionEventArgs e)
+		{
+			if (e.Text.Equals(@"\") || e.Text.Equals(@"/") || e.Text.Equals(@":") ||
+				e.Text.Equals(@"*") || e.Text.Equals(@"?") || e.Text.Equals("\"") ||
+				e.Text.Equals("<") || e.Text.Equals(">") || e.Text.Equals("|"))
+			{
+				this.warningSymbols.IsOpen = true;
+				e.Handled = true;
+			}
 		}
 	}
 }

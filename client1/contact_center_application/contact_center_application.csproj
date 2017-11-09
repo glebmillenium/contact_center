@@ -272,6 +272,7 @@
       <Link>libmupdf.dll</Link>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <None Include="resources\registr.png" />
     <Resource Include="resources\doc.png" />
     <Resource Include="resources\docx.png" />
     <Resource Include="resources\docx_tooltip.png" />

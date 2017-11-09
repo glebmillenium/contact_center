@@ -73,7 +73,6 @@ namespace contact_center_application.graphic_user_interface.manage_graphical_com
 			string extension = Path.GetExtension(nameFile);
 			if (isFile)
 			{
-
 				if (extension.Equals(".doc"))
 				{
 					path = @"resources/doc.png";
@@ -121,6 +120,10 @@ namespace contact_center_application.graphic_user_interface.manage_graphical_com
 				else if (extension.Equals(".jpg") || extension.Equals(".jpeg"))
 				{
 					path = @"resources/jpeg.png";
+				}
+				else if (extension.Equals(".png"))
+				{
+					path = @"resources/png.png";
 				}
 				else
 				{
@@ -150,7 +153,6 @@ namespace contact_center_application.graphic_user_interface.manage_graphical_com
 			string extension = Path.GetExtension(nameFile);
 			if (isFile)
 			{
-
 				if (extension.Equals(".doc"))
 				{
 					path = @"resources/doc.png";
@@ -198,6 +200,10 @@ namespace contact_center_application.graphic_user_interface.manage_graphical_com
 				else if (extension.Equals(".jpg") || extension.Equals(".jpeg"))
 				{
 					path = @"resources/jpeg.png";
+				}
+				else if (extension.Equals(".png"))
+				{
+					path = @"resources/png.png";
 				}
 				else
 				{
@@ -286,6 +292,10 @@ namespace contact_center_application.graphic_user_interface.manage_graphical_com
 				else if (extension.Equals(".jpg") || extension.Equals(".jpeg"))
 				{
 					path = @"resources/jpeg.png";
+				}
+				else if (extension.Equals(".png"))
+				{
+					path = @"resources/png.png";
 				}
 				else
 				{

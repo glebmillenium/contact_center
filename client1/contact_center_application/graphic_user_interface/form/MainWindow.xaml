@@ -39,7 +39,7 @@
 		<DockPanel Grid.Row="2">
 			<StackPanel DockPanel.Dock="Left" Orientation="Horizontal">
 				<TextBlock x:Name="UpdateCatalogs" Margin="5" TextWrapping="Wrap" TextAlignment="Center" VerticalAlignment="Bottom">Меню просмотра каталогов</TextBlock>
-				<Button x:Name="ButtonUpdateCatalogs" VerticalAlignment="Bottom"  Width="60" Height="20" Content="Обновить" Click="ButtonUpdateCatalogs_Click"/>
+				<Button x:Name="ButtonUpdateCatalogs" VerticalAlignment="Top"  Width="60" Height="20" Content="Обновить" Click="ButtonUpdateCatalogs_Click"/>
 			</StackPanel>
 			
 		</DockPanel>
@@ -50,11 +50,19 @@
 			<DockPanel  DockPanel.Dock="Left">
 				<StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
 					<Label  Content="Поиск"/>
-					<TextBox Width="160" Height="20" FontSize="10" TextChanged="TextBox_TextChanged"/>
+					<TextBox x:Name="searchTextBox" Width="140" Height="20" FontSize="10" TextChanged="TextBox_TextChanged"/>
+					<ToggleButton x:Name="registrButton"
+								  Width="25" Height="25" 
+								  Background="White"
+								  Margin="5,0,5,0" Click="registrButton_Click"
+								  >
+						<Image Source="pack://siteoforigin:,,,/resources/registr.png" ToolTip="Включить учет регистра букв"/>
+					</ToggleButton>
 				</StackPanel>
 				<TreeView DockPanel.Dock="Bottom" x:Name="treeViewCatalog" Margin="5" MinWidth="200" MaxWidth="400"/>
 			</DockPanel>
-			<StackPanel x:Name="stackPanelView" DockPanel.Dock="Right" Orientation="Vertical">
+			<StackPanel x:Name="stackPanelView" DockPanel.Dock="Right" Orientation="Vertical"
+						Margin="0,0,5,0">
 				<StackPanel x:Name="managerPanel" Orientation="Horizontal" >
 					<Button x:Name="openFileInExternalProgramm" 
 							Height="30" Margin="0,0,5,0" 

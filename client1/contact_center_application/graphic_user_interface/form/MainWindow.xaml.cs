@@ -222,7 +222,7 @@ namespace contact_center_application.graphic_user_interface.form
 		public void UploadCategory_Click(object sender, RoutedEventArgs e)
 		{
 			System.Windows.Forms.OpenFileDialog OPF = new System.Windows.Forms.OpenFileDialog();
-			OPF.Filter = "Все документы|*.*|Файлы txt|*.txt|Файлы csv|*.csv|Файлы doc|*.doc|Файлы docx|*.docx|Файлы xls|*.xls|Файлы xlsx|*.xlsx|Файлы tiff|*.tiff";
+			OPF.Filter = "Все документы|*.*|Файлы txt|*.txt|Файлы csv|*.csv|Файлы doc|*.doc|Файлы docx|*.docx|Файлы xls|*.xls|Файлы xlsx|*.xlsx|Файлы tiff|*.tiff|Файлы png|*.png";
 			if (OPF.ShowDialog() == System.Windows.Forms.DialogResult.OK)
 			{
 				int index = Int32.Parse(this.alianceIdPolicy[ComboboxFileSystem.SelectedItem.ToString()].Item1);
@@ -252,6 +252,7 @@ namespace contact_center_application.graphic_user_interface.form
 				item = UsersTreeViewItem.getTreeViewItem(element.name, true);
 				System.Windows.Controls.ContextMenu docMenu = new System.Windows.Controls.ContextMenu();
 				item.MouseDoubleClick += this.selectFile;
+				item.KeyDown += Item_KeyDown;
 				this.listTreeView.Add(item, new Tuple<bool, string, bool>(element.file,
 					currentWay + "\\" + element.name, true));
 
@@ -279,6 +280,14 @@ namespace contact_center_application.graphic_user_interface.form
 			}
 
 			return item;
+		}
+
+		private void Item_KeyDown(object sender, KeyEventArgs e)
+		{
+			if (e.Key == Key.Enter)
+			{
+				selectFile(null, null);
+			}
 		}
 
 
@@ -547,13 +556,14 @@ namespace contact_center_application.graphic_user_interface.form
 		/// <param name="e"></param>
 		private void Rename_Click(object sender, RoutedEventArgs e)
 		{
-			RenameUnitFileSystem dialog = new RenameUnitFileSystem();
+			Tuple<bool, TreeViewItem> selectedItem = searchSelectedItem();
+			string relativeWay = this.listTreeView[selectedItem.Item2].Item2;
+			RenameUnitFileSystem dialog = new RenameUnitFileSystem(Path.GetFileName(relativeWay));
 			dialog.ShowDialog();
 			if ((bool)dialog.DialogResult)
 			{
 				string index = this.alianceIdPolicy[ComboboxFileSystem.SelectedItem.ToString()].Item1;
-				Tuple<bool, TreeViewItem> selectedItem = searchSelectedItem();
-				string relativeWay = this.listTreeView[selectedItem.Item2].Item2;
+
 				string nameFile = dialog.getNameFile();
 				RequestDataFromServer.sendToRenameObjectFileSystem(index, relativeWay, nameFile);
 			}
@@ -625,6 +635,7 @@ namespace contact_center_application.graphic_user_interface.form
 		private void ComboboxFileSystem_SelectionChanged(object sender, 
 			SelectionChangedEventArgs e)
 		{
+			callGarbage();
 			getContentFileSystem();
 		}
 
@@ -783,7 +794,7 @@ namespace contact_center_application.graphic_user_interface.form
 					this.tabControl.SelectedItem = this.textboxTab;
 					displayTextbox(way);
 				}
-				else if (extension.Equals(".jpeg") || extension.Equals(".tiff") || extension.Equals(".jpg"))
+				else if (extension.Equals(".jpeg") || extension.Equals(".tiff") || extension.Equals(".jpg") || extension.Equals(".png"))
 				{
 					logger(new DateTime() + " Отображение файла будет в Image");
 					string fullWay = Path.Combine(Path.GetDirectoryName(
@@ -1018,18 +1029,7 @@ namespace contact_center_application.graphic_user_interface.form
 					if (MessageBox.Show("Отправить измененный файл на сервер?", "Файл был изменен",
 						MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
 					{
-						int index = Int32.Parse(this.alianceIdPolicy[
-							ComboboxFileSystem.SelectedItem.ToString()].Item1);
-						Tuple<bool, TreeViewItem> selectedItem = searchSelectedItem();
-
-						string relativeWay = this.listTreeView[selectedItem.Item2].Item2;
-						UploadWindow download = new UploadWindow(index.ToString(),
-							Path.GetDirectoryName(relativeWay),
-							Path.Combine(Path.GetDirectoryName(
-									Assembly.GetExecutingAssembly().Locati‌​on),
-									this.openFile),
-							"1");
-						download.sendFileToServer();
+						sendFileToServer();
 					}
 				}
 			}
@@ -1106,7 +1106,8 @@ namespace contact_center_application.graphic_user_interface.form
 		/// <param name="e"></param>
 		private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
 		{
-			viewer.Height = window.ActualHeight - 150;
+			if (window.ActualHeight - 165 <= 0) return;
+			viewer.Height = window.ActualHeight - 165;
 			textbox.Height = viewer.Height;
 			textbox.Width = viewer.Width;
 			image.Height = viewer.Height;
@@ -1155,7 +1156,9 @@ namespace contact_center_application.graphic_user_interface.form
 			{
 				if (item.Items.Count > 0)
 				{
-					if (temp.IndexOf(text) > -1)
+					int resultSearch;
+					resultSearch = temp.IndexOf(text);
+					if (resultSearch > -1)
 					{
 						item.Visibility = Visibility.Visible;
 						bool typeTreeView = listTreeView.ContainsKey(item);
@@ -1207,7 +1210,16 @@ namespace contact_center_application.graphic_user_interface.form
 				}
 				else
 				{
-					if (temp.IndexOf(text) > -1)
+					int resultSearch;
+					if ((bool) this.registrButton.IsChecked)
+					{
+						resultSearch = temp.IndexOf(text);
+					}
+					else
+					{
+						resultSearch = temp.ToLower().IndexOf(text.ToLower());
+					}
+					if (resultSearch > -1)
 					{
 						item.Header = highlightText(nameElement, text, this.listTreeView[item].Item1);
 						item.Visibility = Visibility.Visible;
@@ -1253,11 +1265,19 @@ namespace contact_center_application.graphic_user_interface.form
 			if (substring.Length != 0)
 			{
 				var indices = new List<int>();
-				int index = source.IndexOf(substring, 0);
+				int index;
+				if((bool)this.registrButton.IsChecked)
+					index = source.IndexOf(substring, 0);
+				else
+					index = source.ToLower().IndexOf(substring.ToLower(), 0);
 				while (index > -1)
 				{
 					indices.Add(index);
-					index = source.IndexOf(substring, index + substring.Length);
+					if ((bool) this.registrButton.IsChecked)
+						index = source.IndexOf(substring, index + substring.Length);
+					else
+						index = source.ToLower().IndexOf(substring.ToLower(), 
+							index + substring.Length);
 				}
 
 				if (indices.Count > 0)
@@ -1327,18 +1347,7 @@ namespace contact_center_application.graphic_user_interface.form
 				if (MessageBox.Show("Отправить измененный файл на сервер?", "Файл был изменен",
 					MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
 				{
-					int index = Int32.Parse(this.alianceIdPolicy[
-						ComboboxFileSystem.SelectedItem.ToString()].Item1);
-					Tuple<bool, TreeViewItem> selectedItem = searchSelectedItem();
-
-					string relativeWay = this.relationWayOpenFile;
-					UploadWindow download = new UploadWindow(index.ToString(),
-						Path.GetDirectoryName(relativeWay),
-						Path.Combine(Path.GetDirectoryName(
-								Assembly.GetExecutingAssembly().Locati‌​on),
-								this.openFile),
-						"1");
-					download.sendFileToServer();
+					sendFileToServer();
 				}
 			}
 			else
@@ -1346,34 +1355,120 @@ namespace contact_center_application.graphic_user_interface.form
 				if (MessageBox.Show("Файл не был изменен. Все равно отправить на сервер?", "Файл не был изменен",
 					MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
 				{
-					int index = Int32.Parse(this.alianceIdPolicy[
-						ComboboxFileSystem.SelectedItem.ToString()].Item1);
-					Tuple<bool, TreeViewItem> selectedItem = searchSelectedItem();
-
-					string relativeWay = this.relationWayOpenFile;
-					UploadWindow download = new UploadWindow(index.ToString(),
-						Path.GetDirectoryName(relativeWay),
-						Path.Combine(Path.GetDirectoryName(
-								Assembly.GetExecutingAssembly().Locati‌​on),
-								this.openFile),
-						"1");
-					download.sendFileToServer();
+					sendFileToServer();
 				}
+			}
+		}
+
+		private void sendFileToServer()
+		{
+			int index = Int32.Parse(this.alianceIdPolicy[
+						ComboboxFileSystem.SelectedItem.ToString()].Item1);
+			Tuple<bool, TreeViewItem> selectedItem = searchSelectedItem();
+
+			string relativeWay = this.relationWayOpenFile;
+			UploadWindow download = new UploadWindow(index.ToString(),
+				Path.GetDirectoryName(relativeWay),
+				Path.Combine(Path.GetDirectoryName(
+						Assembly.GetExecutingAssembly().Locati‌​on),
+						this.openFile),
+				"1");
+			download.sendFileToServer();
+			try
+			{
+				LoadToViewer(this.openFile, this.currentView);
+			}
+			catch (OutOfMemoryException exceptionMemory)
+			{
+				MessageBox.Show("Системных ресурсов вашей операционной системы оказалось " +
+					"недостаточно для отображения содержимого файла(" + Path.GetFileName(this.openFile) +
+					") в данном приложении. " +
+					"Попытайтесь открыть файл во внешнем приложении", "Нехватка системных ресурсов");
+				loggerException(exceptionMemory.Message);
+			}
+			catch (Exception exp)
+			{
+				MessageBox.Show("Неизвестная ошибка", "UNKNOWN");
+				loggerException(exp.Message);
+			}
+			finally
+			{
+				if (this.currentView.Equals("view/temp1"))
+				{
+					this.currentView = "view/temp2";
+				}
+				else
+				{
+					this.currentView = "view/temp1";
+				}
+				progressConvertation.Visibility = Visibility.Hidden;
 			}
 		}
 
 		private void switchModeViewButton_Click(object sender, RoutedEventArgs e)
 		{
-			if (this.switchModeViewButton.IsPressed)
+			string extension = Path.GetExtension(this.openFile);
+			if ((bool) this.switchModeViewButton.IsChecked)
 			{
 				this.switchModeViewButton.Background = 
 					new SolidColorBrush(Colors.DarkCyan);
+
 			}
 			else
 			{
 				this.switchModeViewButton.Background = 
 					new SolidColorBrush(Colors.White);
 			}
+
+			if (extension.Equals(".docx") || extension.Equals(".doc"))
+			{
+				try
+				{
+					LoadToViewer(this.openFile, this.currentView);
+				}
+				catch (OutOfMemoryException exceptionMemory)
+				{
+					MessageBox.Show("Системных ресурсов вашей операционной системы оказалось " +
+						"недостаточно для отображения содержимого файла(" + Path.GetFileName(this.openFile) +
+						") в данном приложении. " +
+						"Попытайтесь открыть файл во внешнем приложении", "Нехватка системных ресурсов");
+					loggerException(exceptionMemory.Message);
+				}
+				catch (Exception exp)
+				{
+					MessageBox.Show("Неизвестная ошибка", "UNKNOWN");
+					loggerException(exp.Message);
+				}
+				finally
+				{
+					if (this.currentView.Equals("view/temp1"))
+					{
+						this.currentView = "view/temp2";
+					}
+					else
+					{
+						this.currentView = "view/temp1";
+					}
+					progressConvertation.Visibility = Visibility.Hidden;
+				}
+			}
+		}
+
+		private void registrButton_Click(object sender, RoutedEventArgs e)
+		{
+			if ((bool) this.switchModeViewButton.IsChecked)
+			{
+				this.registrButton.Background =
+					new SolidColorBrush(Colors.Black);
+				this.registrButton.ToolTip = "Выключить учет регистра букв";
+			}
+			else
+			{
+				this.registrButton.Background =
+					new SolidColorBrush(Colors.White);
+				this.registrButton.ToolTip = "Включить учет регистра букв";
+			}
+			setVisibleOnText(this.searchTextBox.Text);
 		}
 	}
 }

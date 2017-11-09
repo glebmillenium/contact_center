@@ -598,23 +598,22 @@ public class SenderSmallData extends Thread {
         BufferedReader reader = null;
         try
         {
+            System.out.println("1");
             reader = new BufferedReader(new FileReader("list_connect"));
             String line;
             while ((line = reader.readLine()) != null)
             {
+                System.out.println(line);
                 String[] temp = line.split(";");
-                if (temp.length != 3)
-                {
-                    throw new FileNotFoundException();
-                }
+                
                 result.put(temp[0], new Triple<String, String, String>(temp[1], temp[2], temp[3]));
             }
         } catch (FileNotFoundException ex)
         {
+            System.out.println("2");
             result.clear();
-            result.put("0", new Triple<String, String, String>("Тестовый каталог для контакт "
-                    + "центра",
-                    "C:\\Users\\admin\\Desktop\\Инструкции\\", "1"));
+            result.put("0", new Triple<String, String, String>("Системный диск",
+                    "C:\\", "1"));
         } finally
         {
             return result;

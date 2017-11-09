@@ -32,7 +32,6 @@ C:\contact_center\client1\contact_center_application\obj\x86\Release\contact_cen
 C:\contact_center\client1\contact_center_application\obj\x86\Release\contact_center_application.csproj.GenerateResource.Cache
 C:\contact_center\client1\contact_center_application\obj\x86\Release\contact_center_application.csproj.CoreCompileInputs.cache
 C:\contact_center\client1\contact_center_application\obj\x86\Release\contact_center_application.exe
-C:\contact_center\client1\contact_center_application\obj\x86\Release\contact_center_application.csprojResolveAssemblyReference.cache
 C:\contact_center\client1\contact_center_application\obj\x86\Release\graphic_user_interface\form\Authorization.g.cs
 C:\contact_center\client1\contact_center_application\obj\x86\Release\graphic_user_interface\form\DownloadWindow.g.cs
 C:\contact_center\client1\contact_center_application\obj\x86\Release\graphic_user_interface\form\ConfirmationChooseDialog.g.cs
@@ -45,3 +44,4 @@ C:\contact_center\client1\contact_center_application\obj\x86\Release\graphic_use
 C:\contact_center\client1\contact_center_application\obj\x86\Release\graphic_user_interface\form\RenameUnitFileSystem.baml
 C:\contact_center\client1\contact_center_application\obj\x86\Release\graphic_user_interface\form\UploadWindow.baml
 C:\contact_center\client1\contact_center_application\obj\x86\Release\graphic_user_interface\form\MainWindow.baml
+C:\contact_center\client1\contact_center_application\obj\x86\Release\contact_center_application.csprojResolveAssemblyReference.cache
