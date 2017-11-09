@@ -576,8 +576,7 @@ public class SenderSmallData extends Thread {
             String ftpPath = this.aliance.get(obj.param1).param2;
             String relativePath = (new String(obj.param4_array, "UTF-8"));
             String relativeWay = ftpPath + relativePath;
-            Path source = Paths.get(relativeWay);
-            Files.delete(source);
+            deleteObjectFileSystem(new File(relativeWay));
             Logging.log("Удаление ресурса по пути: " + relativeWay
                     + " Канал " + this.channel.toString() + ") Номер запроса: "
                     + this.numberConnect, 1);
@@ -591,10 +590,29 @@ public class SenderSmallData extends Thread {
         return result;
     }
 
+    public void deleteObjectFileSystem(File file)
+    {
+        if (!file.exists())
+        {
+            return;
+        }
+        if (file.isDirectory())
+        {
+            for (File f : file.listFiles())
+            {
+                deleteObjectFileSystem(f);
+            }
+            file.delete();
+        } else
+        {
+            file.delete();
+        }
+    }
+
     private Map<String, Triple<String, String, String>> getRootAliance()
     {
-        Map<String, Triple<String, String, String>> result = 
-                new HashMap<String, Triple<String, String, String>>();
+        Map<String, Triple<String, String, String>> result
+                = new HashMap<String, Triple<String, String, String>>();
         BufferedReader reader = null;
         try
         {
@@ -605,7 +623,7 @@ public class SenderSmallData extends Thread {
             {
                 System.out.println(line);
                 String[] temp = line.split(";");
-                
+
                 result.put(temp[0], new Triple<String, String, String>(temp[1], temp[2], temp[3]));
             }
         } catch (FileNotFoundException ex)
