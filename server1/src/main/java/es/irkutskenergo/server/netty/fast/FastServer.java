@@ -32,13 +32,8 @@ public class FastServer {
         ServerBootstrap bootstrap = new ServerBootstrap(factory);
         bootstrap.setPipelineFactory(new FastServerPipeLineFactory());
 
-        bootstrap.setOption("child.tcpNoDelay", true);
-        //bootstrap.setOption("child.keepAlive", true);
-        bootstrap.setOption("keepAlive", true);
-        bootstrap.setOption("child.keepAlive", false);
         bootstrap.setOption("sendBufferSize", 8 * 1024L);
         bootstrap.setOption("receiveBufferSize", 8 * 1024L);
-        bootstrap.setOption("child.connectTimeoutMillis", 30000);
         bootstrap.bind(new InetSocketAddress(port));
         Logging.log("Сервер быстрого обмена запущен по адресу -  "
                 + InetAddress.getLocalHost().toString() + ":" + port + "\n", 1);

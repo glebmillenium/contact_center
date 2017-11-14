@@ -47,7 +47,9 @@
 		<DockPanel Grid.Row="2">
 			<StackPanel DockPanel.Dock="Left" Orientation="Horizontal">
 				<TextBlock x:Name="UpdateCatalogs" Margin="5" TextWrapping="Wrap" TextAlignment="Center" VerticalAlignment="Bottom">Меню просмотра каталогов</TextBlock>
-				<Button x:Name="ButtonUpdateCatalogs" VerticalAlignment="Top"  Width="60" Height="20" Content="Обновить" Click="ButtonUpdateCatalogs_Click"/>
+				<Button x:Name="ButtonUpdateCatalogs" VerticalAlignment="Top"  Width="20" Height="20" Click="ButtonUpdateCatalogs_Click">
+					<Image Source="pack://siteoforigin:,,,/resources/update.png" ToolTip=""/>
+				</Button>
 			</StackPanel>
 			
 		</DockPanel>

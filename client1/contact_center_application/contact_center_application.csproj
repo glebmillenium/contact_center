@@ -272,6 +272,7 @@
       <Link>libmupdf.dll</Link>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Resource Include="resources\update.png" />
     <None Include="resources\exit.png" />
     <None Include="resources\settings.png" />
     <None Include="resources\help.png" />
