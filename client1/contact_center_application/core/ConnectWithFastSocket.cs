@@ -14,12 +14,12 @@ namespace contact_center_application.core
 		private static bool realization = false;
 		public static void createSocket(String ip, int port)
 		{
-
 			IPHostEntry ipHost = Dns.GetHostEntry(ip);
 			IPAddress ipAddr = ipHost.AddressList[0];
 			IPEndPoint ipEndPoint = new IPEndPoint(ipAddr, port);
 
 			sender = new Socket(ipAddr.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+			//sender.SendTimeout = 10000;
 			sender.Connect(ipEndPoint);
 			realization = true;
 		}

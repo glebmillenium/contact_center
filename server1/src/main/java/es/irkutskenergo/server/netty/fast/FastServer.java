@@ -24,7 +24,7 @@ public class FastServer {
      * @throws Exception
      */
     public FastServer(int port) throws Exception
-    {
+    {        
         ChannelFactory factory = new NioServerSocketChannelFactory(
                 Executors.newCachedThreadPool(),
                 Executors.newCachedThreadPool());
@@ -33,9 +33,13 @@ public class FastServer {
         bootstrap.setPipelineFactory(new FastServerPipeLineFactory());
 
         bootstrap.setOption("child.tcpNoDelay", true);
-        bootstrap.setOption("child.keepAlive", true);
+        //bootstrap.setOption("child.keepAlive", true);
+        bootstrap.setOption("keepAlive", true);
+        bootstrap.setOption("child.keepAlive", false);
+        bootstrap.setOption("sendBufferSize", 8 * 1024L);
+        bootstrap.setOption("receiveBufferSize", 8 * 1024L);
+        bootstrap.setOption("child.connectTimeoutMillis", 30000);
         bootstrap.bind(new InetSocketAddress(port));
-
         Logging.log("Сервер быстрого обмена запущен по адресу -  "
                 + InetAddress.getLocalHost().toString() + ":" + port + "\n", 1);
     }

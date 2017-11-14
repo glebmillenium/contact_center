@@ -32,6 +32,7 @@ public class FtpServer extends Thread {
 //            this.host = InetAddress.getLocalHost();
 //            this.address = new InetSocketAddress(this.host, this.port);
 //            server.bind(address);
+        //this.server.setSoTimeout(15000);
         this.canWork = true;
 
     }

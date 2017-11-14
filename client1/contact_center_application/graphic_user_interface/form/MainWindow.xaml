@@ -11,15 +11,23 @@
 
 	<Grid>
 		<Grid.RowDefinitions>
-			<RowDefinition Height="25"></RowDefinition>
+			<RowDefinition Height="30"></RowDefinition>
 			<RowDefinition Height="26"></RowDefinition>
 			<RowDefinition Height="22"></RowDefinition>
 			<RowDefinition x:Name="row3"></RowDefinition>
-			<RowDefinition Height="20"></RowDefinition>
+			<RowDefinition Height="25"></RowDefinition>
 		</Grid.RowDefinitions>
 
-		<StackPanel Grid.Row="0">
-			<Button Content="Помощь" Margin="0,5,5,0" Height="20" VerticalAlignment="Top" HorizontalAlignment="Right" Width="89"/>
+		<StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Right">
+			<Button Margin="5,0,5,0" Height="30" Width="30" >
+				<Image Source="pack://siteoforigin:,,,/resources/settings.png"/>
+			</Button>
+			<Button Margin="5,0,5,0" Height="30" Width="30" >
+				<Image Source="pack://siteoforigin:,,,/resources/help.png"/>
+			</Button>
+			<Button Margin="5,0,5,0" Height="30" Width="30" >
+				<Image Source="pack://siteoforigin:,,,/resources/exit.png"/>
+			</Button>
 		</StackPanel>
 
 		<DockPanel Grid.Row="1">
@@ -32,7 +40,7 @@
 				</Button>
 			</StackPanel>
 			<StackPanel DockPanel.Dock="Right">
-				<TextBlock Text="Добро пожаловать, Гость!" Margin="0,0,5,0" HorizontalAlignment="Right"/>
+				<TextBlock Text="Вы зарегистрированы в системе как Гость" TextWrapping="Wrap" Margin="0,0,5,0" HorizontalAlignment="Right"/>
 			</StackPanel>
 		</DockPanel>
 
@@ -143,7 +151,7 @@
 		</DockPanel>
 
 		<StackPanel Margin="5" Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right" >
-
+			<TextBlock Text="Версия 0.8.17" FontSize="10"/>
 		</StackPanel>
 	</Grid>
 </Window>

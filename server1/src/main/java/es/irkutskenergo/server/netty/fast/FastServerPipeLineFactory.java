@@ -16,6 +16,7 @@ import org.jboss.netty.handler.codec.string.StringEncoder;
 
 public class FastServerPipeLineFactory implements ChannelPipelineFactory {
 
+    @Override
     public ChannelPipeline getPipeline() throws Exception
     {
         ChannelPipeline pipeline = pipeline();

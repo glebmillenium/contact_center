@@ -621,6 +621,7 @@ namespace contact_center_application.graphic_user_interface.form
 				catch (Exception exp)
 				{
 					loggerException(exp.Message);
+
 				}
 				ButtonUpdateCatalogs_Click(null, null);
 			}
@@ -684,60 +685,71 @@ namespace contact_center_application.graphic_user_interface.form
 		/// <param name="e"></param>
 		private void selectFile(object sender, RoutedEventArgs e)
 		{
-			Tuple<bool, TreeViewItem> selectedItem = searchSelectedItem();
-			if (selectedItem.Item1)
+			try
 			{
-				this.Cursor = Cursors.Wait;
-
-				callGarbage();
-
-				string aliance = ComboboxFileSystem.SelectedItem.ToString();
-				string relativeWay = this.listTreeView[selectedItem.Item2].Item2;
-				string selected = ComboboxFileSystem.SelectedItem.ToString();
-				this.openFile = "tmp" + relativeWay;
-				if (Path.GetExtension(relativeWay).Equals(".link"))
+				Tuple<bool, TreeViewItem> selectedItem = searchSelectedItem();
+				if (selectedItem.Item1)
 				{
-					openWeb(Path.GetFileNameWithoutExtension(relativeWay));
-				}
-				else
-				{
-					int index = Int32.Parse(this.alianceIdPolicy[ComboboxFileSystem.SelectedItem.ToString()].Item1);
-					DownloadWindow download = new DownloadWindow(index.ToString(),
-						relativeWay);
-					download.getContentFileAndWriteToFile(this.openFile);
-					progressConvertation.Visibility = Visibility.Visible;
-					try
+					this.Cursor = Cursors.Wait;
+
+					callGarbage();
+
+					string aliance = ComboboxFileSystem.SelectedItem.ToString();
+					string relativeWay = this.listTreeView[selectedItem.Item2].Item2;
+					string selected = ComboboxFileSystem.SelectedItem.ToString();
+					this.openFile = "tmp" + relativeWay;
+					if (Path.GetExtension(relativeWay).Equals(".link"))
 					{
-						LoadToViewer(this.openFile, this.currentView);
+						openWeb(Path.GetFileNameWithoutExtension(relativeWay));
 					}
-					catch (OutOfMemoryException exceptionMemory)
+					else
 					{
-						MessageBox.Show("Системных ресурсов вашей операционной системы оказалось " +
-							"недостаточно для отображения содержимого файла(" + Path.GetFileName(this.openFile) +
-							") в данном приложении. " +
-							"Попытайтесь открыть файл во внешнем приложении", "Нехватка системных ресурсов");
-						loggerException(exceptionMemory.Message);
-					}
-					catch (Exception exp)
-					{
-						MessageBox.Show("Неизвестная ошибка", "UNKNOWN");
-						loggerException(exp.Message);
-					}
-					finally
-					{
-						if (this.currentView.Equals("view/temp1"))
+						int index = Int32.Parse(this.alianceIdPolicy[ComboboxFileSystem.SelectedItem.ToString()].Item1);
+						DownloadWindow download = new DownloadWindow(index.ToString(),
+							relativeWay);
+						this.IsEnabled = false;
+						download.getContentFileAndWriteToFile(this.openFile);
+						this.IsEnabled = true;
+						progressConvertation.Visibility = Visibility.Visible;
+						try
 						{
-							this.currentView = "view/temp2";
+							LoadToViewer(this.openFile, this.currentView);
 						}
-						else
+						catch (OutOfMemoryException exceptionMemory)
 						{
-							this.currentView = "view/temp1";
+							MessageBox.Show("Системных ресурсов вашей операционной системы оказалось " +
+								"недостаточно для отображения содержимого файла(" + Path.GetFileName(this.openFile) +
+								") в данном приложении. " +
+								"Попытайтесь открыть файл во внешнем приложении", "Нехватка системных ресурсов");
+							loggerException(exceptionMemory.Message);
 						}
-						progressConvertation.Visibility = Visibility.Hidden;
+						catch (Exception exp)
+						{
+							MessageBox.Show("Неизвестная ошибка", "UNKNOWN");
+							loggerException(exp.Message);
+						}
+						finally
+						{
+							if (this.currentView.Equals("view/temp1"))
+							{
+								this.currentView = "view/temp2";
+							}
+							else
+							{
+								this.currentView = "view/temp1";
+							}
+							progressConvertation.Visibility = Visibility.Hidden;
+						}
 					}
+					this.managerPanel.Visibility = Visibility.Visible;
+					this.Cursor = Cursors.Arrow;
 				}
-				this.managerPanel.Visibility = Visibility.Visible;
-				this.Cursor = Cursors.Arrow;
+			}
+			catch (Exception exp)
+			{
+				loggerException(exp.ToString());
+				System.Windows.MessageBox.Show("Отказали системные компоненты приложения. " +
+					"Попробуйте повторить действие. В случае повторного возникновения ошибки перезапустите приложение.", "Критическая ошибка");
 			}
 		}
 
@@ -788,13 +800,15 @@ namespace contact_center_application.graphic_user_interface.form
 			{
 				string extension = Path.GetExtension(way);
 
-				if (extension.Equals(".txt") || extension.Equals(".csv"))
+				if (extension.Equals(".txt") || extension.Equals(".csv") ||
+					extension.Equals(".xml") || extension.Equals(".html"))
 				{
 					logger(new DateTime() + " Отображение файла будет в TextBox");
 					this.tabControl.SelectedItem = this.textboxTab;
 					displayTextbox(way);
 				}
-				else if (extension.Equals(".jpeg") || extension.Equals(".tiff") || extension.Equals(".jpg") || extension.Equals(".png"))
+				else if (extension.Equals(".jpeg") || extension.Equals(".tiff") ||
+					extension.Equals(".jpg") || extension.Equals(".png"))
 				{
 					logger(new DateTime() + " Отображение файла будет в Image");
 					string fullWay = Path.Combine(Path.GetDirectoryName(
@@ -872,6 +886,10 @@ namespace contact_center_application.graphic_user_interface.form
 
 					moonPdfPanel.Open(source);
 					moonPdfPanel.PageRowDisplay = MoonPdfLib.PageRowDisplayType.ContinuousPageRows;
+				}
+				else
+				{
+
 				}
 
 			}

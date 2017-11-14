@@ -4,7 +4,6 @@ import es.irkutskenergo.other.ExceptionServer;
 import es.irkutskenergo.other.Logging;
 import es.irkutskenergo.other.Storage;
 import es.irkutskenergo.other.Triple;
-import es.irkutskenergo.other.Tuple;
 import org.jboss.netty.channel.Channel;
 import es.irkutskenergo.serialization.ObjectForSerialization;
 import java.io.IOException;
@@ -26,6 +25,7 @@ import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Date;
 
 /**
  * SenderSmallData - класс, предназначенный для ответа на первичный запрос от
@@ -83,6 +83,11 @@ public class SenderSmallData extends Thread {
     private final int numberConnect;
 
     /**
+     * Переменная по которой отслеживается время последнего действия треда в 
+     * системе
+     */
+
+    /**
      * SenderSmallData(Channel, String) - конструктор, инициализирует
      * сериализатор в JSON, получает канал по которому клиент соединен с
      * сервером fast
@@ -97,20 +102,15 @@ public class SenderSmallData extends Thread {
         this.channel = channel;
         this.commandFromClient = commandFromClient;
         this.mapper = new ObjectMapper();
-        this.aliance = new HashMap<String, Triple<String, String, String>>();
         this.aliance = getRootAliance();
 
-        /*
-        aliance.put("0", new Tuple<String, String>("Инструкции по АСРН",
-                "C:\\Users\\admin\\Desktop\\Инструкции"));
-        aliance.put("1", new Tuple<String, String>("Обычный каталог для тестирования",
-                "C:\\Users\\admin\\Desktop\\cat"));*/
         query++;
         if (query >= 65536)
         {
             query = 1;
         }
         numberConnect = query;
+
     }
 
     /**
@@ -125,13 +125,13 @@ public class SenderSmallData extends Thread {
     {
         try
         {
+
             String response;
             try
             {
                 response = getResponse();
             } catch (IOException ex)
             {
-
                 response = this.mapper.writeValueAsString(
                         new ObjectForSerialization("error",
                                 "0", "Произошла ошибка при выполнении команды"));
@@ -149,7 +149,7 @@ public class SenderSmallData extends Thread {
                     + " Номер запроса " + this.numberConnect
                     + ". Сообщение от клиента: "
                     + commandFromClient, 1);
-        }
+        } 
     }
 
     /**
@@ -272,6 +272,8 @@ public class SenderSmallData extends Thread {
         {
             Logging.log(e.toString(), 1);
             result = "";
+        } finally
+        {
         }
 
         return result;
