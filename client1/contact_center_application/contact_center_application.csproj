@@ -144,6 +144,9 @@
     <Compile Include="graphic_user_interface\form\RenameUnitFileSystem.xaml.cs">
       <DependentUpon>RenameUnitFileSystem.xaml</DependentUpon>
     </Compile>
+    <Compile Include="graphic_user_interface\form\Settings.xaml.cs">
+      <DependentUpon>Settings.xaml</DependentUpon>
+    </Compile>
     <Compile Include="graphic_user_interface\manage_graphical_component\EventContextMenuTreeView.cs" />
     <Compile Include="graphic_user_interface\manage_graphical_component\TemplateSelector.cs" />
     <Compile Include="graphic_user_interface\form\UploadWindow.xaml.cs">
@@ -169,6 +172,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="graphic_user_interface\form\RenameUnitFileSystem.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="graphic_user_interface\form\Settings.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -272,6 +279,8 @@
       <Link>libmupdf.dll</Link>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <None Include="resources\xps.png" />
+    <None Include="resources\open_folders.png" />
     <Resource Include="resources\update.png" />
     <None Include="resources\exit.png" />
     <None Include="resources\settings.png" />
@@ -283,7 +292,6 @@
     <Resource Include="resources\doc_tooltip.png" />
     <None Include="bin\x86\Debug\resources\docx.png" />
     <None Include="bin\x86\Debug\resources\doc.png" />
-    <None Include="resources\xps.png" />
     <None Include="resources\load.png" />
     <None Include="resources\open.png" />
     <None Include="resources\save.png" />

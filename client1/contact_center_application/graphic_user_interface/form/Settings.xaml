@@ -1,0 +1,25 @@
+﻿<Window x:Class="contact_center_application.graphic_user_interface.form.Settings"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:contact_center_application.graphic_user_interface.form"
+        mc:Ignorable="d"
+        Title="Settings" Height="300" Width="300">
+	<Grid>
+		<TabControl Margin="5,5,5,5">
+			<TabItem>
+				<StackPanel></StackPanel>
+				<TabItem.Header>
+					<TextBlock Text="Показ"/>
+				</TabItem.Header>
+			</TabItem>
+			<TabItem>
+				<StackPanel></StackPanel>
+				<TabItem.Header>
+					<TextBlock Text="Сеть"/>
+				</TabItem.Header>
+			</TabItem>
+		</TabControl>
+	</Grid>
+</Window>

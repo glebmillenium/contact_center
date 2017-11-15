@@ -163,6 +163,16 @@ namespace contact_center_application.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap open_folders {
+            get {
+                object obj = ResourceManager.GetObject("open_folders", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap registr {
             get {
                 object obj = ResourceManager.GetObject("registr", resourceCulture);
