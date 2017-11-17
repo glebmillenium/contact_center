@@ -45,3 +45,5 @@ C:\contact_center\client1\contact_center_application\obj\x86\Release\graphic_use
 C:\contact_center\client1\contact_center_application\obj\x86\Release\graphic_user_interface\form\UploadWindow.baml
 C:\contact_center\client1\contact_center_application\obj\x86\Release\graphic_user_interface\form\MainWindow.baml
 C:\contact_center\client1\contact_center_application\obj\x86\Release\contact_center_application.csprojResolveAssemblyReference.cache
+C:\contact_center\client1\contact_center_application\obj\x86\Release\graphic_user_interface\form\Settings.g.cs
+C:\contact_center\client1\contact_center_application\obj\x86\Release\graphic_user_interface\form\Settings.baml

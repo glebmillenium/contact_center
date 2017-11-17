@@ -36,6 +36,7 @@ public class PrimaryQueryTreatmenter implements Runnable {
     
     public void run()
     {
+        Logging.log("Thread: submain FTP start", 4);
         try
         {
             byte[] b = new byte[1024];
@@ -65,7 +66,7 @@ public class PrimaryQueryTreatmenter implements Runnable {
                             new String(obj.param3, "UTF-8"),
                             Integer.parseInt(new String(obj.param4,
                                     "UTF-8")));
-                    tcpSessionLocal.start();
+                    tcpSessionLocal.process();
                 } else
                 {
                     Logging.log("Запрос на отправку данных клиенту: "
@@ -73,7 +74,7 @@ public class PrimaryQueryTreatmenter implements Runnable {
                             + key + " Объем файла: "
                             + message.length + "байт", 2);
                     ReceiveData rdSession = new ReceiveData(socket, message);
-                    rdSession.start();
+                    rdSession.process();
                 }
             } else
             {
@@ -95,6 +96,7 @@ public class PrimaryQueryTreatmenter implements Runnable {
                     + "получил неизвестную ошибку: "
                     + exception.getMessage(), 2);
         }
+        Logging.log("Thread: submain FTP end", 4);
     }
     
     /**

@@ -68,6 +68,8 @@ public class Storage {
             circle++;
             if (circle > 65537)
             {
+                Logging.log("Максимальный объем заявок в системе превысил "
+                        + "допустимый предел", 2);
                 return -1;
             }
             idQuery++;

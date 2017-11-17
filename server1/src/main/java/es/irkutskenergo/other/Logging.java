@@ -80,6 +80,22 @@ public class Logging {
                     writer.close();
 
                     break;
+                case 3:
+                    output = date.toString() + ". Update Catalog from FastServer. " + message + "\r\n";
+                    writer = new FileWriter("logs/update_catalog.log", true);
+                    writer.append(output);
+                    writer.flush();
+                    writer.close();
+
+                    break;
+                case 4:
+                    output = date.toString() + ". Thread. " + message + "\r\n";
+                    writer = new FileWriter("logs/working_thread.log", true);
+                    writer.append(output);
+                    writer.flush();
+                    writer.close();
+
+                    break;
                 default:
                     System.out.println("Неверный параметр журналирования: "
                             + typeMessage + "\nСообщение: " + message);
@@ -132,6 +148,20 @@ public class Logging {
             }
             file.createNewFile();
 
+            file = new File(".//logs//update_catalog.log");
+            if (file.exists())
+            {
+                file.delete();
+            }
+            file.createNewFile();            
+            
+            file = new File(".//logs//working_thread.log");
+            if (file.exists())
+            {
+                file.delete();
+            }
+            file.createNewFile();  
+            
             file = new File(".//logs//netty.log");
             if (file.exists())
             {

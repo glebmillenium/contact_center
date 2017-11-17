@@ -4,6 +4,7 @@ FC:\contact_center\client1\contact_center_application\graphic_user_interface\for
 FC:\contact_center\client1\contact_center_application\graphic_user_interface\form\DownloadWindow.xaml;;
 FC:\contact_center\client1\contact_center_application\graphic_user_interface\form\ConfirmationChooseDialog.xaml;;
 FC:\contact_center\client1\contact_center_application\graphic_user_interface\form\RenameUnitFileSystem.xaml;;
+FC:\contact_center\client1\contact_center_application\graphic_user_interface\form\Settings.xaml;;
 FC:\contact_center\client1\contact_center_application\graphic_user_interface\form\UploadWindow.xaml;;
 FC:\contact_center\client1\contact_center_application\graphic_user_interface\form\MainWindow.xaml;;
 FC:\contact_center\client1\contact_center_application\ProcessDownloadFile.xaml;;

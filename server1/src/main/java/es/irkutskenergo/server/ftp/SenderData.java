@@ -9,7 +9,7 @@ import java.io.OutputStream;
 import java.net.Socket;
 import java.util.Arrays;
 
-public class SenderData extends Thread {
+public class SenderData {
 
     private Socket socket = null;
     private int error_num = 0;
@@ -37,7 +37,7 @@ public class SenderData extends Thread {
         numberConnect = query;
     }
 
-    public void run()
+    public void process()
     {
         try
         {

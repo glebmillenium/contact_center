@@ -66,6 +66,8 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <PlatformTarget>x86</PlatformTarget>
     <OutputPath>bin\x86\Release\</OutputPath>
+    <DocumentationFile>
+    </DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <PlatformTarget>x64</PlatformTarget>
@@ -157,6 +159,11 @@
     <Compile Include="ProcessDownloadFile.xaml.cs">
       <DependentUpon>ProcessDownloadFile.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="serialization\CatalogForSerialization.cs" />
     <Compile Include="serialization\ObjectForSerialization.cs" />
     <Page Include="graphic_user_interface\form\Authorization.xaml">
@@ -218,11 +225,6 @@
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Settings.settings</DependentUpon>
@@ -230,6 +232,7 @@
     </Compile>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
+      <SubType>Designer</SubType>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <None Include="packages.config" />
@@ -242,22 +245,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="resources\disconnect.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="resources\connect.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="resources\refresh.png" />
-  </ItemGroup>
-  <ItemGroup>
     <WCFMetadata Include="Connected Services\" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="resources\icon_home.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="resources\icon_main.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="main.ico" />
@@ -279,6 +267,8 @@
       <Link>libmupdf.dll</Link>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <None Include="resources\network_settings.png" />
+    <None Include="resources\view_settings.png" />
     <None Include="resources\xps.png" />
     <None Include="resources\open_folders.png" />
     <Resource Include="resources\update.png" />
@@ -294,7 +284,23 @@
     <None Include="bin\x86\Debug\resources\doc.png" />
     <None Include="resources\load.png" />
     <None Include="resources\open.png" />
-    <None Include="resources\save.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>rmdir /s resources 
+rmdir /s definition
+rmdir /s core
+rmdir /s log
+</PreBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PostBuildEvent>mkdir resources
+mkdir definition
+mkdir core
+mkdir log
+move *.dll core
+move *.xml definition
+copy $(ProjectDir)resources $(TargetDir)resources
+copy $(ProjectDir)log $(TargetDir)log</PostBuildEvent>
+  </PropertyGroup>
 </Project>

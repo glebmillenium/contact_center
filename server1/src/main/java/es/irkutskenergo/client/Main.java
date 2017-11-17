@@ -3,6 +3,8 @@ package es.irkutskenergo.client;
 import es.irkutskenergo.other.Logging;
 import es.irkutskenergo.server.netty.fast.FastServer;
 import es.irkutskenergo.server.ftp.FtpServer;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 /**
  *
@@ -24,7 +26,8 @@ public class Main {
             FastServer NT = new FastServer(portFast);
             FtpServer fs = new FtpServer(portFtp);
             fs.start();
-
+            String version = new String(Files.readAllBytes(Paths.get("version")));
+            Logging.log("Версия сервера: " + version);
             Logging.log(" Сервер ЕЭИСЦ успешно запущен:"
                     + "\r\nПорт обмена сообщений - " + portFast
                     + "\r\nПорт файлового обмена - " + portFtp + "\r\n", 0);

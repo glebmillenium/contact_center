@@ -44,8 +44,9 @@ public class FastServerHandler extends SimpleChannelUpstreamHandler {
             Logging.log("Получено сообщение от " + ctx.getChannel().getRemoteAddress()
                     + " (" + ctx.getChannel().getId() + ")", 1);
             SenderSmallData senderSmallData = new SenderSmallData(e.getChannel(), e.getMessage().toString());
+            System.out.println("Thread: Main FAST");
+            Logging.log("Thread: Main FAST", 4);
             senderSmallData.start();
-            
         } catch (Exception ex)
         {
             ex.printStackTrace();

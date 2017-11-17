@@ -13,7 +13,7 @@ import java.util.Arrays;
  *
  * @author admin
  */
-public class ReceiveData extends Thread {
+public class ReceiveData {
 
     private Socket socket = null;
     private int error_num = 0;
@@ -39,8 +39,8 @@ public class ReceiveData extends Thread {
         numberConnect = query;
     }
 
-    @Override
-    public void run()
+
+    public void process()
     {
         try
         {

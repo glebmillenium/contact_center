@@ -25,7 +25,6 @@ import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Date;
 
 /**
  * SenderSmallData - класс, предназначенный для ответа на первичный запрос от
@@ -123,6 +122,7 @@ public class SenderSmallData extends Thread {
     @Override
     public void run()
     {
+        Logging.log("Thread: submain FAST start", 4);
         try
         {
 
@@ -149,7 +149,8 @@ public class SenderSmallData extends Thread {
                     + " Номер запроса " + this.numberConnect
                     + ". Сообщение от клиента: "
                     + commandFromClient, 1);
-        } 
+        }
+        Logging.log("Thread: submain FAST end", 4);
     }
 
     /**
@@ -232,7 +233,7 @@ public class SenderSmallData extends Thread {
                         + "содержимого файловой системы "
                         + this.aliance.get(obj.param1).param2 + " Канал"
                         + this.channel.toString() + ") Номер запроса: "
-                        + this.numberConnect, 1);
+                        + this.numberConnect, 3);
                 result = getCatalog(obj);
             } else if (obj.command.equals("get_content_file"))
             {
@@ -335,9 +336,8 @@ public class SenderSmallData extends Thread {
         String result = this.mapper.writeValueAsString(
                 new ObjectForSerialization("catalog",
                         expectedSize, sendToStorageInFtpServer(false,
-                                obj.command, resultInFtp, new byte[]
-                                {
-                })));
+                                obj.command, resultInFtp, new byte[]{})
+                ));
         return result;
     }
 
@@ -403,8 +403,7 @@ public class SenderSmallData extends Thread {
                 new ObjectForSerialization("content_file",
                         expectedSize, sendToStorageInFtpServer(false,
                                 obj.command, resultInFtp, new byte[]
-                                {
-                })));
+                                {})));
     }
 
     /**
@@ -428,7 +427,8 @@ public class SenderSmallData extends Thread {
 
         } catch (FileNotFoundException ex)
         {
-            Logger.getLogger(SenderSmallData.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(SenderSmallData.class.getName()).log(Level.SEVERE, 
+                    null, ex);
         }
         return s;
     }
@@ -618,19 +618,16 @@ public class SenderSmallData extends Thread {
         BufferedReader reader = null;
         try
         {
-            System.out.println("1");
             reader = new BufferedReader(new FileReader("list_connect"));
             String line;
             while ((line = reader.readLine()) != null)
             {
                 System.out.println(line);
                 String[] temp = line.split(";");
-
                 result.put(temp[0], new Triple<String, String, String>(temp[1], temp[2], temp[3]));
             }
         } catch (FileNotFoundException ex)
         {
-            System.out.println("2");
             result.clear();
             result.put("0", new Triple<String, String, String>("Системный диск",
                     "C:\\", "1"));

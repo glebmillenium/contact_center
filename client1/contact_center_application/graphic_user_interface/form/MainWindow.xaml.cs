@@ -1488,5 +1488,10 @@ namespace contact_center_application.graphic_user_interface.form
 			}
 			setVisibleOnText(this.searchTextBox.Text);
 		}
+
+		private void buttonSettings_Click(object sender, RoutedEventArgs e)
+		{
+			new Settings().ShowDialog();
+		}
 	}
 }

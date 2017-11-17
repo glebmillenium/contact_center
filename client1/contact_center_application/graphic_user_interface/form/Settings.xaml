@@ -10,14 +10,29 @@
 		<TabControl Margin="5,5,5,5">
 			<TabItem>
 				<StackPanel></StackPanel>
+				
 				<TabItem.Header>
-					<TextBlock Text="Показ"/>
+					<StackPanel Orientation="Horizontal">
+						<Image Height="20" Width="20" Margin="0,0,5,0" Source="pack://siteoforigin:,,,/resources/view_settings.png"/>
+						<TextBlock Text="Показ"/>
+					</StackPanel>
 				</TabItem.Header>
 			</TabItem>
 			<TabItem>
-				<StackPanel></StackPanel>
+				<StackPanel>
+					<StackPanel Orientation="Horizontal">
+						<TextBlock Text="IP адрес сервера"/>
+					</StackPanel>
+					<StackPanel Orientation="Horizontal">
+						<TextBlock Text="Время обновления каталогов (сек)"/>
+					</StackPanel>
+				</StackPanel>
+				
 				<TabItem.Header>
-					<TextBlock Text="Сеть"/>
+					<StackPanel Orientation="Horizontal">
+						<Image Height="20" Width="20" Margin="0,0,5,0" Source="pack://siteoforigin:,,,/resources/network_settings.png"/>
+						<TextBlock Text="Сеть"/>
+					</StackPanel>
 				</TabItem.Header>
 			</TabItem>
 		</TabControl>
