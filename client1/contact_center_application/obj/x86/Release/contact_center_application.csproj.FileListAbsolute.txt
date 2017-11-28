@@ -9,7 +9,6 @@ C:\contact_center\client1\contact_center_application\bin\x86\Release\Spire.Licen
 C:\contact_center\client1\contact_center_application\bin\x86\Release\Spire.Pdf.Wpf.dll
 C:\contact_center\client1\contact_center_application\bin\x86\Release\Spire.PdfViewer.Wpf.dll
 C:\contact_center\client1\contact_center_application\bin\x86\Release\Spire.XLS.dll
-C:\contact_center\client1\contact_center_application\bin\x86\Release\MouseKeyboardActivityMonitor.dll
 C:\contact_center\client1\contact_center_application\bin\x86\Release\Microsoft.mshtml.dll
 C:\contact_center\client1\contact_center_application\bin\x86\Release\Spire.Pdf.dll
 C:\contact_center\client1\contact_center_application\bin\x86\Release\Newtonsoft.Json.xml

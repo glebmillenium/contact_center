@@ -148,7 +148,7 @@ public class SenderSmallData extends Thread {
                     + " Клиент " + channel.toString()
                     + " Номер запроса " + this.numberConnect
                     + ". Сообщение от клиента: "
-                    + commandFromClient, 1);
+                    + commandFromClient + " " + ex.getMessage(), 1);
         }
         Logging.log("Thread: submain FAST end", 4);
     }

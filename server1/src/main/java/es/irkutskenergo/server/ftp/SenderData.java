@@ -1,13 +1,11 @@
 package es.irkutskenergo.server.ftp;
 
-import es.irkutskenergo.other.ExceptionServer;
 import es.irkutskenergo.other.Logging;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
-import java.util.Arrays;
 
 public class SenderData {
 

@@ -16,7 +16,7 @@ import org.codehaus.jackson.map.ObjectMapper;
  *
  * @author admin
  */
-public class FtpServer extends Thread {
+public class FtpServer {
 
     private ServerSocket server;
 //    private InetAddress host;
@@ -26,7 +26,6 @@ public class FtpServer extends Thread {
 
     public FtpServer(int port) throws IOException
     {
-
         this.port = port;
         this.server = new ServerSocket(this.port);
 //            this.host = InetAddress.getLocalHost();
@@ -34,7 +33,6 @@ public class FtpServer extends Thread {
 //            server.bind(address);
         //this.server.setSoTimeout(15000);
         this.canWork = true;
-
     }
 
     @Override
@@ -44,7 +42,7 @@ public class FtpServer extends Thread {
         Logging.log("Сервер открытый по порту: " + this.port + " был закрыт", 2);
     }
 
-    @Override
+    
     public void run()
     {
         if (this.canWork)

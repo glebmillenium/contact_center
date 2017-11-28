@@ -109,7 +109,7 @@ public class ReceiveData {
                         {
                         };
                         outputStream.write(failPackage, 0, failPackage.length);
-                        Logging.log(e.toString(), 2);
+                        Logging.log(e.getMessage(), 2);
                     }
                 }
             }
@@ -122,14 +122,14 @@ public class ReceiveData {
                 } catch (IOException ex)
                 {
                     Logging.log("Сокет для файлового приема закрыт: код ошибки "
-                            + error_num + " Номер сеанса: " + numberConnect, 2);
+                            + error_num + " Номер сеанса: " + numberConnect + " "  + ex.getMessage(), 2);
                 }
             }
         } catch (IOException ioe)
         {
             Logging.log("Сессия получения файла была завершена с клиентом "
                     + socket.getInetAddress() + " Номер сеанса: "
-                    + numberConnect, 2);
+                    + numberConnect + " " + ioe.getMessage(), 2);
         }
     }
 }

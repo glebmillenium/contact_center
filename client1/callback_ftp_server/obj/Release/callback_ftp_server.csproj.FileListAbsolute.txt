@@ -1,0 +1,7 @@
+C:\contact_center\client1\callback_ftp_server\bin\Release\callback_ftp_server.exe.config
+C:\contact_center\client1\callback_ftp_server\bin\Release\callback_ftp_server.exe
+C:\contact_center\client1\callback_ftp_server\bin\Release\callback_ftp_server.pdb
+C:\contact_center\client1\callback_ftp_server\obj\Release\callback_ftp_server.csprojResolveAssemblyReference.cache
+C:\contact_center\client1\callback_ftp_server\obj\Release\callback_ftp_server.csproj.CoreCompileInputs.cache
+C:\contact_center\client1\callback_ftp_server\obj\Release\callback_ftp_server.exe
+C:\contact_center\client1\callback_ftp_server\obj\Release\callback_ftp_server.pdb

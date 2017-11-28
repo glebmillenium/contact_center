@@ -90,7 +90,7 @@ public class PrimaryQueryTreatmenter implements Runnable {
                         + "Клиент: "
                         + socket.getInetAddress(), 2);
             }
-        } catch (Exception exception)
+        } catch (IOException | NumberFormatException exception)
         {
             Logging.log("Сервер при выполнении запроса "
                     + "получил неизвестную ошибку: "

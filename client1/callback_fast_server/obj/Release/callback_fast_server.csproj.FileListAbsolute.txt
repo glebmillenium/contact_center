@@ -1,0 +1,7 @@
+C:\contact_center\client1\callback_fast_server\bin\Release\callback_fast_server.exe.config
+C:\contact_center\client1\callback_fast_server\bin\Release\callback_fast_server.exe
+C:\contact_center\client1\callback_fast_server\bin\Release\callback_fast_server.pdb
+C:\contact_center\client1\callback_fast_server\obj\Release\callback_fast_server.csprojResolveAssemblyReference.cache
+C:\contact_center\client1\callback_fast_server\obj\Release\callback_fast_server.csproj.CoreCompileInputs.cache
+C:\contact_center\client1\callback_fast_server\obj\Release\callback_fast_server.exe
+C:\contact_center\client1\callback_fast_server\obj\Release\callback_fast_server.pdb

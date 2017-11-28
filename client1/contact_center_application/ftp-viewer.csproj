@@ -79,7 +79,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="MoonPdfLib">
-      <HintPath>..\..\..\Users\admin\Desktop\MoonPdf-0.3.0-x86\MoonPdf-0.3.0-x86\MoonPdfLib.dll</HintPath>
+      <HintPath>..\packages\MoonPdfLib.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -263,7 +263,7 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="..\..\..\Users\admin\Desktop\MoonPdf-0.3.0-x86\MoonPdf-0.3.0-x86\libmupdf.dll">
+    <Content Include="..\packages\libmupdf.dll">
       <Link>libmupdf.dll</Link>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
