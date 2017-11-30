@@ -28,5 +28,26 @@ namespace contact_center_application.core.storage_dynamic_data
 		public static StackPanel progressConvertation;
 		public static StackPanel managerPanel;
 		public static ToggleButton registrButton;
+
+		public static void initialize(MainWindow wnd)
+		{
+			MainWindowElement.cursor = wnd.Cursor;
+			MainWindowElement.tabControl = wnd.tabControlForViewer;
+			MainWindowElement.textboxTab = wnd.textboxTabForViewer;
+			MainWindowElement.docViewerTab = wnd.docViewerTabForViewer;
+			MainWindowElement.pdfViewerTab = wnd.pdfViewerTabForViewer;
+			MainWindowElement.imageTab = wnd.imageTabForViewer;
+			MainWindowElement.viewerTab = wnd.viewerTabForViewer;
+			MainWindowElement.switchModelViewButton = wnd.switchModelViewButtonXPS;
+			MainWindowElement.docViewerStackPanel = wnd.docViewerOnStackPanel;
+			MainWindowElement.viewerStackPanel = wnd.viewerOnStackPanel;
+			MainWindowElement.pdfViewerStackPanel = wnd.pdfViewerOnStackPanel;
+			MainWindowElement.imageStackPanel = wnd.imageOnStackPanel;
+			MainWindowElement.progressConvertation = wnd.progressOnConvertation;
+			MainWindowElement.managerPanel = wnd.managerOnPanel;
+			MainWindowElement.window = wnd;
+			MainWindowElement.registrButton = wnd.registrOnButton;
+		}
+
 	}
 }

@@ -1,6 +1,7 @@
 ﻿using contact_center_application.core;
 using contact_center_application.core.storage_dynamic_data;
 using contact_center_application.graphic_user_interface.form;
+using contact_center_application.graphic_user_interface.manage_graphical_component.viewer;
 using System;
 using System.Collections.Generic;
 using System.IO;

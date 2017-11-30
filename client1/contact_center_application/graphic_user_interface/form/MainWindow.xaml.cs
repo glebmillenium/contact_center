@@ -14,6 +14,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using contact_center_application.core.storage_dynamic_data;
 using contact_center_application.graphic_user_interface.manage_graphical_component.tree_view;
+using contact_center_application.graphic_user_interface.manage_graphical_component.viewer;
 
 namespace contact_center_application.graphic_user_interface.form
 {
@@ -33,22 +34,7 @@ namespace contact_center_application.graphic_user_interface.form
 			Logger.initialize();
 			InitializeComponent();
 
-			MainWindowElement.cursor = this.Cursor;
-			MainWindowElement.tabControl = this.tabControlForViewer;
-			MainWindowElement.textboxTab = this.textboxTabForViewer;
-			MainWindowElement.docViewerTab = this.docViewerTabForViewer;
-			MainWindowElement.pdfViewerTab = this.pdfViewerTabForViewer;
-			MainWindowElement.imageTab = this.imageTabForViewer;
-			MainWindowElement.viewerTab = this.viewerTabForViewer;
-			MainWindowElement.switchModelViewButton = this.switchModelViewButtonXPS;
-			MainWindowElement.docViewerStackPanel = this.docViewerOnStackPanel;
-			MainWindowElement.viewerStackPanel = this.viewerOnStackPanel;
-			MainWindowElement.pdfViewerStackPanel = this.pdfViewerOnStackPanel;
-			MainWindowElement.imageStackPanel = this.imageOnStackPanel;
-			MainWindowElement.progressConvertation = progressOnConvertation;
-			MainWindowElement.managerPanel = managerOnPanel;
-			MainWindowElement.window = this;
-			MainWindowElement.registrButton = registrOnButton;
+			MainWindowElement.initialize(this);
 			ManagerViewer.textbox = this.textboxDisplay;
 			CurrentDataFileSystem.ComboboxFileSystem = this.ComboboxChooseFileSystem;
 			CurrentDataFileSystem.treeViewCatalog = treeViewCatalogFileSystem;
