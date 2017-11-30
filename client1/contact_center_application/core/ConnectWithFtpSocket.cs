@@ -11,6 +11,7 @@ namespace contact_center_application.core
     {
 		private static Socket sender;
 		private static bool realization = false;
+
 		public static void createSocket(String ip, int port)
 		{
 			IPHostEntry ipHost = Dns.GetHostEntry(ip);

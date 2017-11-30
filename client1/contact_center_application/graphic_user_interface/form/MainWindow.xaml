@@ -19,14 +19,14 @@
 		</Grid.RowDefinitions>
 
 		<StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Right">
-			<Button x:Name="buttonSettings" Margin="5,0,5,0" Height="30" Width="30" Click="buttonSettings_Click" >
+			<Button x:Name="buttonSettings" Margin="0,0,5,0" Height="30" Width="30" Click="buttonSettings_Click" >
 				<Image Source="pack://siteoforigin:,,,/resources/settings.png"/>
 			</Button>
-			<Button Margin="5,0,5,0" Height="30" Width="30" >
+			<Button Margin="0,0,5,0" Height="30" Width="30" >
 				<Image Source="pack://siteoforigin:,,,/resources/help.png"/>
 			</Button>
 
-			<Button>
+			<Button Margin="0,0,5,0" Height="30" Width="30">
 				<Image Source="pack://siteoforigin:,,,/resources/exit.png"/>
 			</Button>
 		</StackPanel>
@@ -34,7 +34,7 @@
 		<DockPanel Grid.Row="1">
 			<StackPanel DockPanel.Dock="Left" Orientation="Horizontal">
 				<Label Content="Файловый ресурс: " Height="30" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-				<ComboBox x:Name="ComboboxFileSystem" Height="23"
+				<ComboBox x:Name="ComboboxChooseFileSystem" Height="23"
 						SelectionChanged="ComboboxFileSystem_SelectionChanged" HorizontalAlignment="Left" VerticalAlignment="Top" Width="300"/>
 				<Button x:Name="buttonRefresh" Width="150" Height="20" ToolTip="Button" HorizontalAlignment="Left" VerticalAlignment="Top" TextOptions.TextFormattingMode="Display" Click="buttonRefresh_Click">
 					<TextBlock x:Name="buttonRetryConnection" Text="Повторить соединение" TextAlignment="Center" TextWrapping="Wrap" Height="15" Width="132"/>
@@ -75,7 +75,7 @@
 						<Image Source="pack://siteoforigin:,,,/resources/open_folders.png" ToolTip="Папки в которых найдены элементы удовлетворяющие критериям поиска будут представлены в развернутом виде"/>
 					</ToggleButton>
 				</StackPanel>
-				<TreeView DockPanel.Dock="Bottom" x:Name="treeViewCatalog" Margin="5" MinWidth="200" MaxWidth="400"/>
+				<TreeView DockPanel.Dock="Bottom" x:Name="treeViewCatalogFileSystem" Margin="5" MinWidth="200" MaxWidth="400"/>
 			</DockPanel>
 			<StackPanel x:Name="stackPanelView" DockPanel.Dock="Right" Orientation="Vertical"
 						Margin="0,0,5,0">

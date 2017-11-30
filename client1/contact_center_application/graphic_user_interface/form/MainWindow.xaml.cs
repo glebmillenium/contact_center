@@ -24,37 +24,11 @@ using System.Windows.Media;
 
 namespace contact_center_application.graphic_user_interface.form
 {
-
 	/// <summary>
 	/// Класс, формирующий графический интерфейс отображения содержимое файловой системы.
 	/// </summary>
 	public partial class MainWindow : Window
 	{
-
-		/// <summary>
-		/// openFile - хранит путь открытого файла в приложении
-		/// </summary>
-		string openFile = "";
-
-		List<TreeViewItem> basisListItems = new List<TreeViewItem>();
-
-		/// <summary>
-		/// listTreeView - словарь (хэш-таблица), хранит относительный путь в 
-		///				файловой системе, включая имя самого объекта, и значения всех TreeView
-		/// 
-		/// @param Dictionary<TreeView, Tuple<bool, string, bool>> - графический элемент; 
-		///						тип объекта, который отображает элемент - файл - true, или каталог - false;
-		///						string - относительный путь файла в системе;
-		///						bool - флаг обновления 
-		/// </summary>
-		private Dictionary<TreeViewItem, Tuple<bool, string, bool>> listTreeView =
-											new Dictionary<TreeViewItem, Tuple<bool, string, bool>>();
-
-		/// <summary>
-		/// alianceAndId - словарь (хэш-таблица), хранит название файловой системы и его 
-		/// уникальный идентификатор
-		/// </summary>
-		private Dictionary<string, Tuple<string, string>> alianceIdPolicy = new Dictionary<string, Tuple<string, string>>();
 		private DocumentViewer viewer = new DocumentViewer(); //viewerTab
 		private MoonPdfPanel moonPdfPanel = new MoonPdfPanel(); //background light-gray
 		private DocViewer docViewer = new DocViewer();
@@ -68,14 +42,11 @@ namespace contact_center_application.graphic_user_interface.form
 		/// </summary>
 		public MainWindow()
 		{
-			File.WriteAllText("log/log.txt", "");
-			File.WriteAllText("log/exception.txt", "");
-			if (Directory.Exists("tmp"))
-			{
-				Directory.Delete("tmp", true);
-				Directory.CreateDirectory("tmp");
-			}
+			Logger.initialize();
+
 			InitializeComponent();
+			CurrentDataFileSystem.ComboboxFileSystem = this.ComboboxChooseFileSystem;
+			CurrentDataFileSystem.treeViewCatalog = treeViewCatalogFileSystem;
 			progressConvertation.Visibility = Visibility.Hidden;
 			managerPanel.Visibility = Visibility.Collapsed;
 			//  DispatcherTimer setup
@@ -84,8 +55,6 @@ namespace contact_center_application.graphic_user_interface.form
 			dispatcherTimer.Interval = new TimeSpan(0, 0, 2);
 			dispatcherTimer.Start();
 
-
-			//callGarbage();
 			SynchronizationContext uiContext = SynchronizationContext.Current;
 			Thread thread = new Thread(Run);
 			thread.Start(uiContext);
@@ -118,7 +87,8 @@ namespace contact_center_application.graphic_user_interface.form
 		{
 			try
 			{
-				int index = Int32.Parse(this.alianceIdPolicy[ComboboxFileSystem.SelectedItem.ToString()].Item1);
+				int index = Int32.Parse(
+					CurrentDataFileSystem.alianceIdPolicy[CurrentDataFileSystem.ComboboxFileSystem.SelectedItem.ToString()].Item1);
 				string answer =
 					RequestDataFromServer.getCatalog(index.ToString());
 				fullingTreeView(answer);
@@ -126,7 +96,7 @@ namespace contact_center_application.graphic_user_interface.form
 			}
 			catch (System.NullReferenceException e)
 			{
-				loggerException(e.Message);
+				Logger.log(e.Message);
 			}
 		}
 
@@ -138,34 +108,25 @@ namespace contact_center_application.graphic_user_interface.form
 		{
 			try
 			{
-				string address = "";
-				try
-				{
-					address = File.ReadAllText(@"settings\ip_connect");
-				}
-				catch (Exception e)
-				{
-					address = "localhost";
-					loggerException(e.Message);
-				}
+				string address = SettingsData.getAddress();
 				string[] aliance = RequestDataFromServer.primaryExchangeWithSocket(address);
-				alianceIdPolicy.Clear();
-				ComboboxFileSystem.Items.Clear();
+				CurrentDataFileSystem.alianceIdPolicy.Clear();
+				CurrentDataFileSystem.ComboboxFileSystem.Items.Clear();
 				for (int i = 0; i < aliance.Length; i++)
 				{
 					string[] item = JsonConvert.DeserializeObject<string[]>(aliance[i]);
 					if (item.Length == 3)
 					{
-						this.alianceIdPolicy.Add(item[1], new Tuple<string, string>(item[0], item[2]));
-						ComboboxFileSystem.Items.Add(item[1]);
+						CurrentDataFileSystem.alianceIdPolicy.Add(
+							item[1], new Tuple<string, string>(item[0], item[2]));
+						CurrentDataFileSystem.ComboboxFileSystem.Items.Add(item[1]);
 					}
 				}
-				ComboboxFileSystem.SelectedItem = JsonConvert.DeserializeObject<string[]>(aliance[0])[1];
-				string selected = ComboboxFileSystem.SelectedItem.ToString();
+				CurrentDataFileSystem.ComboboxFileSystem.SelectedItem = JsonConvert.DeserializeObject<string[]>(aliance[0])[1];
 			}
 			catch (System.Net.Sockets.SocketException socketException)
 			{
-				loggerException(socketException.Message);
+				Logger.log(socketException.Message);
 			}
 		}
 
@@ -175,71 +136,21 @@ namespace contact_center_application.graphic_user_interface.form
 		/// <param name="json"></param>
 		private void fullingTreeView(string json)
 		{
-			
 			if (!updateCatalog)
 			{
-				this.listTreeView.Clear();
+				CurrentDataFileSystem.listTreeView.Clear();
 			}
+			ContextMenuForTreeView.setContextMenuForTreeView();
 
-			if (this.alianceIdPolicy[ComboboxFileSystem.SelectedItem.ToString()].Item2.Equals("0"))
+			CurrentDataFileSystem.basisListItems = getItemsCatalogsFromJson(json, "");
+
+			if (CurrentDataFileSystem.basisListItems.Count != 0)
 			{
-				System.Windows.Controls.ContextMenu docMenu = new System.Windows.Controls.ContextMenu();
-				System.Windows.Controls.MenuItem createDir = new System.Windows.Controls.MenuItem();
-				createDir.Header = "Создать новую папку";
-				createDir.Click += CreateCategory_Click;
-				System.Windows.Controls.MenuItem upload = new System.Windows.Controls.MenuItem();
-				upload.Header = "Загрузить файл";
-				upload.Click += UploadCategory_Click;
-				docMenu.Items.Add(upload);
-				docMenu.Items.Add(createDir);
-
-				this.treeViewCatalog.ContextMenu = docMenu;
-			}
-			if (this.alianceIdPolicy[ComboboxFileSystem.SelectedItem.ToString()].Item2.Equals("1"))
-			{
-				System.Windows.Controls.ContextMenu docMenu = new System.Windows.Controls.ContextMenu();
-				System.Windows.Controls.MenuItem createDir = new System.Windows.Controls.MenuItem();
-				createDir.Header = "Создать новую категорию";
-				createDir.Click += CreateCategory_Click;
-				docMenu.Items.Add(createDir);
-				
-				this.treeViewCatalog.ContextMenu = docMenu;
-			}
-			
-
-			basisListItems = getItemsCatalogsFromJson(json, "");
-
-			if (basisListItems.Count != 0)
-			{
-				this.treeViewCatalog.Items.Clear();
-				foreach (var category in basisListItems)
+				CurrentDataFileSystem.treeViewCatalog.Items.Clear();
+				foreach (var category in CurrentDataFileSystem.basisListItems)
 				{
-					this.treeViewCatalog.Items.Add(category);
+					CurrentDataFileSystem.treeViewCatalog.Items.Add(category);
 				}
-			}
-		}
-
-		public void UploadCategory_Click(object sender, RoutedEventArgs e)
-		{
-			System.Windows.Forms.OpenFileDialog OPF = new System.Windows.Forms.OpenFileDialog();
-			OPF.Filter = "Все документы|*.*|Файлы txt|*.txt|Файлы csv|*.csv|Файлы doc|*.doc|Файлы docx|*.docx|Файлы xls|*.xls|Файлы xlsx|*.xlsx|Файлы tiff|*.tiff|Файлы png|*.png";
-			if (OPF.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-			{
-				int index = Int32.Parse(this.alianceIdPolicy[ComboboxFileSystem.SelectedItem.ToString()].Item1);
-
-				string relativeWay = "";
-				UploadWindow download = new UploadWindow(index.ToString(), relativeWay,
-					OPF.FileName, "0");
-				try
-				{
-					download.sendFileToServer();
-
-				}
-				catch (Exception exp)
-				{
-					loggerException(exp.Message);
-				}
-				ButtonUpdateCatalogs_Click(null, null);
 			}
 		}
 
@@ -249,11 +160,11 @@ namespace contact_center_application.graphic_user_interface.form
 			TreeViewItem item = getSearchItemOnCurrentWay(currentWay + "\\" + element.name);
 			if (item == null)
 			{
-				item = UsersTreeViewItem.getTreeViewItem(element.name, true);
+				item = ProcessTreeViewItem.getTreeViewItem(element.name, true);
 				System.Windows.Controls.ContextMenu docMenu = new System.Windows.Controls.ContextMenu();
 				item.MouseDoubleClick += this.selectFile;
 				item.KeyDown += Item_KeyDown;
-				this.listTreeView.Add(item, new Tuple<bool, string, bool>(element.file,
+				CurrentDataFileSystem.listTreeView.Add(item, new Tuple<bool, string, bool>(element.file,
 					currentWay + "\\" + element.name, true));
 
 				System.Windows.Controls.MenuItem open = new System.Windows.Controls.MenuItem();
@@ -263,19 +174,19 @@ namespace contact_center_application.graphic_user_interface.form
 
 				System.Windows.Controls.MenuItem delete = new System.Windows.Controls.MenuItem();
 				delete.Header = "Удалить файл";
-				delete.Click += Delete_Click;
+				delete.Click += EventsForContextMenuTreeView.Delete_Click;
 				docMenu.Items.Add(delete);
 
 				System.Windows.Controls.MenuItem rename = new System.Windows.Controls.MenuItem();
 				rename.Header = "Переименовать";
-				rename.Click += Rename_Click;
+				rename.Click += EventsForContextMenuTreeView.Rename_Click;
 				docMenu.Items.Add(rename);
 				item.ContextMenuOpening += Item_ContextMenuOpening;
 				item.ContextMenu = docMenu;
 			}
 			else
 			{
-				listTreeView[item] = new Tuple<bool, string, bool>
+				CurrentDataFileSystem.listTreeView[item] = new Tuple<bool, string, bool>
 				(element.file, currentWay + "\\" + element.name, true);
 			}
 
@@ -289,7 +200,6 @@ namespace contact_center_application.graphic_user_interface.form
 				selectFile(null, null);
 			}
 		}
-
 
 		/// <summary>
 		/// Получение 
@@ -305,13 +215,13 @@ namespace contact_center_application.graphic_user_interface.form
 			if (item != null)
 			{
 				item.Items.Clear();
-				listTreeView[item] = new Tuple<bool, string, bool>
+				CurrentDataFileSystem.listTreeView[item] = new Tuple<bool, string, bool>
 				(element.file, currentWay + "\\" + element.name, true);
 			}
 			else
 			{
-				item = UsersTreeViewItem.getTreeViewItem(element.name, false);
-				this.listTreeView.Add(item, new Tuple<bool, string, bool>
+				item = ProcessTreeViewItem.getTreeViewItem(element.name, false);
+				CurrentDataFileSystem.listTreeView.Add(item, new Tuple<bool, string, bool>
 				(element.file, currentWay + "\\" + element.name, true));
 			}
 
@@ -339,17 +249,17 @@ namespace contact_center_application.graphic_user_interface.form
 			{
 				case 1:
 					upload.Header = "Загрузить файл в категорию";
-					upload.Click += Upload_Click;
+					upload.Click += EventsForContextMenuTreeView.Upload_Click;
 					docMenu.Items.Add(upload);
 					break;
 				case 2:
 					upload.Header = "Загрузить файл в тему";
-					upload.Click += Upload_Click;
+					upload.Click += EventsForContextMenuTreeView.Upload_Click;
 					docMenu.Items.Add(upload);
 					break;
 				case 3:
 					upload.Header = "Загрузить файл в подтему";
-					upload.Click += Upload_Click;
+					upload.Click += EventsForContextMenuTreeView.Upload_Click;
 					docMenu.Items.Add(upload);
 					break;
 			}
@@ -359,60 +269,57 @@ namespace contact_center_application.graphic_user_interface.form
 			{
 				case 1:
 					createDir.Header = "Создать новую тему в " + element.name;
-					createDir.Click += CreateDir_Click;
+					createDir.Click += EventsForContextMenuTreeView.CreateDir_Click;
 					docMenu.Items.Add(createDir);
 					break;
 				case 2:
 					createDir.Header = "Создать новую подтему в " + element.name;
-					createDir.Click += CreateDir_Click;
+					createDir.Click += EventsForContextMenuTreeView.CreateDir_Click;
 					docMenu.Items.Add(createDir);
 					break;
 			}
 
-
 			System.Windows.Controls.MenuItem delete = new System.Windows.Controls.MenuItem();
-
 			switch (deep)
 			{
 				case 1:
 					delete.Header = "Удалить категорию";
-					delete.Click += Delete_Click;
+					delete.Click += EventsForContextMenuTreeView.Delete_Click;
 					docMenu.Items.Add(delete);
 					break;
 				case 2:
 					delete.Header = "Удалить тему";
-					delete.Click += Delete_Click;
+					delete.Click += EventsForContextMenuTreeView.Delete_Click;
 					docMenu.Items.Add(delete);
 					break;
 				case 3:
 					delete.Header = "Удалить подтему";
-					delete.Click += Delete_Click;
+					delete.Click += EventsForContextMenuTreeView.Delete_Click;
 					docMenu.Items.Add(delete);
 					break;
 				default:
 					delete.Header = "Удалить папку";
-					delete.Click += Delete_Click;
+					delete.Click += EventsForContextMenuTreeView.Delete_Click;
 					docMenu.Items.Add(delete);
 					break;
 			}
 
 			System.Windows.Controls.MenuItem rename = new System.Windows.Controls.MenuItem();
-
 			switch (deep)
 			{
 				case 1:
 					rename.Header = "Переименовать категорию";
-					rename.Click += Rename_Click;
+					rename.Click += EventsForContextMenuTreeView.Rename_Click;
 					docMenu.Items.Add(rename);
 					break;
 				case 2:
 					rename.Header = "Переименовать тему";
-					rename.Click += Rename_Click;
+					rename.Click += EventsForContextMenuTreeView.Rename_Click;
 					docMenu.Items.Add(rename);
 					break;
 				case 3:
 					rename.Header = "Переименовать подтему";
-					rename.Click += Rename_Click;
+					rename.Click += EventsForContextMenuTreeView.Rename_Click;
 					docMenu.Items.Add(rename);
 					break;
 			}
@@ -422,10 +329,9 @@ namespace contact_center_application.graphic_user_interface.form
 		}
 
 		private void setContextMenuToTreeViewItem(TreeViewItem item, CatalogForSerialization element, int deep)
-
 		{
 			System.Windows.Controls.ContextMenu docMenu = new System.Windows.Controls.ContextMenu();
-			int policy = Int32.Parse(this.alianceIdPolicy[ComboboxFileSystem.SelectedItem.ToString()].Item2);
+			int policy = Int32.Parse(CurrentDataFileSystem.alianceIdPolicy[CurrentDataFileSystem.ComboboxFileSystem.SelectedItem.ToString()].Item2);
 			switch (policy)
 			{
 				case 1:
@@ -434,22 +340,22 @@ namespace contact_center_application.graphic_user_interface.form
 				default:
 					System.Windows.Controls.MenuItem upload = new System.Windows.Controls.MenuItem();
 					upload.Header = "Загрузить файл в папку";
-					upload.Click += Upload_Click;
+					upload.Click += EventsForContextMenuTreeView.Upload_Click;
 					docMenu.Items.Add(upload);
 
 					System.Windows.Controls.MenuItem createDir = new System.Windows.Controls.MenuItem();
 					createDir.Header = "Создать новую папку в " + element.name;
-					createDir.Click += CreateDir_Click;
+					createDir.Click += EventsForContextMenuTreeView.CreateDir_Click;
 					docMenu.Items.Add(createDir);
 
 					System.Windows.Controls.MenuItem delete = new System.Windows.Controls.MenuItem();
 					delete.Header = "Удалить папку";
-					delete.Click += Delete_Click; ;
+					delete.Click += EventsForContextMenuTreeView.Delete_Click; ;
 					docMenu.Items.Add(delete);
 
 					System.Windows.Controls.MenuItem rename = new System.Windows.Controls.MenuItem();
 					rename.Header = "Переименовать";
-					rename.Click += Rename_Click;
+					rename.Click += EventsForContextMenuTreeView.Rename_Click;
 					docMenu.Items.Add(rename);
 					item.ContextMenuOpening += Item_ContextMenuOpening;
 					item.ContextMenu = docMenu;
@@ -492,47 +398,6 @@ namespace contact_center_application.graphic_user_interface.form
 		}
 
 		/// <summary>
-		/// Событие вызываемое при создании директории
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		private void CreateDir_Click(object sender, RoutedEventArgs e)
-		{
-			RenameUnitFileSystem dialog = new RenameUnitFileSystem(true);
-			dialog.ShowDialog();
-			if ((bool)dialog.DialogResult)
-			{
-				string nameDirectory = dialog.getNameFile();
-				string index = this.alianceIdPolicy[ComboboxFileSystem.SelectedItem.ToString()].Item1;
-				Tuple<bool, TreeViewItem> selectedItem = searchSelectedItem();
-				string relativeWay = "";
-				if (selectedItem.Item1)
-				{
-					relativeWay = this.listTreeView[selectedItem.Item2].Item2;
-				}
-				RequestDataFromServer.sendToCreateCatalogFileSystem(index, relativeWay, nameDirectory);
-				ButtonUpdateCatalogs_Click(null, null);
-			}
-		}
-
-		/// <summary>
-		/// Событие вызываемое при создании категории
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		private void CreateCategory_Click(object sender, RoutedEventArgs e)
-		{
-			RenameUnitFileSystem dialog = new RenameUnitFileSystem(true);
-			dialog.ShowDialog();
-			if ((bool)dialog.DialogResult)
-			{
-				string nameDirectory = dialog.getNameFile();
-				string index = this.alianceIdPolicy[ComboboxFileSystem.SelectedItem.ToString()].Item1;
-				RequestDataFromServer.sendToCreateCatalogFileSystem(index, "", nameDirectory);
-			}
-		}
-
-		/// <summary>
 		/// Событие вызываемое при открытии контекстного меню, осуществляет выделение treeviewitem
 		/// </summary>
 		/// <param name="sender"></param>
@@ -550,27 +415,6 @@ namespace contact_center_application.graphic_user_interface.form
 		}
 
 		/// <summary>
-		/// Событие вызываемое для переименование файла
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		private void Rename_Click(object sender, RoutedEventArgs e)
-		{
-			Tuple<bool, TreeViewItem> selectedItem = searchSelectedItem();
-			string relativeWay = this.listTreeView[selectedItem.Item2].Item2;
-			RenameUnitFileSystem dialog = new RenameUnitFileSystem(Path.GetFileName(relativeWay));
-			dialog.ShowDialog();
-			if ((bool)dialog.DialogResult)
-			{
-				string index = this.alianceIdPolicy[ComboboxFileSystem.SelectedItem.ToString()].Item1;
-
-				string nameFile = dialog.getNameFile();
-				RequestDataFromServer.sendToRenameObjectFileSystem(index, relativeWay, nameFile);
-			}
-			ButtonUpdateCatalogs_Click(null, null);
-		}
-
-		/// <summary>
 		/// Событие вызываемое при открытии файла
 		/// </summary>
 		/// <param name="sender"></param>
@@ -578,53 +422,6 @@ namespace contact_center_application.graphic_user_interface.form
 		private void Open_Click(object sender, RoutedEventArgs e)
 		{
 			selectFile(null, null);
-		}
-
-		/// <summary>
-		/// Событие вызываемое при запросе на удаление файла
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		private void Delete_Click(object sender, RoutedEventArgs e)
-		{
-			string index = this.alianceIdPolicy[ComboboxFileSystem.SelectedItem.ToString()].Item1;
-			Tuple<bool, TreeViewItem> selectedItem = searchSelectedItem();
-			selectedItem.Item2.IsSelected = false;
-			string relativeWay = this.listTreeView[selectedItem.Item2].Item2;
-
-			RequestDataFromServer.sendToDeleteObjectFileSystem(index, relativeWay);
-			ButtonUpdateCatalogs_Click(null, null);
-		}
-
-		/// <summary>
-		/// Событие вызываемое при загрузке файла в систему
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		private void Upload_Click(object sender, EventArgs e)
-		{
-			System.Windows.Forms.OpenFileDialog OPF = new System.Windows.Forms.OpenFileDialog();
-			OPF.Filter = "Все документы|*.*|Файлы txt|*.txt|Файлы csv|*.csv|Файлы doc|*.doc|Файлы docx|*.docx|Файлы xls|*.xls|Файлы xlsx|*.xlsx|Файлы tiff|*.tiff";
-			if (OPF.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-			{
-				int index = Int32.Parse(this.alianceIdPolicy[ComboboxFileSystem.SelectedItem.ToString()].Item1);
-				Tuple<bool, TreeViewItem> selectedItem = searchSelectedItem();
-
-				string relativeWay = this.listTreeView[selectedItem.Item2].Item2;
-				UploadWindow download = new UploadWindow(index.ToString(), relativeWay,
-					OPF.FileName, "0");
-				try
-				{
-					download.sendFileToServer();
-
-				}
-				catch (Exception exp)
-				{
-					loggerException(exp.Message);
-
-				}
-				ButtonUpdateCatalogs_Click(null, null);
-			}
 		}
 
 		/// <summary>
@@ -687,46 +484,46 @@ namespace contact_center_application.graphic_user_interface.form
 		{
 			try
 			{
-				Tuple<bool, TreeViewItem> selectedItem = searchSelectedItem();
+				Tuple<bool, TreeViewItem> selectedItem = CurrentDataFileSystem.searchSelectedItem();
 				if (selectedItem.Item1)
 				{
 					this.Cursor = Cursors.Wait;
 
 					callGarbage();
 
-					string aliance = ComboboxFileSystem.SelectedItem.ToString();
-					string relativeWay = this.listTreeView[selectedItem.Item2].Item2;
-					string selected = ComboboxFileSystem.SelectedItem.ToString();
-					this.openFile = "tmp" + relativeWay;
+					string aliance = CurrentDataFileSystem.ComboboxFileSystem.SelectedItem.ToString();
+					string relativeWay = CurrentDataFileSystem.listTreeView[selectedItem.Item2].Item2;
+					string selected = CurrentDataFileSystem.ComboboxFileSystem.SelectedItem.ToString();
+					CurrentDataOpenFile.openFile = "tmp" + relativeWay;
 					if (Path.GetExtension(relativeWay).Equals(".link"))
 					{
 						openWeb(Path.GetFileNameWithoutExtension(relativeWay));
 					}
 					else
 					{
-						int index = Int32.Parse(this.alianceIdPolicy[ComboboxFileSystem.SelectedItem.ToString()].Item1);
+						int index = Int32.Parse(CurrentDataFileSystem.alianceIdPolicy[CurrentDataFileSystem.ComboboxFileSystem.SelectedItem.ToString()].Item1);
 						DownloadWindow download = new DownloadWindow(index.ToString(),
 							relativeWay);
 						this.IsEnabled = false;
-						download.getContentFileAndWriteToFile(this.openFile);
+						download.getContentFileAndWriteToFile(CurrentDataOpenFile.openFile);
 						this.IsEnabled = true;
 						progressConvertation.Visibility = Visibility.Visible;
 						try
 						{
-							LoadToViewer(this.openFile, this.currentView);
+							LoadToViewer(CurrentDataOpenFile.openFile, this.currentView);
 						}
 						catch (OutOfMemoryException exceptionMemory)
 						{
 							MessageBox.Show("Системных ресурсов вашей операционной системы оказалось " +
-								"недостаточно для отображения содержимого файла(" + Path.GetFileName(this.openFile) +
+								"недостаточно для отображения содержимого файла(" + Path.GetFileName(CurrentDataOpenFile.openFile) +
 								") в данном приложении. " +
 								"Попытайтесь открыть файл во внешнем приложении", "Нехватка системных ресурсов");
-							loggerException(exceptionMemory.Message);
+							Logger.log(exceptionMemory.Message);
 						}
 						catch (Exception exp)
 						{
 							MessageBox.Show("Неизвестная ошибка", "UNKNOWN");
-							loggerException(exp.Message);
+							Logger.log(exp.Message);
 						}
 						finally
 						{
@@ -747,32 +544,11 @@ namespace contact_center_application.graphic_user_interface.form
 			}
 			catch (Exception exp)
 			{
-				loggerException(exp.ToString());
+				Logger.log(exp.ToString());
 				System.Windows.MessageBox.Show("Отказали системные компоненты приложения. " +
 					"Попробуйте повторить действие. В случае повторного возникновения ошибки перезапустите приложение.", "Критическая ошибка");
 			}
 		}
-
-		/// <summary>
-		/// Метод для журналирования действий пользователя
-		/// </summary>
-		/// <param name="message">Сообщение которое будет отправлено пользователю</param>
-		public void logger(string message)
-		{
-			StreamWriter writer = File.AppendText("log/log.txt");
-			writer.Write(message + "\r\n");
-			writer.Close();
-		}
-
-		public static void loggerException(string message)
-		{
-			StreamWriter writer = File.AppendText("log/exception.txt");
-			writer.Write(message + "\r\n");
-			writer.Close();
-		}
-
-		string relationWayOpenFile = "";
-		DateTime dateOpenFile = new DateTime();
 
 		/// <summary>
 		/// Загружает данные в правую часть окна
@@ -781,9 +557,9 @@ namespace contact_center_application.graphic_user_interface.form
 		/// <param name="viewWay"></param>
 		private void LoadToViewer(string way, string viewWay)
 		{
-			dateOpenFile = File.GetLastWriteTime(way);
-			relationWayOpenFile = this.listTreeView[searchSelectedItem().Item2].Item2;
-			logger(new DateTime() + " Обработка файла: " + way);
+			CurrentDataOpenFile.dateOpenFile = File.GetLastWriteTime(way);
+			CurrentDataOpenFile.relationWayOpenFile = CurrentDataFileSystem.listTreeView[CurrentDataFileSystem.searchSelectedItem().Item2].Item2;
+			Logger.log(new DateTime() + " Обработка файла: " + way);
 
 			if (!Directory.Exists(Path.GetDirectoryName(viewWay)))
 			{
@@ -803,14 +579,14 @@ namespace contact_center_application.graphic_user_interface.form
 				if (extension.Equals(".txt") || extension.Equals(".csv") ||
 					extension.Equals(".xml") || extension.Equals(".html"))
 				{
-					logger(new DateTime() + " Отображение файла будет в TextBox");
+					Logger.log("Отображение файла будет в TextBox");
 					this.tabControl.SelectedItem = this.textboxTab;
 					displayTextbox(way);
 				}
 				else if (extension.Equals(".jpeg") || extension.Equals(".tiff") ||
 					extension.Equals(".jpg") || extension.Equals(".png"))
 				{
-					logger(new DateTime() + " Отображение файла будет в Image");
+					Logger.log("Отображение файла будет в Image");
 					string fullWay = Path.Combine(Path.GetDirectoryName(
 									Assembly.GetExecutingAssembly().Locati‌​on), way);
 					byte[] buffer = System.IO.File.ReadAllBytes(fullWay);//сюда подставляются image
@@ -827,7 +603,7 @@ namespace contact_center_application.graphic_user_interface.form
 				{
 					if ((bool)this.switchModeViewButton.IsChecked)
 					{
-						logger(new DateTime() + " Отображение файла будет в DocumentViewer");
+						Logger.log("Отображение файла будет в DocumentViewer");
 						this.tabControl.SelectedItem = this.viewerTab;
 
 						this.viewer.Document = null;
@@ -844,7 +620,7 @@ namespace contact_center_application.graphic_user_interface.form
 					}
 					else
 					{
-						logger(new DateTime() + " Отображение файла будет в docViewer");
+						Logger.log("Отображение файла будет в docViewer");
 						this.docViewer.CloseDocument();
 						this.docViewer.LoadFromFile(way);
 						tabControl.SelectedItem = this.docViewerTab;
@@ -852,7 +628,7 @@ namespace contact_center_application.graphic_user_interface.form
 				}
 				else if (extension.Equals(".xlsx") || extension.Equals(".xls"))
 				{
-					logger(new DateTime() + " Отображение файла будет в viewer");
+					Logger.log("Отображение файла будет в viewer");
 					this.tabControl.SelectedItem = this.viewerTab;
 					this.viewer.Document = null;
 					this.viewer.DataContext = null;
@@ -874,12 +650,12 @@ namespace contact_center_application.graphic_user_interface.form
 						this.doc = null;
 						this.viewer.Document = null;
 						this.viewer.DataContext = null;
-						loggerException(exp.Message);
+						Logger.log(exp.Message);
 					}
 				}
 				else if (extension.Equals(".pdf"))
 				{
-					logger(new DateTime() + " Отображение файла будет в pdfviewer");
+					Logger.log("Отображение файла будет в pdfviewer");
 					this.tabControl.SelectedItem = this.pdfViewerTab;
 					byte[] bytes = File.ReadAllBytes(way);
 					var source = new MemorySource(bytes);
@@ -932,22 +708,6 @@ namespace contact_center_application.graphic_user_interface.form
 		}
 
 		/// <summary>
-		/// Поиск и возврат элемента TreeViewItem, который в текущий момент выделен
-		/// </summary>
-		/// <returns></returns>
-		private Tuple<bool, TreeViewItem> searchSelectedItem()
-		{
-			foreach (var item in this.listTreeView)
-			{
-				if (item.Key.IsSelected)
-				{
-					return new Tuple<bool, TreeViewItem>(true, item.Key);
-				}
-			}
-			return new Tuple<bool, TreeViewItem>(false, new TreeViewItem());
-		}
-
-		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="way"></param>
@@ -971,21 +731,21 @@ namespace contact_center_application.graphic_user_interface.form
 				System.Windows.MessageBox.Show("По неясным причинам приложению не удалось отобразить требуемый документ." +
 					" Тем не менее требуемый документ можно открыть в любом внешнем приложении.\n" +
 					"Например: Word Office, OpenOffice, LibreOffice", "Ошибка вывода на экран");
-				loggerException(e.Message);
+				Logger.log(e.Message);
 			}
 			catch (System.IO.IOException e)
 			{
 				System.Windows.MessageBox.Show("По неясным причинам приложению не удалось отобразить требуемый документ." +
 					" Тем не менее требуемый документ можно открыть в любом внешнем приложении.\n" +
 					"Например: Word Office, OpenOffice, LibreOffice", "Ошибка вывода на экран");
-				loggerException(e.Message);
+				Logger.log(e.Message);
 			}
 			catch (System.ApplicationException e)
 			{
 				System.Windows.MessageBox.Show("По неясным причинам приложению не удалось отобразить требуемый документ." +
 					" Тем не менее требуемый документ можно открыть в любом внешнем приложении.\n" +
 					"Например: Word Office, OpenOffice, LibreOffice", "Ошибка вывода на экран");
-				loggerException(e.Message);
+				Logger.log(e.Message);
 			}
 		}
 
@@ -1015,14 +775,14 @@ namespace contact_center_application.graphic_user_interface.form
 			{
 				System.Windows.MessageBox.Show("Не удалось выполнить преобразование документа," +
 					" скорее всего файл поврежден и нуждается в восстановлении");
-				loggerException(e.Message);
+				Logger.log(e.Message);
 				throw new Exception();
 			}
 			catch (System.ArgumentOutOfRangeException e)
 			{
 				System.Windows.MessageBox.Show("Не удалось выполнить преобразование документа," +
 					" скорее всего файл поврежден и нуждается в восстановлении");
-				loggerException(e.Message);
+				Logger.log(e.Message);
 				throw new Exception();
 			}
 		}
@@ -1038,11 +798,11 @@ namespace contact_center_application.graphic_user_interface.form
 		{
 			try
 			{
-				DateTime oldTime = File.GetLastWriteTime(this.openFile);
-				Process currProc = Process.Start(this.openFile);
+				DateTime oldTime = File.GetLastWriteTime(CurrentDataOpenFile.openFile);
+				Process currProc = Process.Start(CurrentDataOpenFile.openFile);
 				currProc.WaitForExit();
 				currProc.Close();
-				if (!oldTime.Equals(File.GetLastWriteTime(this.openFile)))
+				if (!oldTime.Equals(File.GetLastWriteTime(CurrentDataOpenFile.openFile)))
 				{
 					if (MessageBox.Show("Отправить измененный файл на сервер?", "Файл был изменен",
 						MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
@@ -1053,7 +813,7 @@ namespace contact_center_application.graphic_user_interface.form
 			}
 			catch (System.NullReferenceException exceptionWithOpenFile)
 			{
-				loggerException(exceptionWithOpenFile.Message);
+				Logger.log(exceptionWithOpenFile.Message);
 			}
 		}
 
@@ -1067,38 +827,23 @@ namespace contact_center_application.graphic_user_interface.form
 		private void ButtonUpdateCatalogs_Click(object sender, RoutedEventArgs e)
 		{
 			this.updateCatalog = true;
-			TreeViewItem selectedItem = searchSelectedItem().Item2;
+			TreeViewItem selectedItem = CurrentDataFileSystem.searchSelectedItem().Item2;
 			resetFlagsInTreeViewItem();
 			getContentFileSystem();
-			deleteNotNeedItemsInTreeViewItem(selectedItem);
+			CurrentDataFileSystem.deleteNotNeedItemsInTreeViewItem(selectedItem);
 			selectedItem.IsSelected = true;
 			this.updateCatalog = false;
-		}
-
-		private void deleteNotNeedItemsInTreeViewItem(TreeViewItem equalItem)
-		{
-			var temporaryListTreeView = new Dictionary<TreeViewItem, Tuple<bool, string, bool>>();
-
-			foreach (var item in this.listTreeView)
-			{
-				if (item.Value.Item3 == true)
-				{
-					temporaryListTreeView.Add(item.Key, new Tuple<bool, string, bool>(
-						item.Value.Item1, item.Value.Item2, item.Value.Item3));
-				}
-			}
-			listTreeView = temporaryListTreeView;
 		}
 
 		private void resetFlagsInTreeViewItem()
 		{
 			var temporaryListTreeView = new Dictionary<TreeViewItem, Tuple<bool, string, bool>>();
-			foreach (var item in this.listTreeView)
+			foreach (var item in CurrentDataFileSystem.listTreeView)
 			{
 				temporaryListTreeView.Add(item.Key, new Tuple<bool, string, bool>(
 					item.Value.Item1, item.Value.Item2, false));
 			}
-			this.listTreeView = temporaryListTreeView;
+			CurrentDataFileSystem.listTreeView = temporaryListTreeView;
 		}
 
 		/// <summary>
@@ -1144,7 +889,7 @@ namespace contact_center_application.graphic_user_interface.form
 		void setVisibleOnText(string text)
 		{
 			List<TreeViewItem> newListItems = new List<TreeViewItem>();
-			foreach (TreeViewItem elem in basisListItems)
+			foreach (TreeViewItem elem in CurrentDataFileSystem.basisListItems)
 			{
 				bool newElem = setVisibleOnTextForTreeView(elem, text);
 			}
@@ -1152,7 +897,7 @@ namespace contact_center_application.graphic_user_interface.form
 
 		bool setVisibleOnTextForTreeView(TreeViewItem item, string text, bool mandatory = false)
 		{
-			string temp = this.listTreeView[item].Item2;
+			string temp = CurrentDataFileSystem.listTreeView[item].Item2;
 			string nameElement = Path.GetFileName(temp);
 			if (mandatory)
 			{
@@ -1161,12 +906,12 @@ namespace contact_center_application.graphic_user_interface.form
 					foreach (TreeViewItem elem in item.Items)
 					{
 						elem.Visibility = Visibility.Visible;
-						string temp1 = this.listTreeView[elem].Item2;
+						string temp1 = CurrentDataFileSystem.listTreeView[elem].Item2;
 						string nameElement1 = Path.GetFileName(temp1);
-						elem.Header = highlightText(nameElement1, text, this.listTreeView[elem].Item1);
+						elem.Header = highlightText(nameElement1, text, CurrentDataFileSystem.listTreeView[elem].Item1);
 					}
 				}
-				item.Header = highlightText(nameElement, text, this.listTreeView[item].Item1);
+				item.Header = highlightText(nameElement, text, CurrentDataFileSystem.listTreeView[item].Item1);
 				item.Visibility = Visibility.Visible;
 				return true;
 			}
@@ -1179,14 +924,14 @@ namespace contact_center_application.graphic_user_interface.form
 					if (resultSearch > -1)
 					{
 						item.Visibility = Visibility.Visible;
-						bool typeTreeView = listTreeView.ContainsKey(item);
-						item.Header = highlightText(nameElement, text, this.listTreeView[item].Item1);
+						bool typeTreeView = CurrentDataFileSystem.listTreeView.ContainsKey(item);
+						item.Header = highlightText(nameElement, text, CurrentDataFileSystem.listTreeView[item].Item1);
 						foreach (TreeViewItem elem in item.Items)
 						{
 							elem.Visibility = Visibility.Visible;
-							string temp1 = this.listTreeView[elem].Item2;
+							string temp1 = CurrentDataFileSystem.listTreeView[elem].Item2;
 							string nameElement1 = Path.GetFileName(temp1);
-							elem.Header = highlightText(nameElement1, text, this.listTreeView[elem].Item1);
+							elem.Header = highlightText(nameElement1, text, CurrentDataFileSystem.listTreeView[elem].Item1);
 							setVisibleOnTextForTreeView(elem, text, true);
 						}
 						return true;
@@ -1201,9 +946,9 @@ namespace contact_center_application.graphic_user_interface.form
 							{
 								elem.Visibility = Visibility.Visible;
 
-								string temp1 = this.listTreeView[elem].Item2;
+								string temp1 = CurrentDataFileSystem.listTreeView[elem].Item2;
 								string nameElement1 = Path.GetFileName(temp1);
-								elem.Header = highlightText(nameElement1, text, this.listTreeView[elem].Item1);
+								elem.Header = highlightText(nameElement1, text, CurrentDataFileSystem.listTreeView[elem].Item1);
 
 								changeVisible++;
 							}
@@ -1215,7 +960,7 @@ namespace contact_center_application.graphic_user_interface.form
 
 						if (changeVisible > 0)
 						{
-							item.Header = highlightText(nameElement, text, this.listTreeView[item].Item1);
+							item.Header = highlightText(nameElement, text, CurrentDataFileSystem.listTreeView[item].Item1);
 							item.Visibility = Visibility.Visible;
 							return true;
 						}
@@ -1239,7 +984,7 @@ namespace contact_center_application.graphic_user_interface.form
 					}
 					if (resultSearch > -1)
 					{
-						item.Header = highlightText(nameElement, text, this.listTreeView[item].Item1);
+						item.Header = highlightText(nameElement, text, CurrentDataFileSystem.listTreeView[item].Item1);
 						item.Visibility = Visibility.Visible;
 						return true;
 					}
@@ -1267,7 +1012,7 @@ namespace contact_center_application.graphic_user_interface.form
 				}
 				catch (System.ComponentModel.Win32Exception e)
 				{
-					loggerException(e.Message);
+					Logger.log(e.Message);
 					System.Windows.MessageBox.Show("Ошибка",
 					"Не удалось открыть ссылку");
 				}
@@ -1277,7 +1022,7 @@ namespace contact_center_application.graphic_user_interface.form
 		TextBlock highlightText(string source, string substring, bool isFile)
 		{
 			TextBlock result = new TextBlock();
-			result.Inlines.Add(UsersTreeViewItem.getImageOnNameFile(Path.GetFileName(source), isFile));
+			result.Inlines.Add(ProcessTreeViewItem.getImageOnNameFile(Path.GetFileName(source), isFile));
 			result.Inlines.Add("  ");
 			//result.Height = 10;
 			if (substring.Length != 0)
@@ -1348,7 +1093,7 @@ namespace contact_center_application.graphic_user_interface.form
 		private TreeViewItem getSearchItemOnCurrentWay(string currentWay)
 		{
 			TreeViewItem result = null;
-			foreach (var elem in this.listTreeView)
+			foreach (var elem in CurrentDataFileSystem.listTreeView)
 			{
 				if (elem.Value.Item2.Equals(currentWay))
 				{
@@ -1360,7 +1105,7 @@ namespace contact_center_application.graphic_user_interface.form
 
 		private void loadToFileToServer_Click(object sender, RoutedEventArgs e)
 		{
-			if (!this.dateOpenFile.Equals(File.GetLastWriteTime(this.openFile)))
+			if (!CurrentDataOpenFile.dateOpenFile.Equals(File.GetLastWriteTime(CurrentDataOpenFile.openFile)))
 			{
 				if (MessageBox.Show("Отправить измененный файл на сервер?", "Файл был изменен",
 					MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
@@ -1380,34 +1125,35 @@ namespace contact_center_application.graphic_user_interface.form
 
 		private void sendFileToServer()
 		{
-			int index = Int32.Parse(this.alianceIdPolicy[
-						ComboboxFileSystem.SelectedItem.ToString()].Item1);
-			Tuple<bool, TreeViewItem> selectedItem = searchSelectedItem();
+			int index = Int32.Parse(CurrentDataFileSystem.alianceIdPolicy[
+							CurrentDataFileSystem.ComboboxFileSystem.SelectedItem.ToString()].Item1);
+			Tuple<bool, TreeViewItem> selectedItem = CurrentDataFileSystem.searchSelectedItem();
 
-			string relativeWay = this.relationWayOpenFile;
+			string relativeWay = CurrentDataOpenFile.relationWayOpenFile;
 			UploadWindow download = new UploadWindow(index.ToString(),
 				Path.GetDirectoryName(relativeWay),
 				Path.Combine(Path.GetDirectoryName(
 						Assembly.GetExecutingAssembly().Locati‌​on),
-						this.openFile),
+						CurrentDataOpenFile.openFile),
 				"1");
 			download.sendFileToServer();
 			try
 			{
-				LoadToViewer(this.openFile, this.currentView);
+				LoadToViewer(CurrentDataOpenFile.openFile, this.currentView);
 			}
 			catch (OutOfMemoryException exceptionMemory)
 			{
-				MessageBox.Show("Системных ресурсов вашей операционной системы оказалось " +
-					"недостаточно для отображения содержимого файла(" + Path.GetFileName(this.openFile) +
-					") в данном приложении. " +
-					"Попытайтесь открыть файл во внешнем приложении", "Нехватка системных ресурсов");
-				loggerException(exceptionMemory.Message);
+				MessageBox.Show("Системных ресурсов вашей операционной системы оказалось "
+					+ "недостаточно для отображения содержимого файла("
+					+ Path.GetFileName(CurrentDataOpenFile.openFile)
+					+ ") в данном приложении. "
+					+ "Попытайтесь открыть файл во внешнем приложении", "Нехватка системных ресурсов");
+				Logger.log(exceptionMemory.Message);
 			}
 			catch (Exception exp)
 			{
 				MessageBox.Show("Неизвестная ошибка", "UNKNOWN");
-				loggerException(exp.Message);
+				Logger.log(exp.Message);
 			}
 			finally
 			{
@@ -1425,12 +1171,11 @@ namespace contact_center_application.graphic_user_interface.form
 
 		private void switchModeViewButton_Click(object sender, RoutedEventArgs e)
 		{
-			string extension = Path.GetExtension(this.openFile);
+			string extension = Path.GetExtension(CurrentDataOpenFile.openFile);
 			if ((bool) this.switchModeViewButton.IsChecked)
 			{
 				this.switchModeViewButton.Background = 
 					new SolidColorBrush(Colors.DarkCyan);
-
 			}
 			else
 			{
@@ -1442,20 +1187,20 @@ namespace contact_center_application.graphic_user_interface.form
 			{
 				try
 				{
-					LoadToViewer(this.openFile, this.currentView);
+					LoadToViewer(CurrentDataOpenFile.openFile, this.currentView);
 				}
 				catch (OutOfMemoryException exceptionMemory)
 				{
 					MessageBox.Show("Системных ресурсов вашей операционной системы оказалось " +
-						"недостаточно для отображения содержимого файла(" + Path.GetFileName(this.openFile) +
+						"недостаточно для отображения содержимого файла(" + Path.GetFileName(CurrentDataOpenFile.openFile) +
 						") в данном приложении. " +
 						"Попытайтесь открыть файл во внешнем приложении", "Нехватка системных ресурсов");
-					loggerException(exceptionMemory.Message);
+					Logger.log(exceptionMemory.Message);
 				}
 				catch (Exception exp)
 				{
 					MessageBox.Show("Неизвестная ошибка", "UNKNOWN");
-					loggerException(exp.Message);
+					Logger.log(exp.Message);
 				}
 				finally
 				{

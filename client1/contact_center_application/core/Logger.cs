@@ -31,7 +31,7 @@ namespace contact_center_application.core
 		public static void log(string message)
 		{
 			StreamWriter writer = File.AppendText(directoryLog);
-			writer.Write(message + "\r\n");
+			writer.Write(DateTime.Now + " " + message + "\r\n");
 			writer.Close();
 		}
 	}
