@@ -1,6 +1,9 @@
 ﻿using contact_center_application.core;
+using contact_center_application.core.serialization;
 using contact_center_application.core.storage_dynamic_data;
+using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
@@ -14,7 +17,6 @@ namespace contact_center_application.graphic_user_interface.manage_graphical_com
 		public static TreeViewItem CreateTreeViewItem(string name, string icon)
 		{
 			TreeViewItem item = new TreeViewItem();
-
 			StackPanel stack = new StackPanel();
 			stack.Orientation = Orientation.Horizontal;
 			System.Windows.Controls.Image img = new System.Windows.Controls.Image();
@@ -315,6 +317,127 @@ namespace contact_center_application.graphic_user_interface.manage_graphical_com
 				}
 			}
 			return result;
+		}
+
+		public static TreeViewItem getTreeViewItemForFile(CatalogForSerialization element, 
+			string currentWay, int deep = 1)
+		{
+			TreeViewItem item = ProcessTreeViewItem.getSearchItemOnCurrentWay(currentWay + "\\" + element.name);
+			if (item == null)
+			{
+				item = ProcessTreeViewItem.getTreeViewItem(element.name, true);
+				System.Windows.Controls.ContextMenu docMenu = new System.Windows.Controls.ContextMenu();
+				item.MouseDoubleClick += EventsForContextMenuTreeView.selectFile;
+				item.KeyDown += EventsForContextMenuTreeView.Item_KeyDown;
+				CurrentDataFileSystem.listTreeView.Add(item, new Tuple<bool, string, bool>(element.file,
+					currentWay + "\\" + element.name, true));
+
+				System.Windows.Controls.MenuItem open = new System.Windows.Controls.MenuItem();
+				open.Click += EventsForContextMenuTreeView.Open_Click; ;
+				open.Header = "Открыть файл";
+				docMenu.Items.Add(open);
+
+				System.Windows.Controls.MenuItem delete = new System.Windows.Controls.MenuItem();
+				delete.Header = "Удалить файл";
+				delete.Click += EventsForContextMenuTreeView.Delete_Click;
+				docMenu.Items.Add(delete);
+
+				System.Windows.Controls.MenuItem rename = new System.Windows.Controls.MenuItem();
+				rename.Header = "Переименовать";
+				rename.Click += EventsForContextMenuTreeView.Rename_Click;
+				docMenu.Items.Add(rename);
+				item.ContextMenuOpening += EventsForContextMenuTreeView.Item_ContextMenuOpening;
+				item.ContextMenu = docMenu;
+			}
+			else
+			{
+				CurrentDataFileSystem.listTreeView[item] = new Tuple<bool, string, bool>
+				(element.file, currentWay + "\\" + element.name, true);
+			}
+
+			return item;
+		}
+
+		/// <summary>
+		/// Получение 
+		/// </summary>
+		/// <param name="element"></param>
+		/// <param name="currentWay"></param>
+		/// <returns></returns>
+		public static TreeViewItem getTreeViewItemForCatalog(
+			CatalogForSerialization element, string currentWay,
+			int deep = 1)
+		{
+			TreeViewItem item = ProcessTreeViewItem.getSearchItemOnCurrentWay(currentWay + "\\" + element.name);
+			if (item != null)
+			{
+				item.Items.Clear();
+				CurrentDataFileSystem.listTreeView[item] = new Tuple<bool, string, bool>
+				(element.file, currentWay + "\\" + element.name, true);
+			}
+			else
+			{
+				item = ProcessTreeViewItem.getTreeViewItem(element.name, false);
+				CurrentDataFileSystem.listTreeView.Add(item, new Tuple<bool, string, bool>
+				(element.file, currentWay + "\\" + element.name, true));
+			}
+
+			List<TreeViewItem> listChildren =
+				getItemsCatalogsFromJson(element.content,
+					currentWay + "\\" + element.name, ++deep);
+			if (listChildren.Count != 0)
+			{
+				foreach (var children in listChildren)
+				{
+					item.Items.Add(children);
+				}
+			}
+
+			ContextMenuForTreeView.setContextMenuToTreeViewItem(item, element, deep);
+
+			return item;
+		}
+
+		/// <summary>
+		/// Десериализует json - строку в дерево treeView, 
+		/// с указанием их относительного пути
+		/// </summary>
+		/// <param name="json"></param>
+		/// <param name="currentWay"></param>
+		/// <returns></returns>
+		public static List<TreeViewItem> getItemsCatalogsFromJson(string json, string currentWay, int deep = 0)
+		{
+			List<TreeViewItem> result = new List<TreeViewItem>();
+			List<string> listCatalog =
+				   JsonConvert.DeserializeObject<List<string>>(json);
+			foreach (var catalog in listCatalog)
+			{
+				CatalogForSerialization element =
+					JsonConvert.DeserializeObject<CatalogForSerialization>(catalog);
+				TreeViewItem item;
+				if (!element.file)
+				{
+					item = ProcessTreeViewItem.getTreeViewItemForCatalog(element, currentWay, deep);
+				}
+				else
+				{
+					item = ProcessTreeViewItem.getTreeViewItemForFile(element, currentWay);
+				}
+
+				result.Add(item);
+			}
+			return result;
+		}
+
+		private void resetFlagsInTreeViewItem()
+		{
+			var temporaryListTreeView = new Dictionary<TreeViewItem, Tuple<bool, string, bool>>();
+			foreach (var item in CurrentDataFileSystem.listTreeView)
+			{
+				temporaryListTreeView.Add(item.Key, new Tuple<bool, string, bool>(
+					item.Value.Item1, item.Value.Item2, false));
+			}
+			CurrentDataFileSystem.listTreeView = temporaryListTreeView;
 		}
 	}
 }

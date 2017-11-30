@@ -161,6 +161,7 @@
       <DependentUpon>UploadWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="graphic_user_interface\manage_graphical_component\ManagerViewer.cs" />
+    <Compile Include="graphic_user_interface\manage_graphical_component\tree_view\FilterTreeViewItem.cs" />
     <Compile Include="graphic_user_interface\manage_graphical_component\tree_view\ProcessTreeViewItem.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>

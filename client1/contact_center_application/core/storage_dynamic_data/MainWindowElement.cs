@@ -27,5 +27,6 @@ namespace contact_center_application.core.storage_dynamic_data
 		public static StackPanel imageStackPanel;
 		public static StackPanel progressConvertation;
 		public static StackPanel managerPanel;
+		public static ToggleButton registrButton;
 	}
 }

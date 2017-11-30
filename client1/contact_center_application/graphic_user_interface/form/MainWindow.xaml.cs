@@ -48,6 +48,7 @@ namespace contact_center_application.graphic_user_interface.form
 			MainWindowElement.progressConvertation = progressOnConvertation;
 			MainWindowElement.managerPanel = managerOnPanel;
 			MainWindowElement.window = this;
+			MainWindowElement.registrButton = registrOnButton;
 			ManagerViewer.textbox = this.textboxDisplay;
 			CurrentDataFileSystem.ComboboxFileSystem = this.ComboboxChooseFileSystem;
 			CurrentDataFileSystem.treeViewCatalog = treeViewCatalogFileSystem;
@@ -146,7 +147,7 @@ namespace contact_center_application.graphic_user_interface.form
 			}
 			ContextMenuForTreeView.setContextMenuForTreeView();
 
-			CurrentDataFileSystem.basisListItems = getItemsCatalogsFromJson(json, "");
+			CurrentDataFileSystem.basisListItems = ProcessTreeViewItem.getItemsCatalogsFromJson(json, "");
 
 			if (CurrentDataFileSystem.basisListItems.Count != 0)
 			{
@@ -156,126 +157,6 @@ namespace contact_center_application.graphic_user_interface.form
 					CurrentDataFileSystem.treeViewCatalog.Items.Add(category);
 				}
 			}
-		}
-
-		private TreeViewItem getTreeViewItemForFile(
-			CatalogForSerialization element, string currentWay, int deep = 1)
-		{
-			TreeViewItem item = ProcessTreeViewItem.getSearchItemOnCurrentWay(currentWay + "\\" + element.name);
-			if (item == null)
-			{
-				item = ProcessTreeViewItem.getTreeViewItem(element.name, true);
-				System.Windows.Controls.ContextMenu docMenu = new System.Windows.Controls.ContextMenu();
-				item.MouseDoubleClick += EventsForContextMenuTreeView.selectFile;
-				item.KeyDown += Item_KeyDown;
-				CurrentDataFileSystem.listTreeView.Add(item, new Tuple<bool, string, bool>(element.file,
-					currentWay + "\\" + element.name, true));
-
-				System.Windows.Controls.MenuItem open = new System.Windows.Controls.MenuItem();
-				open.Click += EventsForContextMenuTreeView.Open_Click; ;
-				open.Header = "Открыть файл";
-				docMenu.Items.Add(open);
-
-				System.Windows.Controls.MenuItem delete = new System.Windows.Controls.MenuItem();
-				delete.Header = "Удалить файл";
-				delete.Click += EventsForContextMenuTreeView.Delete_Click;
-				docMenu.Items.Add(delete);
-
-				System.Windows.Controls.MenuItem rename = new System.Windows.Controls.MenuItem();
-				rename.Header = "Переименовать";
-				rename.Click += EventsForContextMenuTreeView.Rename_Click;
-				docMenu.Items.Add(rename);
-				item.ContextMenuOpening += EventsForContextMenuTreeView.Item_ContextMenuOpening;
-				item.ContextMenu = docMenu;
-			}
-			else
-			{
-				CurrentDataFileSystem.listTreeView[item] = new Tuple<bool, string, bool>
-				(element.file, currentWay + "\\" + element.name, true);
-			}
-
-			return item;
-		}
-
-		private void Item_KeyDown(object sender, KeyEventArgs e)
-		{
-			if (e.Key == Key.Enter)
-			{
-				EventsForContextMenuTreeView.selectFile(null, null);
-			}
-		}
-
-		/// <summary>
-		/// Получение 
-		/// </summary>
-		/// <param name="element"></param>
-		/// <param name="currentWay"></param>
-		/// <returns></returns>
-		private TreeViewItem getTreeViewItemForCatalog(
-			CatalogForSerialization element, string currentWay, 
-			int deep = 1)
-		{
-			TreeViewItem item = ProcessTreeViewItem.getSearchItemOnCurrentWay(currentWay + "\\" + element.name);
-			if (item != null)
-			{
-				item.Items.Clear();
-				CurrentDataFileSystem.listTreeView[item] = new Tuple<bool, string, bool>
-				(element.file, currentWay + "\\" + element.name, true);
-			}
-			else
-			{
-				item = ProcessTreeViewItem.getTreeViewItem(element.name, false);
-				CurrentDataFileSystem.listTreeView.Add(item, new Tuple<bool, string, bool>
-				(element.file, currentWay + "\\" + element.name, true));
-			}
-
-			List<TreeViewItem> listChildren =
-				getItemsCatalogsFromJson(element.content,
-					currentWay + "\\" + element.name, ++deep);
-			if (listChildren.Count != 0)
-			{
-				foreach (var children in listChildren)
-				{
-					item.Items.Add(children);
-				}
-			}
-
-			ContextMenuForTreeView.setContextMenuToTreeViewItem(item, element, deep);
-
-			return item;
-		}
-
-		/// <summary>
-		/// Десериализует json - строку в дерево treeView, 
-		/// с указанием их относительного пути
-		/// </summary>
-		/// <param name="json"></param>
-		/// <param name="currentWay"></param>
-		/// <returns></returns>
-		private List<TreeViewItem> getItemsCatalogsFromJson(string json, string currentWay, int deep = 0)
-		{
-			List<TreeViewItem> result = new List<TreeViewItem>();
-			List<string> listCatalog =
-				   JsonConvert.DeserializeObject<List<string>>(json);
-			foreach (var catalog in listCatalog)
-			{
-				CatalogForSerialization element =
-					JsonConvert.DeserializeObject<CatalogForSerialization>(catalog);
-
-				TreeViewItem item;
-
-				if (!element.file)
-				{
-					item = getTreeViewItemForCatalog(element, currentWay, deep);
-				}
-				else
-				{
-					item = getTreeViewItemForFile(element, currentWay);
-				}
-
-				result.Add(item);
-			}
-			return result;
 		}
 
 		/// <summary>
@@ -348,22 +229,11 @@ namespace contact_center_application.graphic_user_interface.form
 		{
 			this.updateCatalog = true;
 			TreeViewItem selectedItem = CurrentDataFileSystem.searchSelectedItem().Item2;
-			resetFlagsInTreeViewItem();
+			FilterTreeViewItem.resetFlagsInTreeViewItem();
 			getContentFileSystem();
 			CurrentDataFileSystem.deleteNotNeedItemsInTreeViewItem(selectedItem);
 			selectedItem.IsSelected = true;
 			this.updateCatalog = false;
-		}
-
-		private void resetFlagsInTreeViewItem()
-		{
-			var temporaryListTreeView = new Dictionary<TreeViewItem, Tuple<bool, string, bool>>();
-			foreach (var item in CurrentDataFileSystem.listTreeView)
-			{
-				temporaryListTreeView.Add(item.Key, new Tuple<bool, string, bool>(
-					item.Value.Item1, item.Value.Item2, false));
-			}
-			CurrentDataFileSystem.listTreeView = temporaryListTreeView;
 		}
 
 		/// <summary>
@@ -394,190 +264,10 @@ namespace contact_center_application.graphic_user_interface.form
 
 		private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
 		{
-			setVisibleOnText((sender as TextBox).Text);
+			FilterTreeViewItem.setVisibleOnText((sender as TextBox).Text);
 		}
 
-		void setVisibleOnText(string text)
-		{
-			List<TreeViewItem> newListItems = new List<TreeViewItem>();
-			foreach (TreeViewItem elem in CurrentDataFileSystem.basisListItems)
-			{
-				bool newElem = setVisibleOnTextForTreeView(elem, text);
-			}
-		}
-
-		bool setVisibleOnTextForTreeView(TreeViewItem item, string text, bool mandatory = false)
-		{
-			string temp = CurrentDataFileSystem.listTreeView[item].Item2;
-			string nameElement = Path.GetFileName(temp);
-			if (mandatory)
-			{
-				if (item.Items.Count > 0)
-				{
-					foreach (TreeViewItem elem in item.Items)
-					{
-						elem.Visibility = Visibility.Visible;
-						string temp1 = CurrentDataFileSystem.listTreeView[elem].Item2;
-						string nameElement1 = Path.GetFileName(temp1);
-						elem.Header = highlightText(nameElement1, text, CurrentDataFileSystem.listTreeView[elem].Item1);
-					}
-				}
-				item.Header = highlightText(nameElement, text, CurrentDataFileSystem.listTreeView[item].Item1);
-				item.Visibility = Visibility.Visible;
-				return true;
-			}
-			else
-			{
-				if (item.Items.Count > 0)
-				{
-					int resultSearch;
-					resultSearch = temp.IndexOf(text);
-					if (resultSearch > -1)
-					{
-						item.Visibility = Visibility.Visible;
-						bool typeTreeView = CurrentDataFileSystem.listTreeView.ContainsKey(item);
-						item.Header = highlightText(nameElement, text, CurrentDataFileSystem.listTreeView[item].Item1);
-						foreach (TreeViewItem elem in item.Items)
-						{
-							elem.Visibility = Visibility.Visible;
-							string temp1 = CurrentDataFileSystem.listTreeView[elem].Item2;
-							string nameElement1 = Path.GetFileName(temp1);
-							elem.Header = highlightText(nameElement1, text, CurrentDataFileSystem.listTreeView[elem].Item1);
-							setVisibleOnTextForTreeView(elem, text, true);
-						}
-						return true;
-					}
-					else
-					{
-						int changeVisible = 0;
-						foreach (TreeViewItem elem in item.Items)
-						{
-							bool res = setVisibleOnTextForTreeView(elem, text);
-							if (res)
-							{
-								elem.Visibility = Visibility.Visible;
-
-								string temp1 = CurrentDataFileSystem.listTreeView[elem].Item2;
-								string nameElement1 = Path.GetFileName(temp1);
-								elem.Header = highlightText(nameElement1, text, CurrentDataFileSystem.listTreeView[elem].Item1);
-
-								changeVisible++;
-							}
-							else
-							{
-								elem.Visibility = Visibility.Collapsed;
-							}
-						}
-
-						if (changeVisible > 0)
-						{
-							item.Header = highlightText(nameElement, text, CurrentDataFileSystem.listTreeView[item].Item1);
-							item.Visibility = Visibility.Visible;
-							return true;
-						}
-						else
-						{
-							item.Visibility = Visibility.Collapsed;
-							return false;
-						}
-					}
-				}
-				else
-				{
-					int resultSearch;
-					if ((bool) this.registrButton.IsChecked)
-					{
-						resultSearch = temp.IndexOf(text);
-					}
-					else
-					{
-						resultSearch = temp.ToLower().IndexOf(text.ToLower());
-					}
-					if (resultSearch > -1)
-					{
-						item.Header = highlightText(nameElement, text, CurrentDataFileSystem.listTreeView[item].Item1);
-						item.Visibility = Visibility.Visible;
-						return true;
-					}
-					else
-					{
-						item.Visibility = Visibility.Collapsed;
-						return false;
-					}
-				}
-			}
-		}
-
-		TextBlock highlightText(string source, string substring, bool isFile)
-		{
-			TextBlock result = new TextBlock();
-			result.Inlines.Add(ProcessTreeViewItem.getImageOnNameFile(Path.GetFileName(source), isFile));
-			result.Inlines.Add("  ");
-			//result.Height = 10;
-			if (substring.Length != 0)
-			{
-				var indices = new List<int>();
-				int index;
-				if((bool)this.registrButton.IsChecked)
-					index = source.IndexOf(substring, 0);
-				else
-					index = source.ToLower().IndexOf(substring.ToLower(), 0);
-				while (index > -1)
-				{
-					indices.Add(index);
-					if ((bool) this.registrButton.IsChecked)
-						index = source.IndexOf(substring, index + substring.Length);
-					else
-						index = source.ToLower().IndexOf(substring.ToLower(), 
-							index + substring.Length);
-				}
-
-				if (indices.Count > 0)
-				{
-					int lastSymbol = 0;
-
-					string notCorrectiveName = "";
-					int currentPosition = 0;
-					int i = 0;
-
-					do
-					{
-						int position = indices[i];
-						if (position > currentPosition)
-						{
-							notCorrectiveName = source.Substring(currentPosition, position - currentPosition);
-						}
-						else
-						{
-							notCorrectiveName = "";
-						}
-
-						TextBlock correctiveName = new TextBlock();
-						correctiveName.Inlines.Add(source.Substring(position, substring.Length));
-						correctiveName.Foreground = Brushes.BlueViolet;
-						correctiveName.Background = Brushes.BurlyWood;
-						result.Inlines.Add(notCorrectiveName);
-						result.Inlines.Add(correctiveName);
-
-						currentPosition = position + substring.Length;
-						i++;
-					} while (i < indices.Count);
-					if (currentPosition < source.Length)
-					{
-						result.Inlines.Add(source.Substring(currentPosition, source.Length - currentPosition));
-					}
-				}
-				else
-				{
-					result.Inlines.Add(source);
-				}
-			}
-			else
-			{
-				result.Inlines.Add(source);
-			}
-			return result;
-		}
+		
 
 		private void loadToFileToServer_Click(object sender, RoutedEventArgs e)
 		{
@@ -694,21 +384,21 @@ namespace contact_center_application.graphic_user_interface.form
 			}
 		}
 
-		private void registrButton_Click(object sender, RoutedEventArgs e)
+		private void registrOnButton_Click(object sender, RoutedEventArgs e)
 		{
 			if ((bool) this.switchModelViewButtonXPS.IsChecked)
 			{
-				this.registrButton.Background =
+				MainWindowElement.registrButton.Background =
 					new SolidColorBrush(Colors.Black);
-				this.registrButton.ToolTip = "Выключить учет регистра букв";
+				MainWindowElement.registrButton.ToolTip = "Выключить учет регистра букв";
 			}
 			else
 			{
-				this.registrButton.Background =
+				MainWindowElement.registrButton.Background =
 					new SolidColorBrush(Colors.White);
-				this.registrButton.ToolTip = "Включить учет регистра букв";
+				MainWindowElement.registrButton.ToolTip = "Включить учет регистра букв";
 			}
-			setVisibleOnText(this.searchTextBox.Text);
+			FilterTreeViewItem.setVisibleOnText(this.searchTextBox.Text);
 		}
 
 		private void buttonSettings_Click(object sender, RoutedEventArgs e)

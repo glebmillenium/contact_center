@@ -293,5 +293,13 @@ namespace contact_center_application.graphic_user_interface.manage_graphical_com
 				}
 			}
 		}
+
+		public static void Item_KeyDown(object sender, KeyEventArgs e)
+		{
+			if (e.Key == Key.Enter)
+			{
+				EventsForContextMenuTreeView.selectFile(null, null);
+			}
+		}
 	}
 }
