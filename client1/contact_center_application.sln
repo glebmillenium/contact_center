@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26730.16
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ftp-viewer", "contact_center_application\ftp-viewer.csproj", "{CCC5CA3F-EC9D-4851-B628-2B4CA94B3E9E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "viewer", "contact_center_application\viewer.csproj", "{CCC5CA3F-EC9D-4851-B628-2B4CA94B3E9E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "callback_fast_server", "callback_fast_server\callback_fast_server.csproj", "{10BE5DD4-435D-40FB-993A-B0D9018833CE}"
 EndProject
