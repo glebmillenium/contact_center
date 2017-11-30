@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace contact_center_application.serialization
+namespace contact_center_application.core.serialization
 {
 	class ObjectForSerialization
 	{

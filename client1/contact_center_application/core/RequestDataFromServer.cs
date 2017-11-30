@@ -1,8 +1,8 @@
 ﻿using Newtonsoft.Json;
-using contact_center_application.serialization;
 using System;
 using System.IO;
 using System.Globalization;
+using contact_center_application.core.serialization;
 
 namespace contact_center_application.core
 {

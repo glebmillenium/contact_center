@@ -1,5 +1,5 @@
 ﻿using contact_center_application.core;
-using contact_center_application.serialization;
+using contact_center_application.core.serialization;
 using Newtonsoft.Json;
 using System;
 using System.Globalization;

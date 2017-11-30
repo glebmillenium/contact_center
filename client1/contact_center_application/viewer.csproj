@@ -133,11 +133,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="core\CurrentDataFileSystem.cs" />
-    <Compile Include="core\CurrentDataOpenFile.cs" />
+    <Compile Include="core\storage_dynamic_data\CurrentDataFileSystem.cs" />
+    <Compile Include="core\storage_dynamic_data\CurrentDataOpenFile.cs" />
     <Compile Include="core\Logger.cs" />
-    <Compile Include="core\MainWindowElement.cs" />
-    <Compile Include="core\SettingsData.cs" />
+    <Compile Include="core\storage_dynamic_data\MainWindowElement.cs" />
+    <Compile Include="core\storage_dynamic_data\SettingsData.cs" />
     <Compile Include="graphic_user_interface\form\Authorization.xaml.cs">
       <DependentUpon>Authorization.xaml</DependentUpon>
     </Compile>
@@ -284,6 +284,7 @@
     <None Include="resources\load.png" />
     <None Include="resources\open.png" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>rmdir /s resources 

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace contact_center_application.graphic_user_interface.manage_graphical_component
+namespace contact_center_application.graphic_user_interface.manage_graphical_component.tree_view
 {
 	class EventsForButtons
 	{

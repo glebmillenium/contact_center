@@ -3,24 +3,17 @@ using System.Windows;
 using System.Windows.Controls;
 using contact_center_application.core;
 using Newtonsoft.Json;
-using contact_center_application.serialization;
+using contact_center_application.core.serialization;
 using System;
 using System.IO;
 using System.Diagnostics;
-using System.Windows.Xps.Packaging;
 using System.Threading;
-using Spire.Doc;
-using Spire.Xls;
 using contact_center_application.graphic_user_interface.manage_graphical_component;
-using System.Windows.Documents;
-using System.Text;
-using System.Windows.Media.Imaging;
 using System.Reflection;
 using System.Windows.Input;
-using MoonPdfLib.MuPdf;
-using Spire.DocViewer.Wpf;
-using MoonPdfLib;
 using System.Windows.Media;
+using contact_center_application.core.storage_dynamic_data;
+using contact_center_application.graphic_user_interface.manage_graphical_component.tree_view;
 
 namespace contact_center_application.graphic_user_interface.form
 {

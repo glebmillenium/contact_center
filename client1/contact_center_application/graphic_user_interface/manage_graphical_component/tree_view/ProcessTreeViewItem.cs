@@ -1,4 +1,5 @@
 ﻿using contact_center_application.core;
+using contact_center_application.core.storage_dynamic_data;
 using System;
 using System.IO;
 using System.Windows;
@@ -6,7 +7,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
-namespace contact_center_application.graphic_user_interface.manage_graphical_component
+namespace contact_center_application.graphic_user_interface.manage_graphical_component.tree_view
 {
 	class ProcessTreeViewItem
 	{
