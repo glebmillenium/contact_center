@@ -1,4 +1,5 @@
-﻿using System;
+﻿using contact_center_application.core;
+using System;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
@@ -302,6 +303,17 @@ namespace contact_center_application.graphic_user_interface.manage_graphical_com
 			return tempTextBlock;
 		}
 
-
+		public static TreeViewItem getSearchItemOnCurrentWay(string currentWay)
+		{
+			TreeViewItem result = null;
+			foreach (var elem in CurrentDataFileSystem.listTreeView)
+			{
+				if (elem.Value.Item2.Equals(currentWay))
+				{
+					return elem.Key;
+				}
+			}
+			return result;
+		}
 	}
 }

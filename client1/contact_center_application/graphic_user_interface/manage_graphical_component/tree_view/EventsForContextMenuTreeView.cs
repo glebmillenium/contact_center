@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace contact_center_application.graphic_user_interface.manage_graphical_component
 {
@@ -179,6 +180,116 @@ namespace contact_center_application.graphic_user_interface.manage_graphical_com
 				item.Focus();
 				item.ContextMenu.IsOpen = true;
 				e.Handled = true;
+			}
+		}
+
+		/// <summary>
+		/// Событие вызываемое при открытии файла
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		public static void Open_Click(object sender, RoutedEventArgs e)
+		{
+			selectFile(null, null);
+		}
+
+		/// <summary>
+		/// Обработчик события, запускается по двойному щелчку мыши по treeView. 
+		/// Запускает процесс загрузки содержимого файла с удаленного сервера
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		public static void selectFile(object sender, RoutedEventArgs e)
+		{
+			try
+			{
+				Tuple<bool, TreeViewItem> selectedItem = CurrentDataFileSystem.searchSelectedItem();
+				if (selectedItem.Item1)
+				{
+					MainWindowElement.cursor = Cursors.Wait;
+
+					ManagerViewer.callGarbage();
+
+					string aliance = CurrentDataFileSystem.ComboboxFileSystem.SelectedItem.ToString();
+					string relativeWay = CurrentDataFileSystem.listTreeView[selectedItem.Item2].Item2;
+					string selected = CurrentDataFileSystem.ComboboxFileSystem.SelectedItem.ToString();
+					CurrentDataOpenFile.openFile = "tmp" + relativeWay;
+					if (Path.GetExtension(relativeWay).Equals(".link"))
+					{
+						openWeb(Path.GetFileNameWithoutExtension(relativeWay));
+					}
+					else
+					{
+						int index = Int32.Parse(CurrentDataFileSystem.alianceIdPolicy[
+							CurrentDataFileSystem.ComboboxFileSystem.SelectedItem.ToString()].Item1);
+						DownloadWindow download = new DownloadWindow(index.ToString(),
+							relativeWay);
+						MainWindowElement.window.IsEnabled = false;
+						download.getContentFileAndWriteToFile(CurrentDataOpenFile.openFile);
+						MainWindowElement.window.IsEnabled = true;
+						MainWindowElement.progressConvertation.Visibility = Visibility.Visible;
+						try
+						{
+							ManagerViewer.LoadToViewer(CurrentDataOpenFile.openFile,
+								ManagerViewer.currentView);
+						}
+						catch (OutOfMemoryException exceptionMemory)
+						{
+							MessageBox.Show("Системных ресурсов вашей операционной системы оказалось " +
+								"недостаточно для отображения содержимого файла(" + Path.GetFileName(CurrentDataOpenFile.openFile) +
+								") в данном приложении. " +
+								"Попытайтесь открыть файл во внешнем приложении", "Нехватка системных ресурсов");
+							Logger.log(exceptionMemory.Message);
+						}
+						catch (Exception exp)
+						{
+							MessageBox.Show("Неизвестная ошибка", "UNKNOWN");
+							Logger.log(exp.Message);
+						}
+						finally
+						{
+							if (ManagerViewer.currentView.Equals("view/temp1"))
+							{
+								ManagerViewer.currentView = "view/temp2";
+							}
+							else
+							{
+								ManagerViewer.currentView = "view/temp1";
+							}
+							MainWindowElement.progressConvertation.Visibility = Visibility.Hidden;
+						}
+					}
+					MainWindowElement.managerPanel.Visibility = Visibility.Visible;
+					MainWindowElement.cursor = Cursors.Arrow;
+				}
+			}
+			catch (Exception exp)
+			{
+				Logger.log(exp.ToString());
+				System.Windows.MessageBox.Show("Отказали системные компоненты приложения. " +
+					"Попробуйте повторить действие. В случае повторного возникновения ошибки перезапустите приложение.", "Критическая ошибка");
+			}
+		}
+
+		private static void openWeb(string url)
+		{
+			string messageBoxText = "Вы уверены, что хотите перейти по этой ссылке: " + url + "?";
+			string caption = "Переход по ссылке";
+			MessageBoxButton button = MessageBoxButton.YesNoCancel;
+			MessageBoxImage icon = MessageBoxImage.Question;
+			MessageBoxResult result = MessageBox.Show(messageBoxText, caption, button, icon);
+			if (result == MessageBoxResult.Yes)
+			{
+				try
+				{
+					System.Diagnostics.Process.Start(url);
+				}
+				catch (System.ComponentModel.Win32Exception e)
+				{
+					Logger.log(e.Message);
+					System.Windows.MessageBox.Show("Ошибка",
+					"Не удалось открыть ссылку");
+				}
 			}
 		}
 	}

@@ -31,7 +31,6 @@ namespace contact_center_application.graphic_user_interface.form
 	{
 
 		private bool updateCatalog = false;
-		string currentView = "view/temp1";
 
 		/// <summary>
 		/// Конструктор, осуществляет чистку папки временных файлов
@@ -41,20 +40,25 @@ namespace contact_center_application.graphic_user_interface.form
 			Logger.initialize();
 			InitializeComponent();
 
+			MainWindowElement.cursor = this.Cursor;
 			MainWindowElement.tabControl = this.tabControlForViewer;
 			MainWindowElement.textboxTab = this.textboxTabForViewer;
 			MainWindowElement.docViewerTab = this.docViewerTabForViewer;
 			MainWindowElement.pdfViewerTab = this.pdfViewerTabForViewer;
 			MainWindowElement.imageTab = this.imageTabForViewer;
 			MainWindowElement.viewerTab = this.viewerTabForViewer;
-			MainWindowElement.switchModelViewButton = switchModelViewButtonXPS;
-
+			MainWindowElement.switchModelViewButton = this.switchModelViewButtonXPS;
+			MainWindowElement.docViewerStackPanel = this.docViewerOnStackPanel;
+			MainWindowElement.viewerStackPanel = this.viewerOnStackPanel;
+			MainWindowElement.pdfViewerStackPanel = this.pdfViewerOnStackPanel;
+			MainWindowElement.imageStackPanel = this.imageOnStackPanel;
+			MainWindowElement.progressConvertation = progressOnConvertation;
+			MainWindowElement.managerPanel = managerOnPanel;
+			MainWindowElement.window = this;
 			ManagerViewer.textbox = this.textboxDisplay;
-
-		CurrentDataFileSystem.ComboboxFileSystem = this.ComboboxChooseFileSystem;
+			CurrentDataFileSystem.ComboboxFileSystem = this.ComboboxChooseFileSystem;
 			CurrentDataFileSystem.treeViewCatalog = treeViewCatalogFileSystem;
-			progressConvertation.Visibility = Visibility.Hidden;
-			managerPanel.Visibility = Visibility.Collapsed;
+
 			//  DispatcherTimer setup
 			System.Windows.Threading.DispatcherTimer dispatcherTimer = new System.Windows.Threading.DispatcherTimer();
 			dispatcherTimer.Tick += new EventHandler(dispatcherTimer_Tick);
@@ -94,7 +98,8 @@ namespace contact_center_application.graphic_user_interface.form
 			try
 			{
 				int index = Int32.Parse(
-					CurrentDataFileSystem.alianceIdPolicy[CurrentDataFileSystem.ComboboxFileSystem.SelectedItem.ToString()].Item1);
+					CurrentDataFileSystem.alianceIdPolicy[
+						CurrentDataFileSystem.ComboboxFileSystem.SelectedItem.ToString()].Item1);
 				string answer =
 					RequestDataFromServer.getCatalog(index.ToString());
 				fullingTreeView(answer);
@@ -163,18 +168,18 @@ namespace contact_center_application.graphic_user_interface.form
 		private TreeViewItem getTreeViewItemForFile(
 			CatalogForSerialization element, string currentWay, int deep = 1)
 		{
-			TreeViewItem item = getSearchItemOnCurrentWay(currentWay + "\\" + element.name);
+			TreeViewItem item = ProcessTreeViewItem.getSearchItemOnCurrentWay(currentWay + "\\" + element.name);
 			if (item == null)
 			{
 				item = ProcessTreeViewItem.getTreeViewItem(element.name, true);
 				System.Windows.Controls.ContextMenu docMenu = new System.Windows.Controls.ContextMenu();
-				item.MouseDoubleClick += this.selectFile;
+				item.MouseDoubleClick += EventsForContextMenuTreeView.selectFile;
 				item.KeyDown += Item_KeyDown;
 				CurrentDataFileSystem.listTreeView.Add(item, new Tuple<bool, string, bool>(element.file,
 					currentWay + "\\" + element.name, true));
 
 				System.Windows.Controls.MenuItem open = new System.Windows.Controls.MenuItem();
-				open.Click += Open_Click; ;
+				open.Click += EventsForContextMenuTreeView.Open_Click; ;
 				open.Header = "Открыть файл";
 				docMenu.Items.Add(open);
 
@@ -203,7 +208,7 @@ namespace contact_center_application.graphic_user_interface.form
 		{
 			if (e.Key == Key.Enter)
 			{
-				selectFile(null, null);
+				EventsForContextMenuTreeView.selectFile(null, null);
 			}
 		}
 
@@ -217,7 +222,7 @@ namespace contact_center_application.graphic_user_interface.form
 			CatalogForSerialization element, string currentWay, 
 			int deep = 1)
 		{
-			TreeViewItem item = getSearchItemOnCurrentWay(currentWay + "\\" + element.name);
+			TreeViewItem item = ProcessTreeViewItem.getSearchItemOnCurrentWay(currentWay + "\\" + element.name);
 			if (item != null)
 			{
 				item.Items.Clear();
@@ -281,16 +286,6 @@ namespace contact_center_application.graphic_user_interface.form
 		}
 
 		/// <summary>
-		/// Событие вызываемое при открытии файла
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		private void Open_Click(object sender, RoutedEventArgs e)
-		{
-			selectFile(null, null);
-		}
-
-		/// <summary>
 		/// Обработчик события, вызывается по изменению ComboBox.
 		/// По указанному combobox получает содержимое файловой системы
 		/// </summary>
@@ -299,122 +294,9 @@ namespace contact_center_application.graphic_user_interface.form
 		private void ComboboxFileSystem_SelectionChanged(object sender, 
 			SelectionChangedEventArgs e)
 		{
-			callGarbage();
+			ManagerViewer.callGarbage();
 			getContentFileSystem();
-		}
-
-		private void callGarbage()
-		{
-			ManagerViewer.image = null;
-			ManagerViewer.docViewer = null;
-			ManagerViewer.viewer = null;
-			ManagerViewer.moonPdfPanel = null;
-			ManagerViewer.doc = null;
-
-			UpdateLayout();
-			GC.Collect();
-			GC.WaitForPendingFinalizers();
-
-			ManagerViewer.viewer = new DocumentViewer(); //viewerTab
-			ManagerViewer.moonPdfPanel = new MoonPdfPanel(); //background light-gray
-			ManagerViewer.docViewer = new DocViewer();
-			ManagerViewer.image = new Image();
-
-			this.docViewerStackPanel.Children.Clear();
-			this.docViewerStackPanel.Children.Add(ManagerViewer.docViewer);
-
-			this.viewerStackPanel.Children.Clear();
-			this.viewerStackPanel.Children.Add(ManagerViewer.viewer);
-
-			this.pdfViewerStackPanel.Children.Clear();
-			this.pdfViewerStackPanel.Children.Add(ManagerViewer.moonPdfPanel);
-
-			this.imageStackPanel.Children.Clear();
-			this.imageStackPanel.Children.Add(ManagerViewer.image);
-
-			if (File.Exists(currentView))
-			{
-				File.Delete(currentView);
-			}
-
-			Window_SizeChanged(null, null);
-		}
-
-		/// <summary>
-		/// Обработчик события, запускается по двойному щелчку мыши по treeView. 
-		/// Запускает процесс загрузки содержимого файла с удаленного сервера
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		private void selectFile(object sender, RoutedEventArgs e)
-		{
-			try
-			{
-				Tuple<bool, TreeViewItem> selectedItem = CurrentDataFileSystem.searchSelectedItem();
-				if (selectedItem.Item1)
-				{
-					this.Cursor = Cursors.Wait;
-
-					callGarbage();
-
-					string aliance = CurrentDataFileSystem.ComboboxFileSystem.SelectedItem.ToString();
-					string relativeWay = CurrentDataFileSystem.listTreeView[selectedItem.Item2].Item2;
-					string selected = CurrentDataFileSystem.ComboboxFileSystem.SelectedItem.ToString();
-					CurrentDataOpenFile.openFile = "tmp" + relativeWay;
-					if (Path.GetExtension(relativeWay).Equals(".link"))
-					{
-						openWeb(Path.GetFileNameWithoutExtension(relativeWay));
-					}
-					else
-					{
-						int index = Int32.Parse(CurrentDataFileSystem.alianceIdPolicy[CurrentDataFileSystem.ComboboxFileSystem.SelectedItem.ToString()].Item1);
-						DownloadWindow download = new DownloadWindow(index.ToString(),
-							relativeWay);
-						this.IsEnabled = false;
-						download.getContentFileAndWriteToFile(CurrentDataOpenFile.openFile);
-						this.IsEnabled = true;
-						progressConvertation.Visibility = Visibility.Visible;
-						try
-						{
-							ManagerViewer.LoadToViewer(CurrentDataOpenFile.openFile, this.currentView);
-						}
-						catch (OutOfMemoryException exceptionMemory)
-						{
-							MessageBox.Show("Системных ресурсов вашей операционной системы оказалось " +
-								"недостаточно для отображения содержимого файла(" + Path.GetFileName(CurrentDataOpenFile.openFile) +
-								") в данном приложении. " +
-								"Попытайтесь открыть файл во внешнем приложении", "Нехватка системных ресурсов");
-							Logger.log(exceptionMemory.Message);
-						}
-						catch (Exception exp)
-						{
-							MessageBox.Show("Неизвестная ошибка", "UNKNOWN");
-							Logger.log(exp.Message);
-						}
-						finally
-						{
-							if (this.currentView.Equals("view/temp1"))
-							{
-								this.currentView = "view/temp2";
-							}
-							else
-							{
-								this.currentView = "view/temp1";
-							}
-							progressConvertation.Visibility = Visibility.Hidden;
-						}
-					}
-					this.managerPanel.Visibility = Visibility.Visible;
-					this.Cursor = Cursors.Arrow;
-				}
-			}
-			catch (Exception exp)
-			{
-				Logger.log(exp.ToString());
-				System.Windows.MessageBox.Show("Отказали системные компоненты приложения. " +
-					"Попробуйте повторить действие. В случае повторного возникновения ошибки перезапустите приложение.", "Критическая ошибка");
-			}
-		}
+		}		
 
 		/// <summary>
 		/// Функция осуществляет побайтовую запись в файл
@@ -514,16 +396,7 @@ namespace contact_center_application.graphic_user_interface.form
 		/// <param name="e"></param>
 		private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
 		{
-			if (window.ActualHeight - 165 <= 0) return;
-			ManagerViewer.viewer.Height = window.ActualHeight - 165;
-			ManagerViewer.textbox.Height = ManagerViewer.viewer.Height;
-			ManagerViewer.textbox.Width = ManagerViewer.viewer.Width;
-			ManagerViewer.image.Height = ManagerViewer.viewer.Height;
-			ManagerViewer.image.Width = ManagerViewer.viewer.Width;
-			ManagerViewer.docViewer.Height = ManagerViewer.viewer.Height;
-			ManagerViewer.docViewer.Width = ManagerViewer.viewer.Width;
-			ManagerViewer.moonPdfPanel.Height = ManagerViewer.viewer.Height;
-			ManagerViewer.moonPdfPanel.Width = ManagerViewer.viewer.Width;
+			ManagerViewer.ChangeSizeViewer();
 		}
 
 		private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
@@ -642,28 +515,6 @@ namespace contact_center_application.graphic_user_interface.form
 			}
 		}
 
-		void openWeb(string url)
-		{
-			string messageBoxText = "Вы уверены, что хотите перейти по этой ссылке: " + url + "?";
-			string caption = "Переход по ссылке";
-			MessageBoxButton button = MessageBoxButton.YesNoCancel;
-			MessageBoxImage icon = MessageBoxImage.Question;
-			MessageBoxResult result = MessageBox.Show(messageBoxText, caption, button, icon);
-			if (result == MessageBoxResult.Yes)
-			{
-				try
-				{
-					System.Diagnostics.Process.Start(url);
-				}
-				catch (System.ComponentModel.Win32Exception e)
-				{
-					Logger.log(e.Message);
-					System.Windows.MessageBox.Show("Ошибка",
-					"Не удалось открыть ссылку");
-				}
-			}
-		}
-
 		TextBlock highlightText(string source, string substring, bool isFile)
 		{
 			TextBlock result = new TextBlock();
@@ -735,19 +586,6 @@ namespace contact_center_application.graphic_user_interface.form
 			return result;
 		}
 
-		private TreeViewItem getSearchItemOnCurrentWay(string currentWay)
-		{
-			TreeViewItem result = null;
-			foreach (var elem in CurrentDataFileSystem.listTreeView)
-			{
-				if (elem.Value.Item2.Equals(currentWay))
-				{
-					return elem.Key;
-				}
-			}
-			return result;
-		}
-
 		private void loadToFileToServer_Click(object sender, RoutedEventArgs e)
 		{
 			if (!CurrentDataOpenFile.dateOpenFile.Equals(File.GetLastWriteTime(CurrentDataOpenFile.openFile)))
@@ -784,7 +622,7 @@ namespace contact_center_application.graphic_user_interface.form
 			download.sendFileToServer();
 			try
 			{
-				ManagerViewer.LoadToViewer(CurrentDataOpenFile.openFile, this.currentView);
+				ManagerViewer.LoadToViewer(CurrentDataOpenFile.openFile, ManagerViewer.currentView);
 			}
 			catch (OutOfMemoryException exceptionMemory)
 			{
@@ -802,15 +640,15 @@ namespace contact_center_application.graphic_user_interface.form
 			}
 			finally
 			{
-				if (this.currentView.Equals("view/temp1"))
+				if (ManagerViewer.currentView.Equals("view/temp1"))
 				{
-					this.currentView = "view/temp2";
+					ManagerViewer.currentView = "view/temp2";
 				}
 				else
 				{
-					this.currentView = "view/temp1";
+					ManagerViewer.currentView = "view/temp1";
 				}
-				progressConvertation.Visibility = Visibility.Hidden;
+				MainWindowElement.progressConvertation.Visibility = Visibility.Hidden;
 			}
 		}
 
@@ -832,7 +670,8 @@ namespace contact_center_application.graphic_user_interface.form
 			{
 				try
 				{
-					ManagerViewer.LoadToViewer(CurrentDataOpenFile.openFile, this.currentView);
+					ManagerViewer.LoadToViewer(CurrentDataOpenFile.openFile,
+						ManagerViewer.currentView);
 				}
 				catch (OutOfMemoryException exceptionMemory)
 				{
@@ -849,15 +688,15 @@ namespace contact_center_application.graphic_user_interface.form
 				}
 				finally
 				{
-					if (this.currentView.Equals("view/temp1"))
+					if (ManagerViewer.currentView.Equals("view/temp1"))
 					{
-						this.currentView = "view/temp2";
+						ManagerViewer.currentView = "view/temp2";
 					}
 					else
 					{
-						this.currentView = "view/temp1";
+						ManagerViewer.currentView = "view/temp1";
 					}
-					progressConvertation.Visibility = Visibility.Hidden;
+					MainWindowElement.progressConvertation.Visibility = Visibility.Hidden;
 				}
 			}
 		}

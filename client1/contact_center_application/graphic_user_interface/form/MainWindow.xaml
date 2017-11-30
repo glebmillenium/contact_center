@@ -79,7 +79,7 @@
 			</DockPanel>
 			<StackPanel x:Name="stackPanelView" DockPanel.Dock="Right" Orientation="Vertical"
 						Margin="0,0,5,0">
-				<StackPanel x:Name="managerPanel" Orientation="Horizontal" >
+				<StackPanel x:Name="managerOnPanel" Orientation="Horizontal" Visibility="Collapsed" >
 					<Button x:Name="openFileInExternalProgramm" 
 							Height="30" Margin="0,0,5,0" 
 							Click="Button_Click" Width="30"
@@ -116,7 +116,7 @@
 						</ToggleButton.ToolTip>
 						<Image Source="pack://siteoforigin:,,,/resources/xps.png"/>
 					</ToggleButton>
-					<StackPanel x:Name="progressConvertation">
+					<StackPanel x:Name="progressOnConvertation" Visibility="Hidden">
 						<TextBlock x:Name="progressConvertationText" Height="15" FontSize="10"/>
 						<ProgressBar Height="15" IsIndeterminate="True"/>
 					</StackPanel>
@@ -124,7 +124,7 @@
 
 				<TabControl x:Name="tabControlForViewer">
 					<TabItem x:Name="viewerTabForViewer" Visibility="Collapsed">
-						<StackPanel x:Name="viewerStackPanel"></StackPanel>
+						<StackPanel x:Name="viewerOnStackPanel"></StackPanel>
 					</TabItem>
 
 					<TabItem x:Name="textboxTabForViewer" Visibility="Collapsed">
@@ -137,15 +137,15 @@
 					</TabItem>
 
 					<TabItem x:Name="docViewerTabForViewer" Visibility="Collapsed">
-						<StackPanel  x:Name="docViewerStackPanel"></StackPanel>
+						<StackPanel  x:Name="docViewerOnStackPanel"></StackPanel>
 					</TabItem>
 
 					<TabItem  x:Name="pdfViewerTabForViewer" Visibility="Collapsed">
-						<StackPanel x:Name="pdfViewerStackPanel"></StackPanel>
+						<StackPanel x:Name="pdfViewerOnStackPanel"></StackPanel>
 					</TabItem>
 
 					<TabItem x:Name="imageTabForViewer" Visibility="Collapsed">
-						<StackPanel x:Name="imageStackPanel">
+						<StackPanel x:Name="imageOnStackPanel">
 							<ScrollViewer 
 							HorizontalScrollBarVisibility="Auto" 
 							VerticalScrollBarVisibility="Auto">

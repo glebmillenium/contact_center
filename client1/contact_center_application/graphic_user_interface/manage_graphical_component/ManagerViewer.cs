@@ -27,6 +27,7 @@ namespace contact_center_application.graphic_user_interface.manage_graphical_com
 		public static XpsDocument doc;
 		public static Document simpleDoc;
 		public static RichTextBox textbox;
+		public static string currentView = "view/temp1";
 
 		/// <summary>
 		/// Загружает данные в правую часть окна
@@ -248,6 +249,57 @@ namespace contact_center_application.graphic_user_interface.manage_graphical_com
 			paragraph.Inlines.Add(text);
 			document.Blocks.Add(paragraph);
 			textbox.Document = document;
+		}
+
+		public static void callGarbage()
+		{
+			ManagerViewer.image = null;
+			ManagerViewer.docViewer = null;
+			ManagerViewer.viewer = null;
+			ManagerViewer.moonPdfPanel = null;
+			ManagerViewer.doc = null;
+
+			MainWindowElement.window.UpdateLayout();
+			GC.Collect();
+			GC.WaitForPendingFinalizers();
+
+			ManagerViewer.viewer = new DocumentViewer(); //viewerTab
+			ManagerViewer.moonPdfPanel = new MoonPdfPanel(); //background light-gray
+			ManagerViewer.docViewer = new DocViewer();
+			ManagerViewer.image = new Image();
+
+			MainWindowElement.docViewerStackPanel.Children.Clear();
+			MainWindowElement.docViewerStackPanel.Children.Add(ManagerViewer.docViewer);
+
+			MainWindowElement.viewerStackPanel.Children.Clear();
+			MainWindowElement.viewerStackPanel.Children.Add(ManagerViewer.viewer);
+
+			MainWindowElement.pdfViewerStackPanel.Children.Clear();
+			MainWindowElement.pdfViewerStackPanel.Children.Add(ManagerViewer.moonPdfPanel);
+
+			MainWindowElement.imageStackPanel.Children.Clear();
+			MainWindowElement.imageStackPanel.Children.Add(ManagerViewer.image);
+
+			if (File.Exists(ManagerViewer.currentView))
+			{
+				File.Delete(ManagerViewer.currentView);
+			}
+
+			ChangeSizeViewer();
+		}
+
+		public static void ChangeSizeViewer()
+		{
+			if (MainWindowElement.window.ActualHeight - 165 <= 0) return;
+			ManagerViewer.viewer.Height = MainWindowElement.window.ActualHeight - 165;
+			ManagerViewer.textbox.Height = ManagerViewer.viewer.Height;
+			ManagerViewer.textbox.Width = ManagerViewer.viewer.Width;
+			ManagerViewer.image.Height = ManagerViewer.viewer.Height;
+			ManagerViewer.image.Width = ManagerViewer.viewer.Width;
+			ManagerViewer.docViewer.Height = ManagerViewer.viewer.Height;
+			ManagerViewer.docViewer.Width = ManagerViewer.viewer.Width;
+			ManagerViewer.moonPdfPanel.Height = ManagerViewer.viewer.Height;
+			ManagerViewer.moonPdfPanel.Width = ManagerViewer.viewer.Width;
 		}
 	}
 }
