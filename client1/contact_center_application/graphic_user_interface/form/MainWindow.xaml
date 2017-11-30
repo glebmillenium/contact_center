@@ -94,10 +94,10 @@
 							>
 						<Image Source="pack://siteoforigin:,,,/resources/load.png"/>
 					</Button>
-					<ToggleButton x:Name="switchModeViewButton"
+					<ToggleButton x:Name="switchModelViewButtonXPS"
 								  Width="30" Height="30" 
 								  Background="White"
-								  Click="switchModeViewButton_Click"
+								  Click="switchModelViewButtonXPS_Click"
 								  >
 						<ToggleButton.ToolTip>
 							<StackPanel Orientation="Horizontal">
@@ -122,29 +122,29 @@
 					</StackPanel>
 				</StackPanel>
 
-				<TabControl x:Name="tabControl">
-					<TabItem x:Name="viewerTab" Visibility="Collapsed">
+				<TabControl x:Name="tabControlForViewer">
+					<TabItem x:Name="viewerTabForViewer" Visibility="Collapsed">
 						<StackPanel x:Name="viewerStackPanel"></StackPanel>
 					</TabItem>
 
-					<TabItem x:Name="textboxTab" Visibility="Collapsed">
+					<TabItem x:Name="textboxTabForViewer" Visibility="Collapsed">
 						<RichTextBox 
 							IsReadOnly="True" 
-							x:Name="textbox" 
+							x:Name="textboxDisplay" 
 							Height="200" 
 							AcceptsReturn="True"
 							VerticalScrollBarVisibility="Auto"/>
 					</TabItem>
 
-					<TabItem x:Name="docViewerTab" Visibility="Collapsed">
+					<TabItem x:Name="docViewerTabForViewer" Visibility="Collapsed">
 						<StackPanel  x:Name="docViewerStackPanel"></StackPanel>
 					</TabItem>
 
-					<TabItem  x:Name="pdfViewerTab" Visibility="Collapsed">
+					<TabItem  x:Name="pdfViewerTabForViewer" Visibility="Collapsed">
 						<StackPanel x:Name="pdfViewerStackPanel"></StackPanel>
 					</TabItem>
 
-					<TabItem x:Name="imageTab" Visibility="Collapsed">
+					<TabItem x:Name="imageTabForViewer" Visibility="Collapsed">
 						<StackPanel x:Name="imageStackPanel">
 							<ScrollViewer 
 							HorizontalScrollBarVisibility="Auto" 

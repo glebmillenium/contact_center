@@ -29,11 +29,7 @@ namespace contact_center_application.graphic_user_interface.form
 	/// </summary>
 	public partial class MainWindow : Window
 	{
-		private DocumentViewer viewer = new DocumentViewer(); //viewerTab
-		private MoonPdfPanel moonPdfPanel = new MoonPdfPanel(); //background light-gray
-		private DocViewer docViewer = new DocViewer();
-		private Image image = new Image();
-		XpsDocument doc;
+
 		private bool updateCatalog = false;
 		string currentView = "view/temp1";
 
@@ -43,9 +39,19 @@ namespace contact_center_application.graphic_user_interface.form
 		public MainWindow()
 		{
 			Logger.initialize();
-
 			InitializeComponent();
-			CurrentDataFileSystem.ComboboxFileSystem = this.ComboboxChooseFileSystem;
+
+			MainWindowElement.tabControl = this.tabControlForViewer;
+			MainWindowElement.textboxTab = this.textboxTabForViewer;
+			MainWindowElement.docViewerTab = this.docViewerTabForViewer;
+			MainWindowElement.pdfViewerTab = this.pdfViewerTabForViewer;
+			MainWindowElement.imageTab = this.imageTabForViewer;
+			MainWindowElement.viewerTab = this.viewerTabForViewer;
+			MainWindowElement.switchModelViewButton = switchModelViewButtonXPS;
+
+			ManagerViewer.textbox = this.textboxDisplay;
+
+		CurrentDataFileSystem.ComboboxFileSystem = this.ComboboxChooseFileSystem;
 			CurrentDataFileSystem.treeViewCatalog = treeViewCatalogFileSystem;
 			progressConvertation.Visibility = Visibility.Hidden;
 			managerPanel.Visibility = Visibility.Collapsed;
@@ -181,7 +187,7 @@ namespace contact_center_application.graphic_user_interface.form
 				rename.Header = "Переименовать";
 				rename.Click += EventsForContextMenuTreeView.Rename_Click;
 				docMenu.Items.Add(rename);
-				item.ContextMenuOpening += Item_ContextMenuOpening;
+				item.ContextMenuOpening += EventsForContextMenuTreeView.Item_ContextMenuOpening;
 				item.ContextMenu = docMenu;
 			}
 			else
@@ -236,132 +242,9 @@ namespace contact_center_application.graphic_user_interface.form
 				}
 			}
 
-			setContextMenuToTreeViewItem(item, element, deep);
+			ContextMenuForTreeView.setContextMenuToTreeViewItem(item, element, deep);
 
 			return item;
-		}
-
-		private void policyContactCenter(TreeViewItem item, 
-			ContextMenu docMenu, CatalogForSerialization element, int deep)
-		{
-			System.Windows.Controls.MenuItem upload = new System.Windows.Controls.MenuItem();
-			switch (deep)
-			{
-				case 1:
-					upload.Header = "Загрузить файл в категорию";
-					upload.Click += EventsForContextMenuTreeView.Upload_Click;
-					docMenu.Items.Add(upload);
-					break;
-				case 2:
-					upload.Header = "Загрузить файл в тему";
-					upload.Click += EventsForContextMenuTreeView.Upload_Click;
-					docMenu.Items.Add(upload);
-					break;
-				case 3:
-					upload.Header = "Загрузить файл в подтему";
-					upload.Click += EventsForContextMenuTreeView.Upload_Click;
-					docMenu.Items.Add(upload);
-					break;
-			}
-
-			System.Windows.Controls.MenuItem createDir = new System.Windows.Controls.MenuItem();
-			switch (deep)
-			{
-				case 1:
-					createDir.Header = "Создать новую тему в " + element.name;
-					createDir.Click += EventsForContextMenuTreeView.CreateDir_Click;
-					docMenu.Items.Add(createDir);
-					break;
-				case 2:
-					createDir.Header = "Создать новую подтему в " + element.name;
-					createDir.Click += EventsForContextMenuTreeView.CreateDir_Click;
-					docMenu.Items.Add(createDir);
-					break;
-			}
-
-			System.Windows.Controls.MenuItem delete = new System.Windows.Controls.MenuItem();
-			switch (deep)
-			{
-				case 1:
-					delete.Header = "Удалить категорию";
-					delete.Click += EventsForContextMenuTreeView.Delete_Click;
-					docMenu.Items.Add(delete);
-					break;
-				case 2:
-					delete.Header = "Удалить тему";
-					delete.Click += EventsForContextMenuTreeView.Delete_Click;
-					docMenu.Items.Add(delete);
-					break;
-				case 3:
-					delete.Header = "Удалить подтему";
-					delete.Click += EventsForContextMenuTreeView.Delete_Click;
-					docMenu.Items.Add(delete);
-					break;
-				default:
-					delete.Header = "Удалить папку";
-					delete.Click += EventsForContextMenuTreeView.Delete_Click;
-					docMenu.Items.Add(delete);
-					break;
-			}
-
-			System.Windows.Controls.MenuItem rename = new System.Windows.Controls.MenuItem();
-			switch (deep)
-			{
-				case 1:
-					rename.Header = "Переименовать категорию";
-					rename.Click += EventsForContextMenuTreeView.Rename_Click;
-					docMenu.Items.Add(rename);
-					break;
-				case 2:
-					rename.Header = "Переименовать тему";
-					rename.Click += EventsForContextMenuTreeView.Rename_Click;
-					docMenu.Items.Add(rename);
-					break;
-				case 3:
-					rename.Header = "Переименовать подтему";
-					rename.Click += EventsForContextMenuTreeView.Rename_Click;
-					docMenu.Items.Add(rename);
-					break;
-			}
-
-			item.ContextMenuOpening += Item_ContextMenuOpening;
-			item.ContextMenu = docMenu;
-		}
-
-		private void setContextMenuToTreeViewItem(TreeViewItem item, CatalogForSerialization element, int deep)
-		{
-			System.Windows.Controls.ContextMenu docMenu = new System.Windows.Controls.ContextMenu();
-			int policy = Int32.Parse(CurrentDataFileSystem.alianceIdPolicy[CurrentDataFileSystem.ComboboxFileSystem.SelectedItem.ToString()].Item2);
-			switch (policy)
-			{
-				case 1:
-					policyContactCenter(item, docMenu, element, deep);
-					break;
-				default:
-					System.Windows.Controls.MenuItem upload = new System.Windows.Controls.MenuItem();
-					upload.Header = "Загрузить файл в папку";
-					upload.Click += EventsForContextMenuTreeView.Upload_Click;
-					docMenu.Items.Add(upload);
-
-					System.Windows.Controls.MenuItem createDir = new System.Windows.Controls.MenuItem();
-					createDir.Header = "Создать новую папку в " + element.name;
-					createDir.Click += EventsForContextMenuTreeView.CreateDir_Click;
-					docMenu.Items.Add(createDir);
-
-					System.Windows.Controls.MenuItem delete = new System.Windows.Controls.MenuItem();
-					delete.Header = "Удалить папку";
-					delete.Click += EventsForContextMenuTreeView.Delete_Click; ;
-					docMenu.Items.Add(delete);
-
-					System.Windows.Controls.MenuItem rename = new System.Windows.Controls.MenuItem();
-					rename.Header = "Переименовать";
-					rename.Click += EventsForContextMenuTreeView.Rename_Click;
-					docMenu.Items.Add(rename);
-					item.ContextMenuOpening += Item_ContextMenuOpening;
-					item.ContextMenu = docMenu;
-					break;
-			}
-			
 		}
 
 		/// <summary>
@@ -398,23 +281,6 @@ namespace contact_center_application.graphic_user_interface.form
 		}
 
 		/// <summary>
-		/// Событие вызываемое при открытии контекстного меню, осуществляет выделение treeviewitem
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		private void Item_ContextMenuOpening(object sender, ContextMenuEventArgs e)
-		{
-			bool value = e.Handled;
-			TreeViewItem item = sender as TreeViewItem;
-			if (item != null)
-			{
-				item.Focus();
-				item.ContextMenu.IsOpen = true;
-				e.Handled = true;
-			}
-		}
-
-		/// <summary>
 		/// Событие вызываемое при открытии файла
 		/// </summary>
 		/// <param name="sender"></param>
@@ -439,32 +305,32 @@ namespace contact_center_application.graphic_user_interface.form
 
 		private void callGarbage()
 		{
-			image = null;
-			docViewer = null;
-			viewer = null;
-			moonPdfPanel = null;
-			doc = null;
+			ManagerViewer.image = null;
+			ManagerViewer.docViewer = null;
+			ManagerViewer.viewer = null;
+			ManagerViewer.moonPdfPanel = null;
+			ManagerViewer.doc = null;
 
 			UpdateLayout();
 			GC.Collect();
 			GC.WaitForPendingFinalizers();
 
-			viewer = new DocumentViewer(); //viewerTab
-			moonPdfPanel = new MoonPdfPanel(); //background light-gray
-			docViewer = new DocViewer();
-			image = new Image();
+			ManagerViewer.viewer = new DocumentViewer(); //viewerTab
+			ManagerViewer.moonPdfPanel = new MoonPdfPanel(); //background light-gray
+			ManagerViewer.docViewer = new DocViewer();
+			ManagerViewer.image = new Image();
 
 			this.docViewerStackPanel.Children.Clear();
-			this.docViewerStackPanel.Children.Add(this.docViewer);
+			this.docViewerStackPanel.Children.Add(ManagerViewer.docViewer);
 
 			this.viewerStackPanel.Children.Clear();
-			this.viewerStackPanel.Children.Add(this.viewer);
+			this.viewerStackPanel.Children.Add(ManagerViewer.viewer);
 
 			this.pdfViewerStackPanel.Children.Clear();
-			this.pdfViewerStackPanel.Children.Add(this.moonPdfPanel);
+			this.pdfViewerStackPanel.Children.Add(ManagerViewer.moonPdfPanel);
 
 			this.imageStackPanel.Children.Clear();
-			this.imageStackPanel.Children.Add(this.image);
+			this.imageStackPanel.Children.Add(ManagerViewer.image);
 
 			if (File.Exists(currentView))
 			{
@@ -510,7 +376,7 @@ namespace contact_center_application.graphic_user_interface.form
 						progressConvertation.Visibility = Visibility.Visible;
 						try
 						{
-							LoadToViewer(CurrentDataOpenFile.openFile, this.currentView);
+							ManagerViewer.LoadToViewer(CurrentDataOpenFile.openFile, this.currentView);
 						}
 						catch (OutOfMemoryException exceptionMemory)
 						{
@@ -551,147 +417,6 @@ namespace contact_center_application.graphic_user_interface.form
 		}
 
 		/// <summary>
-		/// Загружает данные в правую часть окна
-		/// </summary>
-		/// <param name="way"></param>
-		/// <param name="viewWay"></param>
-		private void LoadToViewer(string way, string viewWay)
-		{
-			CurrentDataOpenFile.dateOpenFile = File.GetLastWriteTime(way);
-			CurrentDataOpenFile.relationWayOpenFile = CurrentDataFileSystem.listTreeView[CurrentDataFileSystem.searchSelectedItem().Item2].Item2;
-			Logger.log(new DateTime() + " Обработка файла: " + way);
-
-			if (!Directory.Exists(Path.GetDirectoryName(viewWay)))
-			{
-				Directory.CreateDirectory(Path.GetDirectoryName(viewWay));
-			}
-			File.Copy(way, viewWay, true);
-			FileInfo fi = new FileInfo(viewWay);
-			if (fi.Length > 500 * 1024 * 1024)
-			{
-				System.Windows.MessageBox.Show("Размер файла слишком большой для показа в текущем приложении",
-					"Слишком большой размер файла");
-			}
-			else
-			{
-				string extension = Path.GetExtension(way);
-
-				if (extension.Equals(".txt") || extension.Equals(".csv") ||
-					extension.Equals(".xml") || extension.Equals(".html"))
-				{
-					Logger.log("Отображение файла будет в TextBox");
-					this.tabControl.SelectedItem = this.textboxTab;
-					displayTextbox(way);
-				}
-				else if (extension.Equals(".jpeg") || extension.Equals(".tiff") ||
-					extension.Equals(".jpg") || extension.Equals(".png"))
-				{
-					Logger.log("Отображение файла будет в Image");
-					string fullWay = Path.Combine(Path.GetDirectoryName(
-									Assembly.GetExecutingAssembly().Locati‌​on), way);
-					byte[] buffer = System.IO.File.ReadAllBytes(fullWay);//сюда подставляются image
-					MemoryStream ms = new MemoryStream(buffer);
-					BitmapImage bitmap33 = new BitmapImage();
-					bitmap33.BeginInit();
-					bitmap33.StreamSource = ms;
-					bitmap33.EndInit();
-					bitmap33.Freeze();
-					image.Source = bitmap33;
-					tabControl.SelectedItem = imageTab;
-				}
-				else if (extension.Equals(".doc") || extension.Equals(".docx"))
-				{
-					if ((bool)this.switchModeViewButton.IsChecked)
-					{
-						Logger.log("Отображение файла будет в DocumentViewer");
-						this.tabControl.SelectedItem = this.viewerTab;
-
-						this.viewer.Document = null;
-						this.viewer.DataContext = null;
-						if (doc != null)
-						{
-							this.doc.Close();
-						}
-
-						convertDocxDocToXps(way, viewWay);
-						this.doc = new XpsDocument(viewWay, FileAccess.Read);
-						viewer.Document = doc.GetFixedDocumentSequence();
-						doc.Close();
-					}
-					else
-					{
-						Logger.log("Отображение файла будет в docViewer");
-						this.docViewer.CloseDocument();
-						this.docViewer.LoadFromFile(way);
-						tabControl.SelectedItem = this.docViewerTab;
-					}
-				}
-				else if (extension.Equals(".xlsx") || extension.Equals(".xls"))
-				{
-					Logger.log("Отображение файла будет в viewer");
-					this.tabControl.SelectedItem = this.viewerTab;
-					this.viewer.Document = null;
-					this.viewer.DataContext = null;
-					if (doc != null)
-					{
-						this.doc.Close();
-					}
-					this.doc = null;
-
-					try
-					{
-						convertXlsToXps(way, viewWay);
-						this.doc = new XpsDocument(viewWay, FileAccess.Read);
-						viewer.Document = doc.GetFixedDocumentSequence();
-						this.doc.Close();
-					}
-					catch (Exception exp)
-					{
-						this.doc = null;
-						this.viewer.Document = null;
-						this.viewer.DataContext = null;
-						Logger.log(exp.Message);
-					}
-				}
-				else if (extension.Equals(".pdf"))
-				{
-					Logger.log("Отображение файла будет в pdfviewer");
-					this.tabControl.SelectedItem = this.pdfViewerTab;
-					byte[] bytes = File.ReadAllBytes(way);
-					var source = new MemorySource(bytes);
-
-					moonPdfPanel.Open(source);
-					moonPdfPanel.PageRowDisplay = MoonPdfLib.PageRowDisplayType.ContinuousPageRows;
-				}
-				else
-				{
-
-				}
-
-			}
-		}
-
-		/// <summary>
-		/// Отображает содержимое файла (текстового) в RichTextBox textbox
-		/// </summary>
-		/// <param name="viewWay"></param>
-		private void displayTextbox(string viewWay)
-		{
-			textbox.Height = viewer.Height;
-			textbox.Width = viewer.Width;
-			textbox.Document.Blocks.Clear();
-			var sr = new StreamReader(viewWay, Encoding.UTF8);
-			string text = sr.ReadToEnd();
-			sr.Close();
-			sr.Dispose();
-			var document = new FlowDocument();
-			var paragraph = new Paragraph();
-			paragraph.Inlines.Add(text);
-			document.Blocks.Add(paragraph);
-			textbox.Document = document;
-		}
-
-		/// <summary>
 		/// Функция осуществляет побайтовую запись в файл
 		/// </summary>
 		/// <param name="relativeWay"></param>
@@ -705,86 +430,6 @@ namespace contact_center_application.graphic_user_interface.form
 				File.Delete(relativeWay);
 			}
 			File.WriteAllBytes(relativeWay, contentFile);
-		}
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="way"></param>
-		/// <param name="viewWay"></param>
-		public static void convertDocxDocToXps(string way, string viewWay)
-		{
-			try
-			{
-				Document doc = new Document(way);
-				string directoryWay = Path.GetDirectoryName(viewWay);
-				Directory.CreateDirectory(directoryWay);
-				if (File.Exists(viewWay))
-				{
-					File.Delete(viewWay);
-				}
-				doc.SaveToFile(viewWay, Spire.Doc.FileFormat.XPS);
-				doc.Close();
-			}
-			catch (System.OutOfMemoryException e)
-			{
-				System.Windows.MessageBox.Show("По неясным причинам приложению не удалось отобразить требуемый документ." +
-					" Тем не менее требуемый документ можно открыть в любом внешнем приложении.\n" +
-					"Например: Word Office, OpenOffice, LibreOffice", "Ошибка вывода на экран");
-				Logger.log(e.Message);
-			}
-			catch (System.IO.IOException e)
-			{
-				System.Windows.MessageBox.Show("По неясным причинам приложению не удалось отобразить требуемый документ." +
-					" Тем не менее требуемый документ можно открыть в любом внешнем приложении.\n" +
-					"Например: Word Office, OpenOffice, LibreOffice", "Ошибка вывода на экран");
-				Logger.log(e.Message);
-			}
-			catch (System.ApplicationException e)
-			{
-				System.Windows.MessageBox.Show("По неясным причинам приложению не удалось отобразить требуемый документ." +
-					" Тем не менее требуемый документ можно открыть в любом внешнем приложении.\n" +
-					"Например: Word Office, OpenOffice, LibreOffice", "Ошибка вывода на экран");
-				Logger.log(e.Message);
-			}
-		}
-
-		/// <summary>
-		/// Функция конвертирует из XLS формата в XPS формат для дальнейшего показа
-		/// 
-		/// </summary>
-		/// <param name="way"></param>
-		/// <param name="viewWay"></param>
-		public static void convertXlsToXps(string way, string viewWay)
-		{
-			try
-			{
-				Workbook workbook = new Workbook();
-				workbook.LoadFromFile(way, ExcelVersion.Version97to2003);
-				string directoryWay = Path.GetDirectoryName(viewWay);
-				Directory.CreateDirectory(directoryWay);
-				if (File.Exists(viewWay))
-				{
-					File.Delete(viewWay);
-				}
-				workbook.SaveToFile(viewWay, Spire.Xls.FileFormat.XPS);
-				workbook.Dispose();
-				workbook = null;
-			}
-			catch (System.NotSupportedException e)
-			{
-				System.Windows.MessageBox.Show("Не удалось выполнить преобразование документа," +
-					" скорее всего файл поврежден и нуждается в восстановлении");
-				Logger.log(e.Message);
-				throw new Exception();
-			}
-			catch (System.ArgumentOutOfRangeException e)
-			{
-				System.Windows.MessageBox.Show("Не удалось выполнить преобразование документа," +
-					" скорее всего файл поврежден и нуждается в восстановлении");
-				Logger.log(e.Message);
-				throw new Exception();
-			}
 		}
 
 		/// <summary>
@@ -870,15 +515,15 @@ namespace contact_center_application.graphic_user_interface.form
 		private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
 		{
 			if (window.ActualHeight - 165 <= 0) return;
-			viewer.Height = window.ActualHeight - 165;
-			textbox.Height = viewer.Height;
-			textbox.Width = viewer.Width;
-			image.Height = viewer.Height;
-			image.Width = viewer.Width;
-			docViewer.Height = viewer.Height;
-			docViewer.Width = viewer.Width;
-			moonPdfPanel.Height = viewer.Height;
-			moonPdfPanel.Width = viewer.Width;
+			ManagerViewer.viewer.Height = window.ActualHeight - 165;
+			ManagerViewer.textbox.Height = ManagerViewer.viewer.Height;
+			ManagerViewer.textbox.Width = ManagerViewer.viewer.Width;
+			ManagerViewer.image.Height = ManagerViewer.viewer.Height;
+			ManagerViewer.image.Width = ManagerViewer.viewer.Width;
+			ManagerViewer.docViewer.Height = ManagerViewer.viewer.Height;
+			ManagerViewer.docViewer.Width = ManagerViewer.viewer.Width;
+			ManagerViewer.moonPdfPanel.Height = ManagerViewer.viewer.Height;
+			ManagerViewer.moonPdfPanel.Width = ManagerViewer.viewer.Width;
 		}
 
 		private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
@@ -1139,7 +784,7 @@ namespace contact_center_application.graphic_user_interface.form
 			download.sendFileToServer();
 			try
 			{
-				LoadToViewer(CurrentDataOpenFile.openFile, this.currentView);
+				ManagerViewer.LoadToViewer(CurrentDataOpenFile.openFile, this.currentView);
 			}
 			catch (OutOfMemoryException exceptionMemory)
 			{
@@ -1169,17 +814,17 @@ namespace contact_center_application.graphic_user_interface.form
 			}
 		}
 
-		private void switchModeViewButton_Click(object sender, RoutedEventArgs e)
+		private void switchModelViewButtonXPS_Click(object sender, RoutedEventArgs e)
 		{
 			string extension = Path.GetExtension(CurrentDataOpenFile.openFile);
-			if ((bool) this.switchModeViewButton.IsChecked)
+			if ((bool) this.switchModelViewButtonXPS.IsChecked)
 			{
-				this.switchModeViewButton.Background = 
+				this.switchModelViewButtonXPS.Background = 
 					new SolidColorBrush(Colors.DarkCyan);
 			}
 			else
 			{
-				this.switchModeViewButton.Background = 
+				this.switchModelViewButtonXPS.Background = 
 					new SolidColorBrush(Colors.White);
 			}
 
@@ -1187,7 +832,7 @@ namespace contact_center_application.graphic_user_interface.form
 			{
 				try
 				{
-					LoadToViewer(CurrentDataOpenFile.openFile, this.currentView);
+					ManagerViewer.LoadToViewer(CurrentDataOpenFile.openFile, this.currentView);
 				}
 				catch (OutOfMemoryException exceptionMemory)
 				{
@@ -1219,7 +864,7 @@ namespace contact_center_application.graphic_user_interface.form
 
 		private void registrButton_Click(object sender, RoutedEventArgs e)
 		{
-			if ((bool) this.switchModeViewButton.IsChecked)
+			if ((bool) this.switchModelViewButtonXPS.IsChecked)
 			{
 				this.registrButton.Background =
 					new SolidColorBrush(Colors.Black);

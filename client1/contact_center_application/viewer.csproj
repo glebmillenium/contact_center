@@ -136,6 +136,7 @@
     <Compile Include="core\CurrentDataFileSystem.cs" />
     <Compile Include="core\CurrentDataOpenFile.cs" />
     <Compile Include="core\Logger.cs" />
+    <Compile Include="core\MainWindowElement.cs" />
     <Compile Include="core\SettingsData.cs" />
     <Compile Include="graphic_user_interface\form\Authorization.xaml.cs">
       <DependentUpon>Authorization.xaml</DependentUpon>
@@ -153,13 +154,14 @@
     <Compile Include="graphic_user_interface\form\Settings.xaml.cs">
       <DependentUpon>Settings.xaml</DependentUpon>
     </Compile>
-    <Compile Include="graphic_user_interface\manage_graphical_component\ContextMenuForTreeView.cs" />
-    <Compile Include="graphic_user_interface\manage_graphical_component\EventsForButtons.cs" />
-    <Compile Include="graphic_user_interface\manage_graphical_component\EventsForContextMenuTreeView.cs" />
+    <Compile Include="graphic_user_interface\manage_graphical_component\tree_view\ContextMenuForTreeView.cs" />
+    <Compile Include="graphic_user_interface\manage_graphical_component\tree_view\EventsForButtons.cs" />
+    <Compile Include="graphic_user_interface\manage_graphical_component\tree_view\EventsForContextMenuTreeView.cs" />
     <Compile Include="graphic_user_interface\form\UploadWindow.xaml.cs">
       <DependentUpon>UploadWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="graphic_user_interface\manage_graphical_component\ProcessTreeViewItem.cs" />
+    <Compile Include="graphic_user_interface\manage_graphical_component\ManagerViewer.cs" />
+    <Compile Include="graphic_user_interface\manage_graphical_component\tree_view\ProcessTreeViewItem.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
