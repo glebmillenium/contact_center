@@ -1,6 +1,7 @@
 ﻿using contact_center_application.core;
 using contact_center_application.core.serialization;
 using contact_center_application.core.storage_dynamic_data;
+using contact_center_application.graphic_user_interface.manage_graphical_component.viewer;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -438,6 +439,30 @@ namespace contact_center_application.graphic_user_interface.manage_graphical_com
 					item.Value.Item1, item.Value.Item2, false));
 			}
 			CurrentDataFileSystem.listTreeView = temporaryListTreeView;
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="json"></param>
+		public static void fullingTreeView(string json)
+		{
+			if (!ManagerViewer.updateCatalog)
+			{
+				CurrentDataFileSystem.listTreeView.Clear();
+			}
+			ContextMenuForTreeView.setContextMenuForTreeView();
+
+			CurrentDataFileSystem.basisListItems = ProcessTreeViewItem.getItemsCatalogsFromJson(json, "");
+
+			if (CurrentDataFileSystem.basisListItems.Count != 0)
+			{
+				CurrentDataFileSystem.treeViewCatalog.Items.Clear();
+				foreach (var category in CurrentDataFileSystem.basisListItems)
+				{
+					CurrentDataFileSystem.treeViewCatalog.Items.Add(category);
+				}
+			}
 		}
 	}
 }

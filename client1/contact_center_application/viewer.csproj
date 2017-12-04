@@ -138,6 +138,7 @@
     <Compile Include="core\Logger.cs" />
     <Compile Include="core\storage_dynamic_data\MainWindowElement.cs" />
     <Compile Include="core\storage_dynamic_data\SettingsData.cs" />
+    <Compile Include="core\TreatmenterExchangeFileWithServer.cs" />
     <Compile Include="graphic_user_interface\form\Authorization.xaml.cs">
       <DependentUpon>Authorization.xaml</DependentUpon>
     </Compile>

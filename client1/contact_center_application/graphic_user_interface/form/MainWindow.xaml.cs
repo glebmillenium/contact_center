@@ -24,8 +24,6 @@ namespace contact_center_application.graphic_user_interface.form
 	public partial class MainWindow : Window
 	{
 
-		private bool updateCatalog = false;
-
 		/// <summary>
 		/// Конструктор, осуществляет чистку папки временных файлов
 		/// </summary>
@@ -33,11 +31,12 @@ namespace contact_center_application.graphic_user_interface.form
 		{
 			Logger.initialize();
 			InitializeComponent();
-
+			MainWindowElement.switchModeViewButtonXPS = this.switchModeViewButtonXPS;
 			MainWindowElement.initialize(this);
 			ManagerViewer.textbox = this.textboxDisplay;
 			CurrentDataFileSystem.ComboboxFileSystem = this.ComboboxChooseFileSystem;
 			CurrentDataFileSystem.treeViewCatalog = treeViewCatalogFileSystem;
+			MainWindowElement.openFolders = this.openFolders;
 
 			//  DispatcherTimer setup
 			System.Windows.Threading.DispatcherTimer dispatcherTimer = new System.Windows.Threading.DispatcherTimer();
@@ -82,7 +81,7 @@ namespace contact_center_application.graphic_user_interface.form
 						CurrentDataFileSystem.ComboboxFileSystem.SelectedItem.ToString()].Item1);
 				string answer =
 					RequestDataFromServer.getCatalog(index.ToString());
-				fullingTreeView(answer);
+				ProcessTreeViewItem.fullingTreeView(answer);
 				buttonRefresh.Visibility = Visibility.Hidden;
 			}
 			catch (System.NullReferenceException e)
@@ -122,30 +121,6 @@ namespace contact_center_application.graphic_user_interface.form
 		}
 
 		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="json"></param>
-		private void fullingTreeView(string json)
-		{
-			if (!updateCatalog)
-			{
-				CurrentDataFileSystem.listTreeView.Clear();
-			}
-			ContextMenuForTreeView.setContextMenuForTreeView();
-
-			CurrentDataFileSystem.basisListItems = ProcessTreeViewItem.getItemsCatalogsFromJson(json, "");
-
-			if (CurrentDataFileSystem.basisListItems.Count != 0)
-			{
-				CurrentDataFileSystem.treeViewCatalog.Items.Clear();
-				foreach (var category in CurrentDataFileSystem.basisListItems)
-				{
-					CurrentDataFileSystem.treeViewCatalog.Items.Add(category);
-				}
-			}
-		}
-
-		/// <summary>
 		/// Обработчик события, вызывается по изменению ComboBox.
 		/// По указанному combobox получает содержимое файловой системы
 		/// </summary>
@@ -157,22 +132,6 @@ namespace contact_center_application.graphic_user_interface.form
 			ManagerViewer.callGarbage();
 			getContentFileSystem();
 		}		
-
-		/// <summary>
-		/// Функция осуществляет побайтовую запись в файл
-		/// </summary>
-		/// <param name="relativeWay"></param>
-		/// <param name="contentFile"></param>
-		private static void writeToFile(string relativeWay, byte[] contentFile)
-		{
-			string directoryWay = Path.GetDirectoryName(relativeWay);
-			Directory.CreateDirectory(directoryWay);
-			if (File.Exists(relativeWay))
-			{
-				File.Delete(relativeWay);
-			}
-			File.WriteAllBytes(relativeWay, contentFile);
-		}
 
 		/// <summary>
 		/// Запуск загрузки содержимого файла с сервера и открытия в documentViewer либо 
@@ -194,7 +153,7 @@ namespace contact_center_application.graphic_user_interface.form
 					if (MessageBox.Show("Отправить измененный файл на сервер?", "Файл был изменен",
 						MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
 					{
-						sendFileToServer();
+						TreatmenterExchangeFileWithServer.sendFileToServer();
 					}
 				}
 			}
@@ -213,13 +172,13 @@ namespace contact_center_application.graphic_user_interface.form
 		/// <param name="e"></param>
 		private void ButtonUpdateCatalogs_Click(object sender, RoutedEventArgs e)
 		{
-			this.updateCatalog = true;
+			ManagerViewer.updateCatalog = true;
 			TreeViewItem selectedItem = CurrentDataFileSystem.searchSelectedItem().Item2;
 			FilterTreeViewItem.resetFlagsInTreeViewItem();
 			getContentFileSystem();
 			CurrentDataFileSystem.deleteNotNeedItemsInTreeViewItem(selectedItem);
 			selectedItem.IsSelected = true;
-			this.updateCatalog = false;
+			ManagerViewer.updateCatalog = false;
 		}
 
 		/// <summary>
@@ -253,126 +212,19 @@ namespace contact_center_application.graphic_user_interface.form
 			FilterTreeViewItem.setVisibleOnText((sender as TextBox).Text);
 		}
 
-		
-
 		private void loadToFileToServer_Click(object sender, RoutedEventArgs e)
 		{
-			if (!CurrentDataOpenFile.dateOpenFile.Equals(File.GetLastWriteTime(CurrentDataOpenFile.openFile)))
-			{
-				if (MessageBox.Show("Отправить измененный файл на сервер?", "Файл был изменен",
-					MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
-				{
-					sendFileToServer();
-				}
-			}
-			else
-			{
-				if (MessageBox.Show("Файл не был изменен. Все равно отправить на сервер?", "Файл не был изменен",
-					MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
-				{
-					sendFileToServer();
-				}
-			}
-		}
-
-		private void sendFileToServer()
-		{
-			int index = Int32.Parse(CurrentDataFileSystem.alianceIdPolicy[
-							CurrentDataFileSystem.ComboboxFileSystem.SelectedItem.ToString()].Item1);
-			Tuple<bool, TreeViewItem> selectedItem = CurrentDataFileSystem.searchSelectedItem();
-
-			string relativeWay = CurrentDataOpenFile.relationWayOpenFile;
-			UploadWindow download = new UploadWindow(index.ToString(),
-				Path.GetDirectoryName(relativeWay),
-				Path.Combine(Path.GetDirectoryName(
-						Assembly.GetExecutingAssembly().Locati‌​on),
-						CurrentDataOpenFile.openFile),
-				"1");
-			download.sendFileToServer();
-			try
-			{
-				ManagerViewer.LoadToViewer(CurrentDataOpenFile.openFile, ManagerViewer.currentView);
-			}
-			catch (OutOfMemoryException exceptionMemory)
-			{
-				MessageBox.Show("Системных ресурсов вашей операционной системы оказалось "
-					+ "недостаточно для отображения содержимого файла("
-					+ Path.GetFileName(CurrentDataOpenFile.openFile)
-					+ ") в данном приложении. "
-					+ "Попытайтесь открыть файл во внешнем приложении", "Нехватка системных ресурсов");
-				Logger.log(exceptionMemory.Message);
-			}
-			catch (Exception exp)
-			{
-				MessageBox.Show("Неизвестная ошибка", "UNKNOWN");
-				Logger.log(exp.Message);
-			}
-			finally
-			{
-				if (ManagerViewer.currentView.Equals("view/temp1"))
-				{
-					ManagerViewer.currentView = "view/temp2";
-				}
-				else
-				{
-					ManagerViewer.currentView = "view/temp1";
-				}
-				MainWindowElement.progressConvertation.Visibility = Visibility.Hidden;
-			}
+			TreatmenterExchangeFileWithServer.loadFileToServer();
 		}
 
 		private void switchModelViewButtonXPS_Click(object sender, RoutedEventArgs e)
 		{
-			string extension = Path.GetExtension(CurrentDataOpenFile.openFile);
-			if ((bool) this.switchModelViewButtonXPS.IsChecked)
-			{
-				this.switchModelViewButtonXPS.Background = 
-					new SolidColorBrush(Colors.DarkCyan);
-			}
-			else
-			{
-				this.switchModelViewButtonXPS.Background = 
-					new SolidColorBrush(Colors.White);
-			}
-
-			if (extension.Equals(".docx") || extension.Equals(".doc"))
-			{
-				try
-				{
-					ManagerViewer.LoadToViewer(CurrentDataOpenFile.openFile,
-						ManagerViewer.currentView);
-				}
-				catch (OutOfMemoryException exceptionMemory)
-				{
-					MessageBox.Show("Системных ресурсов вашей операционной системы оказалось " +
-						"недостаточно для отображения содержимого файла(" + Path.GetFileName(CurrentDataOpenFile.openFile) +
-						") в данном приложении. " +
-						"Попытайтесь открыть файл во внешнем приложении", "Нехватка системных ресурсов");
-					Logger.log(exceptionMemory.Message);
-				}
-				catch (Exception exp)
-				{
-					MessageBox.Show("Неизвестная ошибка", "UNKNOWN");
-					Logger.log(exp.Message);
-				}
-				finally
-				{
-					if (ManagerViewer.currentView.Equals("view/temp1"))
-					{
-						ManagerViewer.currentView = "view/temp2";
-					}
-					else
-					{
-						ManagerViewer.currentView = "view/temp1";
-					}
-					MainWindowElement.progressConvertation.Visibility = Visibility.Hidden;
-				}
-			}
+			ManagerViewer.switchViewXPSMode();
 		}
 
 		private void registrOnButton_Click(object sender, RoutedEventArgs e)
 		{
-			if ((bool) this.switchModelViewButtonXPS.IsChecked)
+			if ((bool)MainWindowElement.registrButton.IsChecked)
 			{
 				MainWindowElement.registrButton.Background =
 					new SolidColorBrush(Colors.Black);
@@ -390,6 +242,11 @@ namespace contact_center_application.graphic_user_interface.form
 		private void buttonSettings_Click(object sender, RoutedEventArgs e)
 		{
 			new Settings().ShowDialog();
+		}
+
+		private void openFolders_Checked(object sender, RoutedEventArgs e)
+		{
+			
 		}
 	}
 }

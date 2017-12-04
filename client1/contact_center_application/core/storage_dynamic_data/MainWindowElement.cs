@@ -28,6 +28,8 @@ namespace contact_center_application.core.storage_dynamic_data
 		public static StackPanel progressConvertation;
 		public static StackPanel managerPanel;
 		public static ToggleButton registrButton;
+		public static ToggleButton switchModeViewButtonXPS;
+		public static ToggleButton openFolders;
 
 		public static void initialize(MainWindow wnd)
 		{
@@ -38,7 +40,7 @@ namespace contact_center_application.core.storage_dynamic_data
 			MainWindowElement.pdfViewerTab = wnd.pdfViewerTabForViewer;
 			MainWindowElement.imageTab = wnd.imageTabForViewer;
 			MainWindowElement.viewerTab = wnd.viewerTabForViewer;
-			MainWindowElement.switchModelViewButton = wnd.switchModelViewButtonXPS;
+			MainWindowElement.switchModelViewButton = wnd.switchModeViewButtonXPS;
 			MainWindowElement.docViewerStackPanel = wnd.docViewerOnStackPanel;
 			MainWindowElement.viewerStackPanel = wnd.viewerOnStackPanel;
 			MainWindowElement.pdfViewerStackPanel = wnd.pdfViewerOnStackPanel;

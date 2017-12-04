@@ -129,7 +129,6 @@ namespace contact_center_application.graphic_user_interface.manage_graphical_com
 			TextBlock result = new TextBlock();
 			result.Inlines.Add(ProcessTreeViewItem.getImageOnNameFile(Path.GetFileName(source), isFile));
 			result.Inlines.Add("  ");
-			//result.Height = 10;
 			if (substring.Length != 0)
 			{
 				var indices = new List<int>();

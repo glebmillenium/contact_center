@@ -70,7 +70,7 @@
 					<ToggleButton x:Name="openFolders"
 								  Width="25" Height="25" 
 								  Background="White"
-								  Margin="5,0,5,0" Click="registrOnButton_Click"
+								  Margin="5,0,5,0" Checked="openFolders_Checked" 
 								  >
 						<Image Source="pack://siteoforigin:,,,/resources/open_folders.png" ToolTip="Папки в которых найдены элементы удовлетворяющие критериям поиска будут представлены в развернутом виде"/>
 					</ToggleButton>
@@ -94,7 +94,7 @@
 							>
 						<Image Source="pack://siteoforigin:,,,/resources/load.png"/>
 					</Button>
-					<ToggleButton x:Name="switchModelViewButtonXPS"
+					<ToggleButton x:Name="switchModeViewButtonXPS"
 								  Width="30" Height="30" 
 								  Background="White"
 								  Click="switchModelViewButtonXPS_Click"

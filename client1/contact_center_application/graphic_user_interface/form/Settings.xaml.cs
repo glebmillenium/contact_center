@@ -19,6 +19,7 @@ namespace contact_center_application.graphic_user_interface.form
     /// </summary>
     public partial class Settings : Window
     {
+		public static int maxSecondsWaitUploadFileSystem = 5;
         public Settings()
         {
             InitializeComponent();
