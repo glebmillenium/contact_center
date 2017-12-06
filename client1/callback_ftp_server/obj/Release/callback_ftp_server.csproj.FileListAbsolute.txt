@@ -5,3 +5,8 @@ C:\contact_center\client1\callback_ftp_server\obj\Release\callback_ftp_server.cs
 C:\contact_center\client1\callback_ftp_server\obj\Release\callback_ftp_server.csproj.CoreCompileInputs.cache
 C:\contact_center\client1\callback_ftp_server\obj\Release\callback_ftp_server.exe
 C:\contact_center\client1\callback_ftp_server\obj\Release\callback_ftp_server.pdb
+C:\contact_center\client1\callback_ftp_server\bin\Release\libmupdf.dll
+C:\contact_center\client1\callback_ftp_server\bin\Release\contact_center_application.exe
+C:\contact_center\client1\callback_ftp_server\bin\Release\Newtonsoft.Json.dll
+C:\contact_center\client1\callback_ftp_server\bin\Release\contact_center_application.exe.config
+C:\contact_center\client1\callback_ftp_server\bin\Release\Newtonsoft.Json.xml

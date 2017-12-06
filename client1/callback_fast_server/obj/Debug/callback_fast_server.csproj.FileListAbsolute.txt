@@ -1,0 +1,9 @@
+C:\contact_center\client1\callback_fast_server\bin\Debug\callback_fast_server.exe.config
+C:\contact_center\client1\callback_fast_server\bin\Debug\callback_fast_server.exe
+C:\contact_center\client1\callback_fast_server\bin\Debug\callback_fast_server.pdb
+C:\contact_center\client1\callback_fast_server\bin\Debug\Newtonsoft.Json.dll
+C:\contact_center\client1\callback_fast_server\bin\Debug\Newtonsoft.Json.xml
+C:\contact_center\client1\callback_fast_server\obj\Debug\callback_fast_server.csproj.CoreCompileInputs.cache
+C:\contact_center\client1\callback_fast_server\obj\Debug\callback_fast_server.exe
+C:\contact_center\client1\callback_fast_server\obj\Debug\callback_fast_server.pdb
+C:\contact_center\client1\callback_fast_server\obj\Debug\callback_fast_server.csprojResolveAssemblyReference.cache

@@ -12,12 +12,12 @@ public class FastServerHandler extends SimpleChannelUpstreamHandler {
 
     public FastServerHandler()
     {
+        
     }
 
     @Override
     public void handleUpstream(ChannelHandlerContext ctx, ChannelEvent e) throws Exception
     {
-
         super.handleUpstream(ctx, e);
     }
 

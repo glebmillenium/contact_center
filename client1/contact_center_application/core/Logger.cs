@@ -10,13 +10,21 @@ namespace contact_center_application.core
 	class Logger
 	{
 		private static string directoryLog = "log/log.txt";
-		private static string direcotryException = "log/exception.txt";
+		private static string directoryException = "log/exception.txt";
 		private static string directoryForTemporary = "tmp";
+
+		public Logger(string directoryOnLog, string directoryOnException, string directoryOnForTemporary)
+		{
+			directoryLog = directoryOnLog;
+			directoryException = directoryOnException;
+			directoryForTemporary = directoryOnForTemporary;
+			initialize();
+		}
 
 		public static void initialize()
 		{
 			File.WriteAllText(directoryLog, "");
-			File.WriteAllText(direcotryException, "");
+			File.WriteAllText(directoryException, "");
 			if (Directory.Exists(directoryForTemporary))
 			{
 				Directory.Delete(directoryForTemporary, true);

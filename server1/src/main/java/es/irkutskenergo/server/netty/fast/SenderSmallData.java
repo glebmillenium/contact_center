@@ -82,10 +82,9 @@ public class SenderSmallData extends Thread {
     private final int numberConnect;
 
     /**
-     * Переменная по которой отслеживается время последнего действия треда в 
+     * Переменная по которой отслеживается время последнего действия треда в
      * системе
      */
-
     /**
      * SenderSmallData(Channel, String) - конструктор, инициализирует
      * сериализатор в JSON, получает канал по которому клиент соединен с
@@ -125,7 +124,6 @@ public class SenderSmallData extends Thread {
         Logging.log("Thread: submain FAST start", 4);
         try
         {
-
             String response;
             try
             {
@@ -179,13 +177,13 @@ public class SenderSmallData extends Thread {
      * @return
      * @throws IOException
      */
-    private String getResponseWhenError() throws IOException
+    private String getResponseWhenUnknownCommand() throws IOException
     {
         String result;
         try
         {
             result = this.mapper.writeValueAsString(
-                    new ObjectForSerialization("error"));
+                    new ObjectForSerialization("error", "UNKNOWN"));
         } catch (IOException ex)
         {
             Logging.log("Ошибка при сериализации объекта "
@@ -265,6 +263,19 @@ public class SenderSmallData extends Thread {
                         + "файловую систему " + this.channel.toString()
                         + ") Номер запроса: " + this.numberConnect, 1);
                 result = setupToUpload(obj);
+            } else if (obj.command.equals("test_fast_socket"))
+            {
+                Logging.log("Тестирование соединения клиента с сервером "
+                        + this.channel.toString()
+                        + ") Номер запроса: " + this.numberConnect, 1);
+                result = testConnectionWithFastSocket(obj);
+            } else
+            {
+                Logging.log("Полученный запрос содержит "
+                        + "неизвестную для сервера команду "
+                        + this.channel.toString()
+                        + ") Номер запроса: " + this.numberConnect, 1);
+                result = getResponseWhenUnknownCommand();
             }
             Logging.log("Запрос успешно выполнен, отправление данных: "
                     + this.channel.toString() + ") Номер запроса: "
@@ -336,7 +347,9 @@ public class SenderSmallData extends Thread {
         String result = this.mapper.writeValueAsString(
                 new ObjectForSerialization("catalog",
                         expectedSize, sendToStorageInFtpServer(false,
-                                obj.command, resultInFtp, new byte[]{})
+                                obj.command, resultInFtp, new byte[]
+                                {
+                })
                 ));
         return result;
     }
@@ -403,7 +416,8 @@ public class SenderSmallData extends Thread {
                 new ObjectForSerialization("content_file",
                         expectedSize, sendToStorageInFtpServer(false,
                                 obj.command, resultInFtp, new byte[]
-                                {})));
+                                {
+                })));
     }
 
     /**
@@ -427,7 +441,7 @@ public class SenderSmallData extends Thread {
 
         } catch (FileNotFoundException ex)
         {
-            Logger.getLogger(SenderSmallData.class.getName()).log(Level.SEVERE, 
+            Logger.getLogger(SenderSmallData.class.getName()).log(Level.SEVERE,
                     null, ex);
         }
         return s;
@@ -635,5 +649,22 @@ public class SenderSmallData extends Thread {
         {
             return result;
         }
+    }
+
+    private String testConnectionWithFastSocket(ObjectForSerialization obj) 
+    {
+        String result = "";
+        try
+        {
+            result = this.mapper.writeValueAsString(
+                    new ObjectForSerialization("answer_on_test_fast_socket", "true"));
+
+        } catch (IOException ex)
+        {
+            Logging.log("Не удалось произвести сериализацию файла "
+                    + " Канал " + this.channel.toString() + " Номер запроса: "
+                    + this.numberConnect, 1);
+        }
+        return result;
     }
 }

@@ -22,18 +22,19 @@ import org.codehaus.jackson.map.ObjectMapper;
 public class PrimaryQueryTreatmenter implements Runnable {
 
     Socket socket;
+
     PrimaryQueryTreatmenter(Socket socket)
     {
         this.socket = socket;
     }
-    
+
     /**
      * Вспомогательный объект, осуществлящий сериализацию данных
      *
      * @param ObjectMapper
      */
     private static ObjectMapper mapper = new ObjectMapper();
-    
+
     public void run()
     {
         Logging.log("Thread: submain FTP start", 4);
@@ -78,17 +79,33 @@ public class PrimaryQueryTreatmenter implements Runnable {
                 }
             } else
             {
-                OutputStream outputStream;
-                outputStream = socket.getOutputStream();
-                byte[] failPackage = new byte[]
+                if (key == -1)
                 {
-                };
-                outputStream.write(failPackage, 0, failPackage.length);
-                Logging.log("Такого запроса не существует. "
-                        + "Возможно, он был удален по причине "
-                        + "длительного застоя в системе"
-                        + "Клиент: "
-                        + socket.getInetAddress(), 2);
+                    Logging.log("Тестирование соединения клиента с сервером"
+                            + "Клиент: "
+                            + socket.getInetAddress(), 2);
+                    OutputStream outputStream;
+                    outputStream = socket.getOutputStream();
+                    ObjectMapper mapper = new ObjectMapper();;
+                    String resultString = mapper.writeValueAsString(
+                            new ObjectForSerialization("answer_on_test_ftp_socket",
+                                    "true"));
+                    byte[] testPackage = resultString.getBytes();
+                    outputStream.write(testPackage, 0, testPackage.length);
+                } else
+                {
+                    OutputStream outputStream;
+                    outputStream = socket.getOutputStream();
+                    byte[] failPackage = new byte[]
+                    {
+                    };
+                    outputStream.write(failPackage, 0, failPackage.length);
+                    Logging.log("Такого запроса не существует. "
+                            + "Возможно, он был удален по причине "
+                            + "длительного застоя в системе"
+                            + "Клиент: "
+                            + socket.getInetAddress(), 2);
+                }
             }
         } catch (IOException | NumberFormatException exception)
         {
@@ -98,7 +115,7 @@ public class PrimaryQueryTreatmenter implements Runnable {
         }
         Logging.log("Thread: submain FTP end", 4);
     }
-    
+
     /**
      * getObjectFromJson - сериализует объект из строки в ObjectForSerialization
      *
