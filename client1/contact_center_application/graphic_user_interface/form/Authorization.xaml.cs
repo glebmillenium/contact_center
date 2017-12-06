@@ -23,5 +23,12 @@ namespace contact_center_application.graphic_user_interface.form
 		{
 			InitializeComponent();
 		}
+
+		private void Button_Click(object sender, RoutedEventArgs e)
+		{
+			MainWindow mw = new MainWindow();
+			mw.Show();
+			this.Close();
+		}
 	}
 }

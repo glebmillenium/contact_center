@@ -9,7 +9,7 @@ namespace contact_center_application.core.storage_dynamic_data
 		private static string directoryPortFTP	 = @"settings/port_ftp";
 		private static string directoryPortFast  = @"settings/port_fast";
 		private static string directoryVersion	 = @"settings/version";
-
+		private static int rightAccess			 = 0;
 
 		public static void setDirectorySettings(string directoryOnIpAddress, string directoryOnPortFTP,
 			string directoryOnPortFast, string directoryOnVersion)

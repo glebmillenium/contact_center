@@ -13,3 +13,5 @@ C:\contact_center\client1\Patcher\obj\Release\Patcher.csproj.GenerateResource.Ca
 C:\contact_center\client1\Patcher\obj\Release\Patcher.csproj.CoreCompileInputs.cache
 C:\contact_center\client1\Patcher\obj\Release\Patcher.exe
 C:\contact_center\client1\Patcher\obj\Release\Patcher.pdb
+C:\contact_center\client1\Patcher\bin\Release\Newtonsoft.Json.dll
+C:\contact_center\client1\Patcher\bin\Release\Newtonsoft.Json.xml

@@ -142,7 +142,7 @@ public class SenderSmallData extends Thread {
             sendToClient(response);
         } catch (Exception ex)
         {
-            Logging.log("Произошла ошибка при выполнении команды и её отправке."
+            Logging.log("Произошла критическая ошибка при выполнении команды и её отправке."
                     + " Клиент " + channel.toString()
                     + " Номер запроса " + this.numberConnect
                     + ". Сообщение от клиента: "

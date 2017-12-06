@@ -63,6 +63,16 @@ namespace contact_center_application.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap auth_info {
+            get {
+                object obj = ResourceManager.GetObject("auth_info", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap doc {
             get {
                 object obj = ResourceManager.GetObject("doc", resourceCulture);

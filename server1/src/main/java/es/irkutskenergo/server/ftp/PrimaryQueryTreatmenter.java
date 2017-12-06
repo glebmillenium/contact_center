@@ -117,7 +117,7 @@ public class PrimaryQueryTreatmenter implements Runnable {
         }   catch (Exception exception)
         {
             Logging.log("Критическая ошибка: "
-                    + exception.getMessage(), 2);
+                    + exception.getMessage(), 1);
         } 
         Logging.log("Thread: submain FTP end", 4);
     }

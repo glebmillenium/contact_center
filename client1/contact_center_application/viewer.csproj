@@ -53,7 +53,7 @@
     <StartupObject />
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>main.ico</ApplicationIcon>
+    <ApplicationIcon>viewer.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup />
   <PropertyGroup>
@@ -164,11 +164,6 @@
     <Compile Include="graphic_user_interface\manage_graphical_component\viewer\ManagerViewer.cs" />
     <Compile Include="graphic_user_interface\manage_graphical_component\tree_view\FilterTreeViewItem.cs" />
     <Compile Include="graphic_user_interface\manage_graphical_component\tree_view\ProcessTreeViewItem.cs" />
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
     <Compile Include="core\serialization\CatalogForSerialization.cs" />
     <Compile Include="core\serialization\ObjectForSerialization.cs" />
     <Page Include="graphic_user_interface\form\Authorization.xaml">
@@ -226,6 +221,11 @@
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Settings.settings</DependentUpon>
@@ -249,9 +249,6 @@
     <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="main.ico" />
-  </ItemGroup>
-  <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.6.1">
       <Visible>False</Visible>
       <ProductName>Microsoft .NET Framework 4.6.1 %28x86 и x64%29</ProductName>
@@ -268,6 +265,8 @@
       <Link>libmupdf.dll</Link>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Resource Include="viewer.ico" />
+    <None Include="resources\auth_info.png" />
     <None Include="resources\network_settings.png" />
     <None Include="resources\view_settings.png" />
     <None Include="resources\xps.png" />
