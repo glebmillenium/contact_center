@@ -1,0 +1,15 @@
+C:\contact_center\client1\Patcher\obj\Release\Patcher.csprojResolveAssemblyReference.cache
+C:\contact_center\client1\Patcher\obj\Release\MainWindow.g.cs
+C:\contact_center\client1\Patcher\obj\Release\App.g.cs
+C:\contact_center\client1\Patcher\obj\Release\Patcher_MarkupCompile.cache
+C:\contact_center\client1\Patcher\obj\Release\Patcher_MarkupCompile.lref
+C:\contact_center\client1\Patcher\bin\Release\Patcher.exe.config
+C:\contact_center\client1\Patcher\bin\Release\Patcher.exe
+C:\contact_center\client1\Patcher\bin\Release\Patcher.pdb
+C:\contact_center\client1\Patcher\obj\Release\MainWindow.baml
+C:\contact_center\client1\Patcher\obj\Release\Patcher.g.resources
+C:\contact_center\client1\Patcher\obj\Release\Patcher.Properties.Resources.resources
+C:\contact_center\client1\Patcher\obj\Release\Patcher.csproj.GenerateResource.Cache
+C:\contact_center\client1\Patcher\obj\Release\Patcher.csproj.CoreCompileInputs.cache
+C:\contact_center\client1\Patcher\obj\Release\Patcher.exe
+C:\contact_center\client1\Patcher\obj\Release\Patcher.pdb

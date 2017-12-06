@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace callback_ftp_server
 {
+	/**
+	 * 
+	 */
 	class ObjectForSerialization
 	{
 		public string command;

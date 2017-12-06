@@ -5,12 +5,20 @@ namespace contact_center_application.core.storage_dynamic_data
 {
 	class SettingsData
 	{
-		private static string directoryIpAddress = @"settings\ip_connect";
-		private static string directoryPortFTP = @"settings\port_ftp";
-		private static string directoryPortFast = @"settings\port_fast";
-		private static string address = "localhost";
-		private static string portFtp = "6502";
-		private static string portFast = "6500";
+		private static string directoryIpAddress = @"settings/ip_connect";
+		private static string directoryPortFTP	 = @"settings/port_ftp";
+		private static string directoryPortFast  = @"settings/port_fast";
+		private static string directoryVersion	 = @"settings/version";
+
+
+		public static void setDirectorySettings(string directoryOnIpAddress, string directoryOnPortFTP,
+			string directoryOnPortFast, string directoryOnVersion)
+		{
+			directoryIpAddress = directoryOnIpAddress;
+			directoryPortFTP = directoryOnPortFTP;
+			directoryPortFast = directoryOnPortFast;
+			directoryVersion = directoryOnVersion;
+		}
 
 		public static string getAddress()
 		{
@@ -27,34 +35,34 @@ namespace contact_center_application.core.storage_dynamic_data
 			return address;
 		}
 
-		public static string getFtpPort()
+		public static int getFtpPort()
 		{
-			string portFtp = "";
+			int portFtp;
 			try
 			{
-				portFtp = getContentFile(directoryPortFTP);
+				portFtp = Int32.Parse(getContentFile(directoryPortFTP));
 			}
 			catch (Exception e)
 			{
-				portFtp = "6502";
+				portFtp = 6502;
 				Logger.log(e.Message);
 			}
 			return portFtp;
 		}
 
-		public static string getFastPort()
+		public static int getFastPort()
 		{
-			string portFast = "";
+			int portFtp;
 			try
 			{
-				portFast = getContentFile(directoryPortFast);
+				portFtp = Int32.Parse(getContentFile(directoryPortFast));
 			}
 			catch (Exception e)
 			{
-				portFast = "6500";
+				portFtp = 6500;
 				Logger.log(e.Message);
 			}
-			return portFast;
+			return portFtp;
 		}
 
 		private static string getContentFile(string way)

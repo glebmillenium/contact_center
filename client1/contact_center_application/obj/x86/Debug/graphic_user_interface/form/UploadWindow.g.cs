@@ -76,8 +76,7 @@ namespace contact_center_application.graphic_user_interface.form {
                 return;
             }
             _contentLoaded = true;
-            System.Uri resourceLocater = new System.Uri("/contact_center_application;component/graphic_user_interface/form/uploadwindow.xa" +
-                    "ml", System.UriKind.Relative);
+            System.Uri resourceLocater = new System.Uri("/viewer;component/graphic_user_interface/form/uploadwindow.xaml", System.UriKind.Relative);
             
             #line 1 "..\..\..\..\..\graphic_user_interface\form\UploadWindow.xaml"
             System.Windows.Application.LoadComponent(this, resourceLocater);

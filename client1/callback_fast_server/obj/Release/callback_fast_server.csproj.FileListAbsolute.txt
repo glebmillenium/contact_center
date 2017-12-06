@@ -6,3 +6,4 @@ C:\contact_center\client1\callback_fast_server\obj\Release\callback_fast_server.
 C:\contact_center\client1\callback_fast_server\obj\Release\callback_fast_server.pdb
 C:\contact_center\client1\callback_fast_server\bin\Release\Newtonsoft.Json.dll
 C:\contact_center\client1\callback_fast_server\bin\Release\Newtonsoft.Json.xml
+C:\contact_center\client1\callback_fast_server\obj\Release\callback_fast_server.csprojResolveAssemblyReference.cache

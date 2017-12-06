@@ -52,8 +52,7 @@ namespace contact_center_application.graphic_user_interface.form {
                 return;
             }
             _contentLoaded = true;
-            System.Uri resourceLocater = new System.Uri("/contact_center_application;component/graphic_user_interface/form/authorization.x" +
-                    "aml", System.UriKind.Relative);
+            System.Uri resourceLocater = new System.Uri("/viewer;component/graphic_user_interface/form/authorization.xaml", System.UriKind.Relative);
             
             #line 1 "..\..\..\..\..\graphic_user_interface\form\Authorization.xaml"
             System.Windows.Application.LoadComponent(this, resourceLocater);

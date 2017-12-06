@@ -1,4 +1,3 @@
-C:\contact_center\client1\contact_center_application\obj\x86\Release\viewer.csproj.contact_center_application.exe.config
 C:\contact_center\client1\contact_center_application\obj\x86\Release\ThemesSoft\MoonUICore.baml
 C:\contact_center\client1\contact_center_application\obj\x86\Release\Themes\Brushes.baml
 C:\contact_center\client1\contact_center_application\obj\x86\Release\Themes\Core.baml
@@ -11,13 +10,7 @@ C:\contact_center\client1\contact_center_application\obj\x86\Release\graphic_use
 C:\contact_center\client1\contact_center_application\obj\x86\Release\graphic_user_interface\form\MainWindow.g.cs
 C:\contact_center\client1\contact_center_application\obj\x86\Release\Themes\Core.g.cs
 C:\contact_center\client1\contact_center_application\obj\x86\Release\App.g.cs
-C:\contact_center\client1\contact_center_application\obj\x86\Release\contact_center_application_Content.g.cs
-C:\contact_center\client1\contact_center_application\obj\x86\Release\contact_center_application_MarkupCompile.cache
-C:\contact_center\client1\contact_center_application\obj\x86\Release\contact_center_application_MarkupCompile.lref
-C:\contact_center\client1\contact_center_application\obj\x86\Release\contact_center_application.exe
 C:\contact_center\client1\contact_center_application\bin\x86\Release\libmupdf.dll
-C:\contact_center\client1\contact_center_application\bin\x86\Release\contact_center_application.exe.config
-C:\contact_center\client1\contact_center_application\bin\x86\Release\contact_center_application.exe
 C:\contact_center\client1\contact_center_application\bin\x86\Release\MoonPdfLib.dll
 C:\contact_center\client1\contact_center_application\bin\x86\Release\Newtonsoft.Json.dll
 C:\contact_center\client1\contact_center_application\bin\x86\Release\Spire.Doc.Wpf.dll
@@ -39,7 +32,15 @@ C:\contact_center\client1\contact_center_application\obj\x86\Release\graphic_use
 C:\contact_center\client1\contact_center_application\obj\x86\Release\graphic_user_interface\form\Settings.baml
 C:\contact_center\client1\contact_center_application\obj\x86\Release\graphic_user_interface\form\UploadWindow.baml
 C:\contact_center\client1\contact_center_application\obj\x86\Release\graphic_user_interface\form\MainWindow.baml
-C:\contact_center\client1\contact_center_application\obj\x86\Release\contact_center_application.g.resources
 C:\contact_center\client1\contact_center_application\obj\x86\Release\contact_center_application.Properties.Resources.resources
 C:\contact_center\client1\contact_center_application\obj\x86\Release\viewer.csproj.GenerateResource.Cache
 C:\contact_center\client1\contact_center_application\obj\x86\Release\viewer.csproj.CoreCompileInputs.cache
+C:\contact_center\client1\contact_center_application\bin\x86\Release\viewer.exe.config
+C:\contact_center\client1\contact_center_application\bin\x86\Release\viewer.exe
+C:\contact_center\client1\contact_center_application\obj\x86\Release\viewer.csproj.viewer.exe.config
+C:\contact_center\client1\contact_center_application\obj\x86\Release\viewer_Content.g.cs
+C:\contact_center\client1\contact_center_application\obj\x86\Release\viewer_MarkupCompile.cache
+C:\contact_center\client1\contact_center_application\obj\x86\Release\viewer_MarkupCompile.lref
+C:\contact_center\client1\contact_center_application\obj\x86\Release\viewer.g.resources
+C:\contact_center\client1\contact_center_application\obj\x86\Release\viewer.exe
+C:\contact_center\client1\contact_center_application\obj\x86\Release\viewer.csprojResolveAssemblyReference.cache

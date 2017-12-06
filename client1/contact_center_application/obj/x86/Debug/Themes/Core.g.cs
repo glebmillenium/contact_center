@@ -51,7 +51,7 @@ namespace DarkBlue {
                 return;
             }
             _contentLoaded = true;
-            System.Uri resourceLocater = new System.Uri("/contact_center_application;component/themes/core.xaml", System.UriKind.Relative);
+            System.Uri resourceLocater = new System.Uri("/viewer;component/themes/core.xaml", System.UriKind.Relative);
             
             #line 1 "..\..\..\..\Themes\Core.xaml"
             System.Windows.Application.LoadComponent(this, resourceLocater);

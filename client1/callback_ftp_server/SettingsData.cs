@@ -5,16 +5,19 @@ namespace callback_ftp_server
 {
 	class SettingsData
 	{
-		private static string directoryIpAddress = @"settings\ip_connect";
-		private static string directoryPortFTP = @"settings\port_ftp";
-		private static string directoryPortFast = @"settings\port_fast";
+		private static string directoryIpAddress = @"settings/ip_connect";
+		private static string directoryPortFTP	 = @"settings/port_ftp";
+		private static string directoryPortFast  = @"settings/port_fast";
+		private static string directoryVersion	 = @"settings/version";
 
-		public static void setDirectorySettings(string directoryOnIpAddress, string directoryOnPortFTP, 
-			string directoryOnPortFast)
+
+		public static void setDirectorySettings(string directoryOnIpAddress, string directoryOnPortFTP,
+			string directoryOnPortFast, string directoryOnVersion)
 		{
 			directoryIpAddress = directoryOnIpAddress;
 			directoryPortFTP = directoryOnPortFTP;
 			directoryPortFast = directoryOnPortFast;
+			directoryVersion = directoryOnVersion;
 		}
 
 		public static string getAddress()
