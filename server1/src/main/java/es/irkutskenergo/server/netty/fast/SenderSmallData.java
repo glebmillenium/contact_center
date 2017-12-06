@@ -140,7 +140,7 @@ public class SenderSmallData extends Thread {
                         + commandFromClient, 1);
             }
             sendToClient(response);
-        } catch (IOException ex)
+        } catch (Exception ex)
         {
             Logging.log("Произошла ошибка при выполнении команды и её отправке."
                     + " Клиент " + channel.toString()

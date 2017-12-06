@@ -38,6 +38,7 @@ public class PrimaryQueryTreatmenter implements Runnable {
     public void run()
     {
         Logging.log("Thread: submain FTP start", 4);
+        try{
         try
         {
             byte[] b = new byte[1024];
@@ -107,12 +108,17 @@ public class PrimaryQueryTreatmenter implements Runnable {
                             + socket.getInetAddress(), 2);
                 }
             }
-        } catch (IOException | NumberFormatException exception)
+        } catch (IOException | NumberFormatException  exception)
         {
             Logging.log("Сервер при выполнении запроса "
                     + "получил неизвестную ошибку: "
                     + exception.getMessage(), 2);
         }
+        }   catch (Exception exception)
+        {
+            Logging.log("Критическая ошибка: "
+                    + exception.getMessage(), 2);
+        } 
         Logging.log("Thread: submain FTP end", 4);
     }
 

@@ -22,6 +22,7 @@ import org.jboss.netty.handler.execution.OrderedMemoryAwareThreadPoolExecutor;
 public class FastServer {
 
     private static Channel channel;
+
     /**
      * FastServer(port) - конструктор, создает сокет на сервере по указанному
      * логическому порту
@@ -38,24 +39,32 @@ public class FastServer {
         bootstrap.setOption("connectTimeoutMillis", 10000);
         bootstrap.setPipelineFactory(new FastServerPipeLineFactory());
         FastServer.channel = bootstrap.bind(new InetSocketAddress(port));
-        
-        /**ChannelFactory factory = new NioServerSocketChannelFactory(
-                Executors.newCachedThreadPool(),
-                Executors.newCachedThreadPool());
 
-        ServerBootstrap bootstrap = new ServerBootstrap(factory);
-        bootstrap.setPipelineFactory(new FastServerPipeLineFactory());
-
-        bootstrap.setOption("sendBufferSize", 8 * 1024L);
-        bootstrap.setOption("receiveBufferSize", 8 * 1024L);**/
-
-        /**ExecutorService bossExec = new OrderedMemoryAwareThreadPoolExecutor(1, (long) 400000000, 2000000000, 60, TimeUnit.SECONDS);
-        ExecutorService ioExec = new OrderedMemoryAwareThreadPoolExecutor(4, (long) 400000000, 2000000000, 60, TimeUnit.SECONDS);
-        ServerBootstrap networkServer = new ServerBootstrap(new NioServerSocketChannelFactory(bossExec, ioExec, 4));
-        networkServer.setOption("backlog", 500);
-        networkServer.setOption("connectTimeoutMillis", 10000);
-        networkServer.setPipelineFactory(new ServerPipelineFactory());
-        Channel channel = networkServer.bind(new InetSocketAddress(port));*/
+        /**
+         * ExecutorService bossExec = new
+         *  OrderedMemoryAwareThreadPoolExecutor(1, (long) 400000000, 2000000000,
+         *  60, TimeUnit.SECONDS); 
+         * ExecutorService ioExec = new
+         *  OrderedMemoryAwareThreadPoolExecutor(4, (long) 400000000, 2000000000,
+         *  60, TimeUnit.SECONDS); 
+         * ServerBootstrap networkServer = new
+         *  ServerBootstrap(new NioServerSocketChannelFactory(bossExec, ioExec,
+         *  4)); 
+         * networkServer.setOption("backlog", 500);
+         * networkServer.setOption("connectTimeoutMillis", 10000);
+         * networkServer.setPipelineFactory(new ServerPipelineFactory());
+         * Channel channel = networkServer.bind(new InetSocketAddress(port));
+         */
+        /**
+         * ChannelFactory factory = new NioServerSocketChannelFactory(
+         * Executors.newCachedThreadPool(), Executors.newCachedThreadPool());
+         *
+         * ServerBootstrap bootstrap = new ServerBootstrap(factory);
+         * bootstrap.setPipelineFactory(new FastServerPipeLineFactory());
+         *
+         * bootstrap.setOption("sendBufferSize", 8 * 1024L);
+         * bootstrap.setOption("receiveBufferSize", 8 * 1024L);*
+         */
         Logging.log("Сервер быстрого обмена запущен по адресу -  "
                 + InetAddress.getLocalHost().toString() + ":" + port + "\n", 1);
     }
