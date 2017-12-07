@@ -10,18 +10,41 @@ namespace Patcher
 	class SettingsData
 	{
 		private static string directoryIpAddress = @"settings/ip_connect";
-		private static string directoryPortFTP	 = @"settings/port_ftp";
-		private static string directoryPortFast	 = @"settings/port_fast";
-		private static string directoryVersion	 = @"settings/version";
+		private static string directoryPortFTP = @"settings/port_ftp";
+		private static string directoryPortFast = @"settings/port_fast";
+		private static string directoryVersion = @"settings/version";
+		private static string directoryUpdateFileSystem = @"settings/update_file_system";
 
+		private static int rightAccess = 0;
 
 		public static void setDirectorySettings(string directoryOnIpAddress, string directoryOnPortFTP,
-			string directoryOnPortFast, string directoryOnVersion)
+			string directoryOnPortFast, string directoryOnVersion, string directoryOnUpdateFileSystem)
 		{
 			directoryIpAddress = directoryOnIpAddress;
 			directoryPortFTP = directoryOnPortFTP;
 			directoryPortFast = directoryOnPortFast;
 			directoryVersion = directoryOnVersion;
+			directoryUpdateFileSystem = directoryOnUpdateFileSystem;
+		}
+
+		public void setRightAccess(int right)
+		{
+			rightAccess = right;
+		}
+
+		public static string getVersion()
+		{
+			string version = "";
+			try
+			{
+				version = getContentFile(directoryVersion);
+			}
+			catch (Exception e)
+			{
+				version = "0.0.1";
+				Logger.log(e.Message);
+			}
+			return version;
 		}
 
 		public static string getAddress()

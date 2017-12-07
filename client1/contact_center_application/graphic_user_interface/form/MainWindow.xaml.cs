@@ -31,12 +31,12 @@ namespace contact_center_application.graphic_user_interface.form
 		{
 			Logger.initialize();
 			InitializeComponent();
-			MainWindowElement.switchModeViewButtonXPS = this.switchModeViewButtonXPS;
+	
 			MainWindowElement.initialize(this);
 			ManagerViewer.textbox = this.textboxDisplay;
 			CurrentDataFileSystem.ComboboxFileSystem = this.ComboboxChooseFileSystem;
 			CurrentDataFileSystem.treeViewCatalog = treeViewCatalogFileSystem;
-			MainWindowElement.openFolders = this.openFolders;
+			MainWindowElement.versionTextBlock.Text = SettingsData.getVersion();
 
 			//  DispatcherTimer setup
 			System.Windows.Threading.DispatcherTimer dispatcherTimer = new System.Windows.Threading.DispatcherTimer();
@@ -246,7 +246,34 @@ namespace contact_center_application.graphic_user_interface.form
 
 		private void openFolders_Checked(object sender, RoutedEventArgs e)
 		{
-			
+			if ((bool)MainWindowElement.openFolders.IsChecked)
+			{
+				MainWindowElement.openFolders.Background =
+					new SolidColorBrush(Colors.White);
+			}
+			else
+			{
+				MainWindowElement.openFolders.Background =
+					new SolidColorBrush(Colors.White);
+			}
+			FilterTreeViewItem.setVisibleOnText(this.searchTextBox.Text);
+		}
+
+		private void exitFromSystem_Click(object sender, RoutedEventArgs e)
+		{
+			this.Close();
+		}
+
+		private void goToAuth_Click(object sender, RoutedEventArgs e)
+		{
+			Authorization auth = new Authorization();
+			auth.Show();
+			this.Close();
+		}
+
+		private void window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+		{
+			RequestDataFromServer.closeConnection();
 		}
 	}
 }

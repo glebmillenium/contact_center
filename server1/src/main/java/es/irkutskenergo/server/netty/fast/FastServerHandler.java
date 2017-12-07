@@ -10,9 +10,11 @@ import org.jboss.netty.channel.SimpleChannelUpstreamHandler;
 
 public class FastServerHandler extends SimpleChannelUpstreamHandler {
 
+    SenderSmallData senderSmallData;
+
     public FastServerHandler()
     {
-        
+
     }
 
     @Override
@@ -27,6 +29,7 @@ public class FastServerHandler extends SimpleChannelUpstreamHandler {
         Logging.log("Клиент присоединился к серверу: "
                 + ctx.getChannel().getRemoteAddress() + " (" + ctx.getChannel()
                 .getId() + ")", 1);
+        senderSmallData = new SenderSmallData(e.getChannel());
     }
 
     @Override
@@ -34,6 +37,10 @@ public class FastServerHandler extends SimpleChannelUpstreamHandler {
     {
         Logging.log("Соединение с сервером было закрыто " + ctx.getChannel().getRemoteAddress()
                 + " (" + ctx.getChannel().getId() + ")", 1);
+        this.senderSmallData = null;
+        ctx.getChannel().close();
+        ctx.getChannel().disconnect();
+        System.gc();
     }
 
     @Override
@@ -43,14 +50,21 @@ public class FastServerHandler extends SimpleChannelUpstreamHandler {
         {
             Logging.log("Получено сообщение от " + ctx.getChannel().getRemoteAddress()
                     + " (" + ctx.getChannel().getId() + ")", 1);
-            SenderSmallData senderSmallData = new SenderSmallData(e.getChannel(), e.getMessage().toString());
+
             System.out.println("Thread: Main FAST");
             Logging.log("Thread: Main FAST", 4);
-            senderSmallData.start();
+            senderSmallData.process(e.getMessage().toString());
         } catch (Exception ex)
         {
-            ex.printStackTrace();
+            Logging.log("Критическая ошибка в главном потоке Netty: "
+                    + ex.getMessage(), 1);
         }
+    }
+
+    @Override
+    public void channelDisconnected(ChannelHandlerContext ctx, ChannelStateEvent e) throws Exception
+    {
+        channelClosed(ctx, e);
     }
 
     @Override

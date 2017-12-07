@@ -35,12 +35,12 @@ C:\contact_center\client1\contact_center_application\obj\x86\Release\graphic_use
 C:\contact_center\client1\contact_center_application\obj\x86\Release\contact_center_application.Properties.Resources.resources
 C:\contact_center\client1\contact_center_application\obj\x86\Release\viewer.csproj.GenerateResource.Cache
 C:\contact_center\client1\contact_center_application\obj\x86\Release\viewer.csproj.CoreCompileInputs.cache
-C:\contact_center\client1\contact_center_application\bin\x86\Release\viewer.exe.config
-C:\contact_center\client1\contact_center_application\bin\x86\Release\viewer.exe
-C:\contact_center\client1\contact_center_application\obj\x86\Release\viewer.csproj.viewer.exe.config
-C:\contact_center\client1\contact_center_application\obj\x86\Release\viewer_Content.g.cs
-C:\contact_center\client1\contact_center_application\obj\x86\Release\viewer_MarkupCompile.cache
-C:\contact_center\client1\contact_center_application\obj\x86\Release\viewer_MarkupCompile.lref
-C:\contact_center\client1\contact_center_application\obj\x86\Release\viewer.g.resources
-C:\contact_center\client1\contact_center_application\obj\x86\Release\viewer.exe
 C:\contact_center\client1\contact_center_application\obj\x86\Release\viewer.csprojResolveAssemblyReference.cache
+C:\contact_center\client1\contact_center_application\bin\x86\Release\АРМ оператора контакт-центра.exe.config
+C:\contact_center\client1\contact_center_application\bin\x86\Release\АРМ оператора контакт-центра.exe
+C:\contact_center\client1\contact_center_application\obj\x86\Release\viewer.csproj.АРМ оператора контакт-центра.exe.config
+C:\contact_center\client1\contact_center_application\obj\x86\Release\АРМ оператора контакт-центра_Content.g.cs
+C:\contact_center\client1\contact_center_application\obj\x86\Release\АРМ оператора контакт-центра_MarkupCompile.cache
+C:\contact_center\client1\contact_center_application\obj\x86\Release\АРМ оператора контакт-центра_MarkupCompile.lref
+C:\contact_center\client1\contact_center_application\obj\x86\Release\АРМ оператора контакт-центра.g.resources
+C:\contact_center\client1\contact_center_application\obj\x86\Release\АРМ оператора контакт-центра.exe

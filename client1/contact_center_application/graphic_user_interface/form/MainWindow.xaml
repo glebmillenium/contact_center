@@ -7,40 +7,45 @@
 		xmlns:mpp="clr-namespace:MoonPdfLib;assembly=MoonPdfLib"
 		xmlns:my="clr-namespace:Spire.DocViewer.Wpf;assembly=Spire.DocViewer.Wpf" WindowStartupLocation="CenterScreen"
 		mc:Ignorable="d"
-        Title="Информационный портал ЕЭИСЦ" MinWidth="800" MinHeight="600" SizeChanged="Window_SizeChanged" x:Name="window">
+        Title="Информационный портал ЕЭИСЦ" MinWidth="800" MinHeight="600" SizeChanged="Window_SizeChanged" x:Name="window" Closing="window_Closing">
 
 	<Grid>
 		<Grid.RowDefinitions>
+			<RowDefinition Height="10"></RowDefinition>
 			<RowDefinition Height="30"></RowDefinition>
-			<RowDefinition Height="26"></RowDefinition>
 			<RowDefinition Height="22"></RowDefinition>
 			<RowDefinition x:Name="row3"></RowDefinition>
 			<RowDefinition Height="25"></RowDefinition>
 		</Grid.RowDefinitions>
 
-		<StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Right">
-			<Button x:Name="buttonSettings" Margin="0,0,5,0" Height="30" Width="30" Click="buttonSettings_Click" >
-				<Image Source="pack://siteoforigin:,,,/resources/settings.png"/>
-			</Button>
-			<Button Margin="0,0,5,0" Height="30" Width="30" >
-				<Image Source="pack://siteoforigin:,,,/resources/help.png"/>
-			</Button>
 
-			<Button Margin="0,0,5,0" Height="30" Width="30">
-				<Image Source="pack://siteoforigin:,,,/resources/exit.png"/>
-			</Button>
-		</StackPanel>
 
 		<DockPanel Grid.Row="1">
 			<StackPanel DockPanel.Dock="Left" Orientation="Horizontal">
-				<Label Content="Файловый ресурс: " Height="30" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-				<ComboBox x:Name="ComboboxChooseFileSystem" Height="23"
-						SelectionChanged="ComboboxFileSystem_SelectionChanged" HorizontalAlignment="Left" VerticalAlignment="Top" Width="300"/>
-				<Button x:Name="buttonRefresh" Width="150" Height="20" ToolTip="Button" HorizontalAlignment="Left" VerticalAlignment="Top" TextOptions.TextFormattingMode="Display" Click="buttonRefresh_Click">
+				<Label Content="Файловый ресурс: " Height="30" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+				<ComboBox x:Name="ComboboxChooseFileSystem" Height="23" 
+						SelectionChanged="ComboboxFileSystem_SelectionChanged" HorizontalAlignment="Left" VerticalAlignment="Center" Width="300"/>
+				<Button x:Name="buttonRefresh" Width="150" Height="20" ToolTip="Button" HorizontalAlignment="Left" VerticalAlignment="Center" TextOptions.TextFormattingMode="Display" Click="buttonRefresh_Click">
 					<TextBlock x:Name="buttonRetryConnection" Text="Повторить соединение" TextAlignment="Center" TextWrapping="Wrap" Height="15" Width="132"/>
 				</Button>
 			</StackPanel>
-			<StackPanel DockPanel.Dock="Right"/>
+			<StackPanel DockPanel.Dock="Right" Orientation="Horizontal" HorizontalAlignment="Right">
+				<Button x:Name="buttonSettings" Margin="0,0,5,0" Height="30" Width="30" Click="buttonSettings_Click" >
+					<Image Source="pack://siteoforigin:,,,/resources/settings.png"/>
+				</Button>
+				<Button Margin="0,0,5,0" Height="30" Width="30" >
+					<Image Source="pack://siteoforigin:,,,/resources/help.png"/>
+				</Button>
+				<Menu Margin="0,0,5,0" Height="30" Width="30">
+					<MenuItem Height="30" Width="30">
+						<MenuItem.Header>
+							<Image Height="25" Width="25" Source="pack://siteoforigin:,,,/resources/exit.png"/>
+						</MenuItem.Header>
+						<MenuItem x:Name="goToAuth" Header="Выйти из системы" Click="goToAuth_Click"></MenuItem>
+						<MenuItem x:Name="exitFromSystem" Click="exitFromSystem_Click" Header="Завершить работу приложения"></MenuItem>
+					</MenuItem>
+				</Menu>
+			</StackPanel>
 		</DockPanel>
 
 		<DockPanel Grid.Row="2">
@@ -67,12 +72,12 @@
 								  >
 						<Image Source="pack://siteoforigin:,,,/resources/registr.png" ToolTip="Включить учет регистра букв"/>
 					</ToggleButton>
-					<ToggleButton x:Name="openFolders"
+					<ToggleButton x:Name="openOnFolders"
 								  Width="25" Height="25" 
 								  Background="White"
 								  Margin="5,0,5,0" Checked="openFolders_Checked" 
 								  >
-						<Image Source="pack://siteoforigin:,,,/resources/open_folders.png" ToolTip="Папки в которых найдены элементы удовлетворяющие критериям поиска будут представлены в развернутом виде"/>
+						<Image Source="pack://siteoforigin:,,,/resources/open_folders.png" ToolTip="Папки, удовлетворяющие критериям поиска, будут представлены в развернутом виде"/>
 					</ToggleButton>
 				</StackPanel>
 				<TreeView DockPanel.Dock="Bottom" x:Name="treeViewCatalogFileSystem" Margin="5" MinWidth="200" MaxWidth="400"/>
@@ -159,7 +164,7 @@
 		</DockPanel>
 
 		<StackPanel Margin="5" Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right" >
-			<TextBlock Text="Версия 0.8.17a" FontSize="10"/>
+			<TextBlock x:Name="versionOnTextBlock" FontSize="10"/>
 		</StackPanel>
 	</Grid>
 </Window>

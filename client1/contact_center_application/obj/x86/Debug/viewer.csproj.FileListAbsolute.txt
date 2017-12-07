@@ -36,13 +36,13 @@ C:\contact_center\client1\contact_center_application\obj\x86\Debug\contact_cente
 C:\contact_center\client1\contact_center_application\obj\x86\Debug\viewer.csproj.GenerateResource.Cache
 C:\contact_center\client1\contact_center_application\obj\x86\Debug\viewer.csproj.CoreCompileInputs.cache
 C:\contact_center\client1\contact_center_application\obj\x86\Debug\viewer.csprojResolveAssemblyReference.cache
-C:\contact_center\client1\contact_center_application\bin\x86\Debug\viewer.exe.config
-C:\contact_center\client1\contact_center_application\bin\x86\Debug\viewer.exe
-C:\contact_center\client1\contact_center_application\bin\x86\Debug\viewer.pdb
-C:\contact_center\client1\contact_center_application\obj\x86\Debug\viewer.csproj.viewer.exe.config
-C:\contact_center\client1\contact_center_application\obj\x86\Debug\viewer_Content.g.cs
-C:\contact_center\client1\contact_center_application\obj\x86\Debug\viewer_MarkupCompile.cache
-C:\contact_center\client1\contact_center_application\obj\x86\Debug\viewer_MarkupCompile.lref
-C:\contact_center\client1\contact_center_application\obj\x86\Debug\viewer.g.resources
-C:\contact_center\client1\contact_center_application\obj\x86\Debug\viewer.exe
-C:\contact_center\client1\contact_center_application\obj\x86\Debug\viewer.pdb
+C:\contact_center\client1\contact_center_application\bin\x86\Debug\АРМ оператора контакт-центра.exe.config
+C:\contact_center\client1\contact_center_application\bin\x86\Debug\АРМ оператора контакт-центра.exe
+C:\contact_center\client1\contact_center_application\bin\x86\Debug\АРМ оператора контакт-центра.pdb
+C:\contact_center\client1\contact_center_application\obj\x86\Debug\viewer.csproj.АРМ оператора контакт-центра.exe.config
+C:\contact_center\client1\contact_center_application\obj\x86\Debug\АРМ оператора контакт-центра_Content.g.cs
+C:\contact_center\client1\contact_center_application\obj\x86\Debug\АРМ оператора контакт-центра_MarkupCompile.cache
+C:\contact_center\client1\contact_center_application\obj\x86\Debug\АРМ оператора контакт-центра_MarkupCompile.lref
+C:\contact_center\client1\contact_center_application\obj\x86\Debug\АРМ оператора контакт-центра.g.resources
+C:\contact_center\client1\contact_center_application\obj\x86\Debug\АРМ оператора контакт-центра.exe
+C:\contact_center\client1\contact_center_application\obj\x86\Debug\АРМ оператора контакт-центра.pdb

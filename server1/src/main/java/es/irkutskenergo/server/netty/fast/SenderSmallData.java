@@ -1,5 +1,6 @@
 package es.irkutskenergo.server.netty.fast;
 
+import es.irkutskenergo.core.command.InteractiveWithDataBase;
 import es.irkutskenergo.other.ExceptionServer;
 import es.irkutskenergo.other.Logging;
 import es.irkutskenergo.other.Storage;
@@ -33,7 +34,7 @@ import java.nio.file.Paths;
  *
  * @author admin
  */
-public class SenderSmallData extends Thread {
+public class SenderSmallData {
 
     /**
      * i - вспомогательная переменная, учавствует в формировании заявки на ftp
@@ -93,14 +94,13 @@ public class SenderSmallData extends Thread {
      * @param channel
      * @param commandFromClient
      */
-    public SenderSmallData(Channel channel, String commandFromClient)
+    public SenderSmallData(Channel channel)
     {
         super();
-        setName("Fast Swap Server");
+        //setName("Fast Swap Server");
         this.channel = channel;
-        this.commandFromClient = commandFromClient;
         this.mapper = new ObjectMapper();
-        this.aliance = getRootAliance();
+        this.aliance = InteractiveWithDataBase.getRootAliance();
 
         query++;
         if (query >= 65536)
@@ -118,9 +118,10 @@ public class SenderSmallData extends Thread {
      * @param void
      * @return void
      */
-    @Override
-    public void run()
+    //@Override
+    public void process(String commandFromClient)
     {
+        this.commandFromClient = commandFromClient;
         Logging.log("Thread: submain FAST start", 4);
         try
         {
@@ -165,36 +166,8 @@ public class SenderSmallData extends Thread {
     private ObjectForSerialization getObjectFromJson(String jsonInString)
             throws IOException
     {
-
         return this.mapper.readValue(jsonInString,
                 ObjectForSerialization.class);
-    }
-
-    /**
-     * getResponseWhenError Метод генерирующий JSON ответ клиенту при
-     * возникновении ошибки (Не поддерживается!)
-     *
-     * @return
-     * @throws IOException
-     */
-    private String getResponseWhenUnknownCommand() throws IOException
-    {
-        String result;
-        try
-        {
-            result = this.mapper.writeValueAsString(
-                    new ObjectForSerialization("error", "UNKNOWN"));
-        } catch (IOException ex)
-        {
-            Logging.log("Ошибка при сериализации объекта "
-                    + this.channel.toString() + ") Номер запроса: "
-                    + this.numberConnect, 1);
-
-            result = this.mapper.writeValueAsString(
-                    new ObjectForSerialization("error",
-                            "0", "Серверу не удалось выполнить требуемую команду"));
-        }
-        return result;
     }
 
     /**
@@ -269,6 +242,14 @@ public class SenderSmallData extends Thread {
                         + this.channel.toString()
                         + ") Номер запроса: " + this.numberConnect, 1);
                 result = testConnectionWithFastSocket(obj);
+            } else if (obj.command.equals("auth"))
+            {
+                Logging.log("Авторизация пользователя с сервером "
+                        + this.channel.toString()
+                        + ") Номер запроса: " + this.numberConnect
+                        + " Имя пользователя: "
+                        + new String(obj.param4_array, "UTF-8"), 1);
+                result = getRightAccess(obj);
             } else
             {
                 Logging.log("Полученный запрос содержит "
@@ -280,14 +261,39 @@ public class SenderSmallData extends Thread {
             Logging.log("Запрос успешно выполнен, отправление данных: "
                     + this.channel.toString() + ") Номер запроса: "
                     + this.numberConnect, 1);
-        } catch (ExceptionServer e)
+        } catch (Exception e)
         {
-            Logging.log(e.toString(), 1);
+            Logging.log("Критическая ошибка обработки командного запроса"
+                    + e.toString(), 1);
             result = "";
-        } finally
-        {
         }
+        return result;
+    }
 
+    /**
+     * getResponseWhenError Метод генерирующий JSON ответ клиенту при
+     * возникновении ошибки (Не поддерживается!)
+     *
+     * @return
+     * @throws IOException
+     */
+    private String getResponseWhenUnknownCommand() throws IOException
+    {
+        String result;
+        try
+        {
+            result = this.mapper.writeValueAsString(
+                    new ObjectForSerialization("error", "UNKNOWN"));
+        } catch (IOException ex)
+        {
+            Logging.log("Ошибка при сериализации объекта "
+                    + this.channel.toString() + ") Номер запроса: "
+                    + this.numberConnect + " Ошибка: " + ex.getMessage(), 1);
+
+            result = this.mapper.writeValueAsString(
+                    new ObjectForSerialization("error",
+                            "0", "Серверу не удалось выполнить требуемую команду"));
+        }
         return result;
     }
 
@@ -320,7 +326,7 @@ public class SenderSmallData extends Thread {
         String expectedSize = Integer.toString(resultInFtp.length);
         return this.mapper.writeValueAsString(
                 new ObjectForSerialization("aliance",
-                        expectedSize, sendToStorageInFtpServer(false,
+                        expectedSize, Storage.sendToStorageInFtpServer(false,
                                 obj.command, resultInFtp, new byte[]
                                 {
                 })));
@@ -346,7 +352,7 @@ public class SenderSmallData extends Thread {
                 resultInFtp.length);
         String result = this.mapper.writeValueAsString(
                 new ObjectForSerialization("catalog",
-                        expectedSize, sendToStorageInFtpServer(false,
+                        expectedSize, Storage.sendToStorageInFtpServer(false,
                                 obj.command, resultInFtp, new byte[]
                                 {
                 })
@@ -414,7 +420,7 @@ public class SenderSmallData extends Thread {
         String expectedSize = Integer.toString(resultInFtp.length);
         return this.mapper.writeValueAsString(
                 new ObjectForSerialization("content_file",
-                        expectedSize, sendToStorageInFtpServer(false,
+                        expectedSize, Storage.sendToStorageInFtpServer(false,
                                 obj.command, resultInFtp, new byte[]
                                 {
                 })));
@@ -477,24 +483,6 @@ public class SenderSmallData extends Thread {
     }
 
     /**
-     * sendToStorageInFtpServer Отправка заявки (и содержимое заявки) на
-     * хранение в FTP сервере до тех пор, пока клиент не придет за ней на
-     * получение, либо пока не истечет время её хранения (в случае запущенного
-     * граббера)
-     *
-     * @param resultInFtp Содержимое заявки
-     * @param typeQuery Тип заявки
-     * @return String Идентификатор заявки
-     */
-    private static String sendToStorageInFtpServer(boolean typeQuery,
-            String nameCommand, byte[] information, byte[] additionalInformation)
-    {
-        int result = Storage.add(typeQuery, nameCommand, information,
-                additionalInformation);
-        return String.valueOf(result);
-    }
-
-    /**
      * Создание заявки в FTP-сервере на прием данных
      *
      * @param ObjectForSerialization
@@ -507,7 +495,7 @@ public class SenderSmallData extends Thread {
                 + (new String(obj.param4_array, "UTF-8")) + "\\"
                 + (new String(obj.param5_array, "UTF-8"));
         byte[] bytePathToFile = strPathToFile.getBytes("UTF-8");
-        String query = sendToStorageInFtpServer(true, obj.command,
+        String query = Storage.sendToStorageInFtpServer(true, obj.command,
                 bytePathToFile, obj.param1.getBytes("UTF-8"));
         return this.mapper.writeValueAsString(
                 new ObjectForSerialization("upload",
@@ -625,46 +613,74 @@ public class SenderSmallData extends Thread {
         }
     }
 
-    private Map<String, Triple<String, String, String>> getRootAliance()
-    {
-        Map<String, Triple<String, String, String>> result
-                = new HashMap<String, Triple<String, String, String>>();
-        BufferedReader reader = null;
-        try
-        {
-            reader = new BufferedReader(new FileReader("list_connect"));
-            String line;
-            while ((line = reader.readLine()) != null)
-            {
-                System.out.println(line);
-                String[] temp = line.split(";");
-                result.put(temp[0], new Triple<String, String, String>(temp[1], temp[2], temp[3]));
-            }
-        } catch (FileNotFoundException ex)
-        {
-            result.clear();
-            result.put("0", new Triple<String, String, String>("Системный диск",
-                    "C:\\", "1"));
-        } finally
-        {
-            return result;
-        }
-    }
-
-    private String testConnectionWithFastSocket(ObjectForSerialization obj) 
+    private String testConnectionWithFastSocket(ObjectForSerialization obj)
     {
         String result = "";
         try
         {
             result = this.mapper.writeValueAsString(
                     new ObjectForSerialization("answer_on_test_fast_socket", "true"));
-
         } catch (IOException ex)
         {
             Logging.log("Не удалось произвести сериализацию файла "
                     + " Канал " + this.channel.toString() + " Номер запроса: "
                     + this.numberConnect, 1);
         }
+        return result;
+    }
+
+    private String getRightAccess(ObjectForSerialization obj) throws IOException
+    {
+        String login;
+        String password;
+        
+        try
+        {
+            login = new String(obj.param4_array, "UTF-8");
+            password = new String(obj.param5_array, "UTF-8");
+        } catch (UnsupportedEncodingException ex)
+        {
+            Logging.log("Не удалось получить права доступа для выбранного логина"
+                    + "(ошибка кодировки) "
+                    + " Канал " + this.channel.toString() + " Номер запроса: "
+                    + this.numberConnect, 1);
+            login = "";
+            password = "";
+        }
+        String result;
+        int right = InteractiveWithDataBase.getRightAccess(login, password);
+
+        String version = new String(Files.readAllBytes(Paths.get("version")));
+        switch (right)
+        {
+            case 1:
+                result = this.mapper.writeValueAsString(
+                        new ObjectForSerialization("auth",
+                                String.valueOf(right), version, "",
+                                new String("Уровень доступа: смена "
+                                        + "файловой системы, просмотр каталогов,"
+                                        + " содержимого файлов")
+                                        .getBytes("UTF-8")));
+                break;
+            case 4:
+                result = this.mapper.writeValueAsString(
+                        new ObjectForSerialization("auth",
+                                String.valueOf(right), version, "",
+                                new String("Уровень доступа: смена "
+                                        + "файловой системы, просмотр каталогов;"
+                                        + " загрузка, изменение, удаление, "
+                                        + "просмотр файлов; удаление, создание "
+                                        + "новых каталогов").getBytes("UTF-8")));
+                break;
+            default:
+                result = this.mapper.writeValueAsString(
+                        new ObjectForSerialization("auth",
+                                "-1", version, "",
+                                new String("Уровень доступа: отсутствует")
+                                        .getBytes("UTF-8")));
+                break;
+        }
+
         return result;
     }
 }

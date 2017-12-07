@@ -1,5 +1,6 @@
 ﻿using contact_center_application.core;
 using contact_center_application.core.serialization;
+using contact_center_application.core.storage_dynamic_data;
 using Newtonsoft.Json;
 using System;
 using System.Globalization;
@@ -221,7 +222,7 @@ namespace contact_center_application.graphic_user_interface.form
 		private void interactionWithFtpSocket(int index, int expectedSize, string relativeWay)
 		{
 
-			createSocket(RequestDataFromServer.getAddressServer(), RequestDataFromServer.getFtpPort());
+			createSocket(SettingsData.getAddress(), SettingsData.getFtpPort());
 			ObjectForSerialization objForSendToFtpSocket = new ObjectForSerialization
 			{
 				command = "content_file",

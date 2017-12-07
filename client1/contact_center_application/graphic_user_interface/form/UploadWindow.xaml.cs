@@ -1,5 +1,6 @@
 ﻿using contact_center_application.core;
 using contact_center_application.core.serialization;
+using contact_center_application.core.storage_dynamic_data;
 using Newtonsoft.Json;
 using System;
 using System.Globalization;
@@ -78,8 +79,8 @@ namespace contact_center_application.graphic_user_interface.form
 					};
 
 
-					createSocket(RequestDataFromServer.getAddressServer(), 
-						RequestDataFromServer.getFtpPort());
+					createSocket(SettingsData.getAddress(), 
+						SettingsData.getFtpPort());
 					resultJson = JsonConvert.SerializeObject(objForSendToFtpSocket);
 
 					sendMessageGetContentFile(resultJson, expectedSizeFile, pathToFileIncludeNameFile);

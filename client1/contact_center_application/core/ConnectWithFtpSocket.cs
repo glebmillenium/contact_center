@@ -20,7 +20,7 @@ namespace contact_center_application.core
 
 			sender = new Socket(ipAddr.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
 			sender.Connect(ipEndPoint);
-			//sender.SendTimeout = 10000;
+			sender.SendTimeout = 4000;
 			realization = true;
 		}
 

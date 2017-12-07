@@ -3,6 +3,7 @@ using System;
 using System.IO;
 using System.Globalization;
 using contact_center_application.core.serialization;
+using contact_center_application.core.storage_dynamic_data;
 
 namespace contact_center_application.core
 {
@@ -11,18 +12,20 @@ namespace contact_center_application.core
 		static string addressServer = "localhost";
 		static int portFtp = 6502;
 		static int portFast = 6500;
-		public static string getAddressServer()
+
+		public static void closeConnection()
 		{
-			return addressServer;
+			ConnectWithFastSocket.closeSocket();
 		}
 
 		public static string[] primaryExchangeWithSocket(string address = "localhost")
 		{
-			addressServer = address;
+			addressServer = SettingsData.getAddress();
+			portFtp = SettingsData.getFtpPort();
+			portFast = SettingsData.getFastPort();
 			try
 			{
 				ConnectWithFastSocket.createSocket(addressServer, portFast);
-				//ConnectWithDataSocket.createSocket(addressServer, 6501);
 			}
 			catch (System.Net.Sockets.SocketException socketException)
 			{
@@ -30,6 +33,37 @@ namespace contact_center_application.core
 			}
 
 			return getAliance();
+		}
+
+		public static Tuple<String, int, String> getRightAccess(string login, string password)
+		{
+			addressServer = SettingsData.getAddress();
+			portFtp = SettingsData.getFtpPort();
+			portFast = SettingsData.getFastPort();
+			try
+			{
+				ConnectWithFastSocket.createSocket(addressServer, portFast);
+			}
+			catch (System.Net.Sockets.SocketException socketException)
+			{
+				throw new System.Net.Sockets.SocketException();
+			}
+
+			ObjectForSerialization objForSendToFastSocket = new ObjectForSerialization
+			{
+				command = "auth",
+				param1 = "",
+				param2 = SettingsData.getVersion(),
+				param3 = "",
+				param4_array = System.Text.Encoding.UTF8.GetBytes(login),
+				param5_array = System.Text.Encoding.UTF8.GetBytes(password)
+			};
+			string resultJson = JsonConvert.SerializeObject(objForSendToFastSocket);
+			string answer = ConnectWithFastSocket.sendMessage(resultJson, 8192);
+			ObjectForSerialization objResponseFromFastSocket =
+				JsonConvert.DeserializeObject<ObjectForSerialization>(answer);
+			return new Tuple<String, int, String>(objResponseFromFastSocket.param2, Int32.Parse(objResponseFromFastSocket.param1),
+				System.Text.Encoding.UTF8.GetString(objResponseFromFastSocket.param4_array));
 		}
 
 		private static string[] getAliance()

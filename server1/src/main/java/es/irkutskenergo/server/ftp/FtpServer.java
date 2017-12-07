@@ -1,15 +1,9 @@
 package es.irkutskenergo.server.ftp;
 
 import es.irkutskenergo.other.Logging;
-import es.irkutskenergo.other.Quadro;
-import es.irkutskenergo.other.Storage;
-import es.irkutskenergo.serialization.ObjectForSerialization;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import org.codehaus.jackson.map.ObjectMapper;
 
 /**
  * Сервер, предназначенный для осуществления отправки большого объема информации
@@ -19,8 +13,6 @@ import org.codehaus.jackson.map.ObjectMapper;
 public class FtpServer {
 
     private ServerSocket server;
-//    private InetAddress host;
-//    private InetSocketAddress address;
     private int port;
     private boolean canWork = false;
 
@@ -28,10 +20,6 @@ public class FtpServer {
     {
         this.port = port;
         this.server = new ServerSocket(this.port);
-//            this.host = InetAddress.getLocalHost();
-//            this.address = new InetSocketAddress(this.host, this.port);
-//            server.bind(address);
-        //this.server.setSoTimeout(15000);
         this.canWork = true;
     }
 

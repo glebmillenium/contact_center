@@ -1,15 +1,12 @@
 package es.irkutskenergo.server.netty.fast;
 
 import es.irkutskenergo.other.Logging;
-import es.irkutskenergo.server.netty.ServerPipelineFactory;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import org.jboss.netty.bootstrap.ServerBootstrap;
 import org.jboss.netty.channel.Channel;
-import org.jboss.netty.channel.ChannelFactory;
 import org.jboss.netty.channel.socket.nio.NioServerSocketChannelFactory;
 import org.jboss.netty.handler.execution.OrderedMemoryAwareThreadPoolExecutor;
 
@@ -32,9 +29,12 @@ public class FastServer {
      */
     public FastServer(int port) throws Exception
     {
-        ExecutorService bossExec = new OrderedMemoryAwareThreadPoolExecutor(1, (long) 400000000, 2000000000, 60, TimeUnit.SECONDS);
-        ExecutorService ioExec = new OrderedMemoryAwareThreadPoolExecutor(4, (long) 400000000, 2000000000, 60, TimeUnit.SECONDS);
-        ServerBootstrap bootstrap = new ServerBootstrap(new NioServerSocketChannelFactory(bossExec, ioExec, 4));
+        ExecutorService bossExec = new OrderedMemoryAwareThreadPoolExecutor(1,
+                (long) 400000000, 2000000000, 60, TimeUnit.SECONDS);
+        ExecutorService ioExec = new OrderedMemoryAwareThreadPoolExecutor(4,
+                (long) 400000000, 2000000000, 60, TimeUnit.SECONDS);
+        ServerBootstrap bootstrap = new ServerBootstrap(
+                new NioServerSocketChannelFactory(bossExec, ioExec, 4));
         bootstrap.setOption("backlog", 500);
         bootstrap.setOption("connectTimeoutMillis", 10000);
         bootstrap.setPipelineFactory(new FastServerPipeLineFactory());
@@ -42,15 +42,12 @@ public class FastServer {
 
         /**
          * ExecutorService bossExec = new
-         *  OrderedMemoryAwareThreadPoolExecutor(1, (long) 400000000, 2000000000,
-         *  60, TimeUnit.SECONDS); 
-         * ExecutorService ioExec = new
-         *  OrderedMemoryAwareThreadPoolExecutor(4, (long) 400000000, 2000000000,
-         *  60, TimeUnit.SECONDS); 
-         * ServerBootstrap networkServer = new
-         *  ServerBootstrap(new NioServerSocketChannelFactory(bossExec, ioExec,
-         *  4)); 
-         * networkServer.setOption("backlog", 500);
+         * OrderedMemoryAwareThreadPoolExecutor(1, (long) 400000000, 2000000000,
+         * 60, TimeUnit.SECONDS); ExecutorService ioExec = new
+         * OrderedMemoryAwareThreadPoolExecutor(4, (long) 400000000, 2000000000,
+         * 60, TimeUnit.SECONDS); ServerBootstrap networkServer = new
+         * ServerBootstrap(new NioServerSocketChannelFactory(bossExec, ioExec,
+         * 4)); networkServer.setOption("backlog", 500);
          * networkServer.setOption("connectTimeoutMillis", 10000);
          * networkServer.setPipelineFactory(new ServerPipelineFactory());
          * Channel channel = networkServer.bind(new InetSocketAddress(port));

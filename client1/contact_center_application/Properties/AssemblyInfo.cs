@@ -10,9 +10,9 @@ using System.Windows;
 [assembly: AssemblyTitle("contact_center_application")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("contact_center_application")]
-[assembly: AssemblyCopyright("Copyright ©  2017")]
+[assembly: AssemblyCompany("es.irkutskenergo")]
+[assembly: AssemblyProduct("Приложение поддержки деятельности операторов КонтактЦентра")]
+[assembly: AssemblyCopyright("Copyright ©  2018")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -51,5 +51,7 @@ using System.Windows;
 // Можно задать все значения или принять номер сборки и номер редакции по умолчанию.
 // используя "*", как показано ниже:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("0.8.17")]
-[assembly: AssemblyFileVersion("0.8.17")]
+[assembly: AssemblyVersion("0.8.20")]
+[assembly: AssemblyFileVersion("0.8.20")]
+[assembly: NeutralResourcesLanguage("")]
+

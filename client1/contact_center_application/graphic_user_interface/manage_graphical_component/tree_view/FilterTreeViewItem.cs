@@ -15,17 +15,37 @@ namespace contact_center_application.graphic_user_interface.manage_graphical_com
 	{
 		public static void setVisibleOnText(string text)
 		{
-			List<TreeViewItem> newListItems = new List<TreeViewItem>();
-			foreach (TreeViewItem elem in CurrentDataFileSystem.basisListItems)
+			if (text.Length == 0)
 			{
-				bool newElem = setVisibleOnTextForTreeView(elem, text);
+				hiddenTreeView();
+			}
+			else
+			{
+				List<TreeViewItem> newListItems = new List<TreeViewItem>();
+				foreach (TreeViewItem elem in CurrentDataFileSystem.basisListItems)
+				{
+					setVisibleOnTextForTreeView(elem, text);
+				}
 			}
 		}
 
-		public static bool setVisibleOnTextForTreeView(TreeViewItem item, string text, bool mandatory = false)
+		private static void hiddenTreeView()
 		{
-			string temp = CurrentDataFileSystem.listTreeView[item].Item2;
-			string nameElement = Path.GetFileName(temp);
+			foreach (var item in CurrentDataFileSystem.listTreeView)
+			{
+				item.Key.IsExpanded = false;
+				item.Key.Visibility = Visibility.Visible;
+				string relativeWay = CurrentDataFileSystem.listTreeView[item.Key].Item2;
+				string nameElement = Path.GetFileName(relativeWay);
+				item.Key.Header = highlightText(nameElement, "", 
+					CurrentDataFileSystem.listTreeView[item.Key].Item1);
+			}
+		}
+
+		private static bool setVisibleOnTextForTreeView(TreeViewItem item, string text, bool mandatory = false)
+		{
+			string relativeWay = CurrentDataFileSystem.listTreeView[item].Item2;
+			string nameElement = Path.GetFileName(relativeWay);
 			if (mandatory)
 			{
 				if (item.Items.Count > 0)
@@ -40,6 +60,12 @@ namespace contact_center_application.graphic_user_interface.manage_graphical_com
 				}
 				item.Header = highlightText(nameElement, text, CurrentDataFileSystem.listTreeView[item].Item1);
 				item.Visibility = Visibility.Visible;
+
+				if ((bool) MainWindowElement.openFolders.IsChecked)
+				{
+					item.IsExpanded = true;
+				}
+
 				return true;
 			}
 			else
@@ -47,7 +73,7 @@ namespace contact_center_application.graphic_user_interface.manage_graphical_com
 				if (item.Items.Count > 0)
 				{
 					int resultSearch;
-					resultSearch = temp.IndexOf(text);
+					resultSearch = relativeWay.IndexOf(text);
 					if (resultSearch > -1)
 					{
 						item.Visibility = Visibility.Visible;
@@ -61,6 +87,12 @@ namespace contact_center_application.graphic_user_interface.manage_graphical_com
 							elem.Header = highlightText(nameElement1, text, CurrentDataFileSystem.listTreeView[elem].Item1);
 							setVisibleOnTextForTreeView(elem, text, true);
 						}
+
+						if ((bool)MainWindowElement.openFolders.IsChecked)
+						{
+							item.IsExpanded = true;
+						}
+
 						return true;
 					}
 					else
@@ -89,6 +121,12 @@ namespace contact_center_application.graphic_user_interface.manage_graphical_com
 						{
 							item.Header = highlightText(nameElement, text, CurrentDataFileSystem.listTreeView[item].Item1);
 							item.Visibility = Visibility.Visible;
+
+							if ((bool)MainWindowElement.openFolders.IsChecked)
+							{
+								item.IsExpanded = true;
+							}
+
 							return true;
 						}
 						else
@@ -103,16 +141,22 @@ namespace contact_center_application.graphic_user_interface.manage_graphical_com
 					int resultSearch;
 					if ((bool)MainWindowElement.registrButton.IsChecked)
 					{
-						resultSearch = temp.IndexOf(text);
+						resultSearch = relativeWay.IndexOf(text);
 					}
 					else
 					{
-						resultSearch = temp.ToLower().IndexOf(text.ToLower());
+						resultSearch = relativeWay.ToLower().IndexOf(text.ToLower());
 					}
 					if (resultSearch > -1)
 					{
 						item.Header = highlightText(nameElement, text, CurrentDataFileSystem.listTreeView[item].Item1);
 						item.Visibility = Visibility.Visible;
+
+						if ((bool)MainWindowElement.openFolders.IsChecked)
+						{
+							item.IsExpanded = true;
+						}
+
 						return true;
 					}
 					else
@@ -124,7 +168,7 @@ namespace contact_center_application.graphic_user_interface.manage_graphical_com
 			}
 		}
 
-		public static TextBlock highlightText(string source, string substring, bool isFile)
+		private static TextBlock highlightText(string source, string substring, bool isFile)
 		{
 			TextBlock result = new TextBlock();
 			result.Inlines.Add(ProcessTreeViewItem.getImageOnNameFile(Path.GetFileName(source), isFile));
@@ -194,6 +238,9 @@ namespace contact_center_application.graphic_user_interface.manage_graphical_com
 			return result;
 		}
 
+		/// <summary>
+		/// Обновить содержимое listTreeView. Вызывается, при обновлении данных с каталоговой системы
+		/// </summary>
 		public static void resetFlagsInTreeViewItem()
 		{
 			var temporaryListTreeView = new Dictionary<TreeViewItem, Tuple<bool, string, bool>>();

@@ -161,4 +161,22 @@ public class Storage {
         queryStorageCommand.remove(key);
         queryStorageInformation.remove(key);
     }
+    
+        /**
+     * sendToStorageInFtpServer Отправка заявки (и содержимое заявки) на
+     * хранение в FTP сервере до тех пор, пока клиент не придет за ней на
+     * получение, либо пока не истечет время её хранения (в случае запущенного
+     * граббера)
+     *
+     * @param resultInFtp Содержимое заявки
+     * @param typeQuery Тип заявки
+     * @return String Идентификатор заявки
+     */
+    public static String sendToStorageInFtpServer(boolean typeQuery,
+            String nameCommand, byte[] information, byte[] additionalInformation)
+    {
+        int result = Storage.add(typeQuery, nameCommand, information,
+                additionalInformation);
+        return String.valueOf(result);
+    }
 }

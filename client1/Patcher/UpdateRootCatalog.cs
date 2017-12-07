@@ -15,7 +15,8 @@ namespace Patcher
 			string PathFolderBack = Path.GetDirectoryName(Directory.GetCurrentDirectory());
 			SettingsData.setDirectorySettings(PathFolderBack + @"/settings/ip_connect",
 				PathFolderBack + @"/settings/port_ftp", PathFolderBack + @"/settings/port_fast",
-				PathFolderBack + @"/settings/version");
+				PathFolderBack + @"/settings/version",
+				PathFolderBack + @"/settings/update_file_system");
 
 			string address = SettingsData.getAddress();
 			int fastPort = SettingsData.getFastPort();

@@ -84,7 +84,8 @@ namespace contact_center_application.graphic_user_interface.form {
                 return;
             }
             _contentLoaded = true;
-            System.Uri resourceLocater = new System.Uri("/viewer;component/graphic_user_interface/form/renameunitfilesystem.xaml", System.UriKind.Relative);
+            System.Uri resourceLocater = new System.Uri("/АРМ оператора контакт-центра;component/graphic_user_interface/form/renameunitfil" +
+                    "esystem.xaml", System.UriKind.Relative);
             
             #line 1 "..\..\..\..\..\graphic_user_interface\form\RenameUnitFileSystem.xaml"
             System.Windows.Application.LoadComponent(this, resourceLocater);
