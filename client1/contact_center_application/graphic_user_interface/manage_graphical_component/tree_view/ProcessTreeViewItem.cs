@@ -327,28 +327,9 @@ namespace contact_center_application.graphic_user_interface.manage_graphical_com
 			if (item == null)
 			{
 				item = ProcessTreeViewItem.getTreeViewItem(element.name, true);
-				System.Windows.Controls.ContextMenu docMenu = new System.Windows.Controls.ContextMenu();
-				item.MouseDoubleClick += EventsForContextMenuTreeView.selectFile;
-				item.KeyDown += EventsForContextMenuTreeView.Item_KeyDown;
 				CurrentDataFileSystem.listTreeView.Add(item, new Tuple<bool, string, bool>(element.file,
-					currentWay + "\\" + element.name, true));
-
-				System.Windows.Controls.MenuItem open = new System.Windows.Controls.MenuItem();
-				open.Click += EventsForContextMenuTreeView.Open_Click; ;
-				open.Header = "Открыть файл";
-				docMenu.Items.Add(open);
-
-				System.Windows.Controls.MenuItem delete = new System.Windows.Controls.MenuItem();
-				delete.Header = "Удалить файл";
-				delete.Click += EventsForContextMenuTreeView.Delete_Click;
-				docMenu.Items.Add(delete);
-
-				System.Windows.Controls.MenuItem rename = new System.Windows.Controls.MenuItem();
-				rename.Header = "Переименовать";
-				rename.Click += EventsForContextMenuTreeView.Rename_Click;
-				docMenu.Items.Add(rename);
-				item.ContextMenuOpening += EventsForContextMenuTreeView.Item_ContextMenuOpening;
-				item.ContextMenu = docMenu;
+	currentWay + "\\" + element.name, true));
+				ContextMenuForTreeView.setContextMenuToTreeViewItemFile(item, element);
 			}
 			else
 			{
@@ -394,7 +375,7 @@ namespace contact_center_application.graphic_user_interface.manage_graphical_com
 				}
 			}
 
-			ContextMenuForTreeView.setContextMenuToTreeViewItem(item, element, deep);
+			ContextMenuForTreeView.setContextMenuToTreeViewItemCatalog(item, element, deep);
 
 			return item;
 		}
@@ -451,7 +432,7 @@ namespace contact_center_application.graphic_user_interface.manage_graphical_com
 			{
 				CurrentDataFileSystem.listTreeView.Clear();
 			}
-			ContextMenuForTreeView.setContextMenuForTreeView();
+			ContextMenuForTreeView.setContextMenuForTreeViewCatalog();
 
 			CurrentDataFileSystem.basisListItems = ProcessTreeViewItem.getItemsCatalogsFromJson(json, "");
 

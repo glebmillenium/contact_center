@@ -100,7 +100,7 @@ public class SenderSmallData {
         //setName("Fast Swap Server");
         this.channel = channel;
         this.mapper = new ObjectMapper();
-        this.aliance = InteractiveWithDataBase.getRootAliance();
+        SenderSmallData.aliance = InteractiveWithDataBase.getRootAliance();
 
         query++;
         if (query >= 65536)
@@ -108,7 +108,6 @@ public class SenderSmallData {
             query = 1;
         }
         numberConnect = query;
-
     }
 
     /**
@@ -662,7 +661,7 @@ public class SenderSmallData {
                                         + " содержимого файлов")
                                         .getBytes("UTF-8")));
                 break;
-            case 4:
+            case 3:
                 result = this.mapper.writeValueAsString(
                         new ObjectForSerialization("auth",
                                 String.valueOf(right), version, "",

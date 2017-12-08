@@ -266,6 +266,14 @@
       <Link>libmupdf.dll</Link>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <None Include="resources\update.ico" />
+    <None Include="resources\exit.ico" />
+    <None Include="resources\help.ico" />
+    <None Include="resources\settings.ico" />
+    <None Include="resources\exit_from_app.ico" />
+    <None Include="resources\exit_from_system.ico" />
+    <None Include="resources\exit_from_app.png" />
+    <None Include="resources\send_to_developer.png" />
     <Resource Include="viewer.ico" />
     <None Include="resources\auth_info.png" />
     <None Include="resources\network_settings.png" />
@@ -293,16 +301,19 @@
 rmdir /s definition
 rmdir /s core
 rmdir /s log
+rmdir /s settings
 </PreBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
     <PostBuildEvent>mkdir resources
+mkdir settings
 mkdir definition
 mkdir core
 mkdir log
 move *.dll core
 move *.xml definition
 copy $(ProjectDir)resources $(TargetDir)resources
+copy $(ProjectDir)settings $(TargetDir)settings
 copy $(ProjectDir)log $(TargetDir)log</PostBuildEvent>
   </PropertyGroup>
 </Project>

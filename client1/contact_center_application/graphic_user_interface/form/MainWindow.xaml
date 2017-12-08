@@ -13,7 +13,7 @@
 		<Grid.RowDefinitions>
 			<RowDefinition Height="10"></RowDefinition>
 			<RowDefinition Height="30"></RowDefinition>
-			<RowDefinition Height="22"></RowDefinition>
+			<RowDefinition Height="25"></RowDefinition>
 			<RowDefinition x:Name="row3"></RowDefinition>
 			<RowDefinition Height="25"></RowDefinition>
 		</Grid.RowDefinitions>
@@ -30,19 +30,27 @@
 				</Button>
 			</StackPanel>
 			<StackPanel DockPanel.Dock="Right" Orientation="Horizontal" HorizontalAlignment="Right">
-				<Button x:Name="buttonSettings" Margin="0,0,5,0" Height="30" Width="30" Click="buttonSettings_Click" >
-					<Image Source="pack://siteoforigin:,,,/resources/settings.png"/>
+				<Button Background="Azure" x:Name="buttonSettings" Margin="0,0,5,0" Height="30" Width="30" Click="buttonSettings_Click" >
+					<Image Height="25" Width="25" Source="pack://siteoforigin:,,,/resources/settings.png"/>
 				</Button>
 				<Button Margin="0,0,5,0" Height="30" Width="30" >
-					<Image Source="pack://siteoforigin:,,,/resources/help.png"/>
+					<Image Height="25" Width="25" Source="pack://siteoforigin:,,,/resources/help.ico"/>
 				</Button>
 				<Menu Margin="0,0,5,0" Height="30" Width="30">
 					<MenuItem Height="30" Width="30">
-						<MenuItem.Header>
-							<Image Height="25" Width="25" Source="pack://siteoforigin:,,,/resources/exit.png"/>
-						</MenuItem.Header>
-						<MenuItem x:Name="goToAuth" Header="Выйти из системы" Click="goToAuth_Click"></MenuItem>
-						<MenuItem x:Name="exitFromSystem" Click="exitFromSystem_Click" Header="Завершить работу приложения"></MenuItem>
+						<MenuItem.Icon>
+							<Image Height="20" Width="20" Source="pack://siteoforigin:,,,/resources/exit.ico"/>
+						</MenuItem.Icon>
+						<MenuItem x:Name="goToAuth" Header="Выйти из системы" Click="goToAuth_Click">
+							<MenuItem.Icon>
+								<Image Source="pack://siteoforigin:,,,/resources/exit_from_system.ico"/>
+							</MenuItem.Icon>
+						</MenuItem>
+						<MenuItem x:Name="exitFromSystem" Click="exitFromSystem_Click" Header="Завершить работу приложения">
+							<MenuItem.Icon>
+								<Image Source="pack://siteoforigin:,,,/resources/exit_from_app.ico"/>
+							</MenuItem.Icon>
+						</MenuItem>
 					</MenuItem>
 				</Menu>
 			</StackPanel>
@@ -51,8 +59,8 @@
 		<DockPanel Grid.Row="2">
 			<StackPanel DockPanel.Dock="Left" Orientation="Horizontal">
 				<TextBlock x:Name="UpdateCatalogs" Margin="5" TextWrapping="Wrap" TextAlignment="Center" VerticalAlignment="Bottom">Меню просмотра каталогов</TextBlock>
-				<Button x:Name="ButtonUpdateCatalogs" VerticalAlignment="Top"  Width="20" Height="20" Click="ButtonUpdateCatalogs_Click">
-					<Image Source="pack://siteoforigin:,,,/resources/update.png" ToolTip="Обновить"/>
+				<Button x:Name="ButtonUpdateCatalogs" VerticalAlignment="Top"  Width="25" Height="25" Click="ButtonUpdateCatalogs_Click">
+					<Image Width="22" Height="22" Source="pack://siteoforigin:,,,/resources/update.ico" ToolTip="Обновить"/>
 				</Button>
 			</StackPanel>
 
@@ -164,7 +172,7 @@
 		</DockPanel>
 
 		<StackPanel Margin="5" Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right" >
-			<TextBlock x:Name="versionOnTextBlock" FontSize="10"/>
+			<TextBlock Text="Версия: " x:Name="versionOnTextBlock" FontSize="10"/>
 		</StackPanel>
 	</Grid>
 </Window>

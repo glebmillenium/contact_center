@@ -11,18 +11,19 @@
 		<Grid.RowDefinitions>
 			<RowDefinition Height="30"></RowDefinition>
 			<RowDefinition Height="1*"></RowDefinition>
+			<RowDefinition Height="15"></RowDefinition>
 		</Grid.RowDefinitions>
 		<DockPanel Grid.Row="0">
 			<Label DockPanel.Dock="Left" Content="Информационный портал ЕЭИСЦ"/>
 			<StackPanel HorizontalAlignment="Right" Orientation="Horizontal" DockPanel.Dock="Right" VerticalAlignment="Top"  >
 				<Button Width="15" Height="15" Margin="0,0,7,0" ToolTip="Отправить сообщение разработчику">
-					<Image Source="pack://siteoforigin:,,,/resources/auth_info.png" ToolTip="О программе"/>
+					<Image Source="pack://siteoforigin:,,,/resources/send_to_developer.png"/>
 				</Button>
 				<Button Width="15" Height="15" Margin="0,0,7,0" ToolTip="О программе">
-					<Image Source="pack://siteoforigin:,,,/resources/auth_info.png" ToolTip="О программе"/>
+					<Image Source="pack://siteoforigin:,,,/resources/auth_info.png"/>
 				</Button>
-				<Button Width="15" Height="15" Margin="0,0,7,0" ToolTip="Выход из программы">
-					<Image Source="pack://siteoforigin:,,,/resources/auth_info.png" ToolTip="О программе"/>
+				<Button x:Name="exitButton" Width="15" Height="15" Margin="0,0,7,0" ToolTip="Выход из программы" Click="exitButton_Click">
+					<Image Source="pack://siteoforigin:,,,/resources/exit_from_app.png"/>
 				</Button>
 			</StackPanel>
 		</DockPanel>
@@ -33,6 +34,20 @@
 			<TextBlock HorizontalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap" Text="Пароль"/>
 			<PasswordBox x:Name="passwordTextBox" HorizontalAlignment="Center" Height="24" Width="120" Background="{DynamicResource CheckBox_fill_bottom_}"/>
 			<Button Width="60" Margin="0,10,0,0" Content="Вход" Height="20" Click="Button_Click"></Button>
+		</StackPanel>
+
+		<StackPanel Grid.Row="2">
+			<TextBlock Margin="0,0,5,0" FontStyle="Italic" FontFamily="Verdana" FontSize="9" HorizontalAlignment="Right">
+				ООО "Иркутскэнергосбыт" © 2017-2018
+			</TextBlock>
+			<Popup x:Name="infoPopup" Placement="Mouse" MaxWidth="180" 
+				   PopupAnimation="Slide" AllowsTransparency="True" StaysOpen="False">
+				<Popup.Effect>
+					<BlurEffect/>
+				</Popup.Effect>
+				<TextBlock x:Name="infoTextBlock" TextWrapping="Wrap" Width="180" 
+						   Background="GhostWhite" Opacity="0.9"/>
+			</Popup>
 		</StackPanel>
 	</Grid>
 </Window>

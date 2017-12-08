@@ -27,7 +27,7 @@ public class InteractiveWithDataBase {
             right = 1;
         } else if (login.equals("supervisor") && password.equals("center"))
         {
-            right = 4;
+            right = 3;
         } else
         {
             right = -1;

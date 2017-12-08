@@ -36,7 +36,7 @@ namespace contact_center_application.graphic_user_interface.form
 			ManagerViewer.textbox = this.textboxDisplay;
 			CurrentDataFileSystem.ComboboxFileSystem = this.ComboboxChooseFileSystem;
 			CurrentDataFileSystem.treeViewCatalog = treeViewCatalogFileSystem;
-			MainWindowElement.versionTextBlock.Text = SettingsData.getVersion();
+			MainWindowElement.versionTextBlock.Text += SettingsData.getVersion();
 
 			//  DispatcherTimer setup
 			System.Windows.Threading.DispatcherTimer dispatcherTimer = new System.Windows.Threading.DispatcherTimer();
@@ -148,13 +148,21 @@ namespace contact_center_application.graphic_user_interface.form
 				Process currProc = Process.Start(CurrentDataOpenFile.openFile);
 				currProc.WaitForExit();
 				currProc.Close();
-				if (!oldTime.Equals(File.GetLastWriteTime(CurrentDataOpenFile.openFile)))
+				if (SettingsData.getRightWrite() == 1)
 				{
-					if (MessageBox.Show("Отправить измененный файл на сервер?", "Файл был изменен",
-						MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
+					if (!oldTime.Equals(File.GetLastWriteTime(CurrentDataOpenFile.openFile)))
 					{
-						TreatmenterExchangeFileWithServer.sendFileToServer();
+						if (MessageBox.Show("Отправить измененный файл на сервер?", "Файл был изменен",
+							MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
+						{
+							TreatmenterExchangeFileWithServer.sendFileToServer();
+						}
 					}
+				}
+				else
+				{
+					MessageBox.Show("Вы изменили содержимое файла." +
+						" Но у вас недостаточно прав для отправки измененного файла на сервер.", "Файл был изменен");
 				}
 			}
 			catch (System.NullReferenceException exceptionWithOpenFile)

@@ -43,27 +43,37 @@ namespace contact_center_application.core
 			try
 			{
 				ConnectWithFastSocket.createSocket(addressServer, portFast);
-			}
-			catch (System.Net.Sockets.SocketException socketException)
-			{
-				throw new System.Net.Sockets.SocketException();
-			}
 
-			ObjectForSerialization objForSendToFastSocket = new ObjectForSerialization
+				ObjectForSerialization objForSendToFastSocket = new ObjectForSerialization
+				{
+					command = "auth",
+					param1 = "",
+					param2 = SettingsData.getVersion(),
+					param3 = "",
+					param4_array = System.Text.Encoding.UTF8.GetBytes(login),
+					param5_array = System.Text.Encoding.UTF8.GetBytes(password)
+				};
+				string resultJson = JsonConvert.SerializeObject(objForSendToFastSocket);
+				string answer = ConnectWithFastSocket.sendMessage(resultJson, 8192);
+				ObjectForSerialization objResponseFromFastSocket =
+					JsonConvert.DeserializeObject<ObjectForSerialization>(answer);
+				Tuple<String, int, String> result;
+				try
+				{
+					result = new Tuple<String, int, String>(objResponseFromFastSocket.param2, Int32.Parse(objResponseFromFastSocket.param1),
+						System.Text.Encoding.UTF8.GetString(objResponseFromFastSocket.param4_array));
+				}
+				catch (Exception e)
+				{
+					result = new Tuple<String, int, String>("Неизвестно", -1,
+						"Сервер не находится в рабочем состоянии");
+				}
+				return result;
+			}
+			catch (Exception socketException)
 			{
-				command = "auth",
-				param1 = "",
-				param2 = SettingsData.getVersion(),
-				param3 = "",
-				param4_array = System.Text.Encoding.UTF8.GetBytes(login),
-				param5_array = System.Text.Encoding.UTF8.GetBytes(password)
-			};
-			string resultJson = JsonConvert.SerializeObject(objForSendToFastSocket);
-			string answer = ConnectWithFastSocket.sendMessage(resultJson, 8192);
-			ObjectForSerialization objResponseFromFastSocket =
-				JsonConvert.DeserializeObject<ObjectForSerialization>(answer);
-			return new Tuple<String, int, String>(objResponseFromFastSocket.param2, Int32.Parse(objResponseFromFastSocket.param1),
-				System.Text.Encoding.UTF8.GetString(objResponseFromFastSocket.param4_array));
+				throw new Exception();
+			}
 		}
 
 		private static string[] getAliance()

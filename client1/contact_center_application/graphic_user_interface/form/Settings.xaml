@@ -5,12 +5,53 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:contact_center_application.graphic_user_interface.form"
         mc:Ignorable="d"
-        Title="Settings" Height="300" Width="300">
+        Title="Settings" Height="300" Width="340">
 	<Grid>
-		<TabControl Margin="5,5,5,5">
+		<Grid.RowDefinitions>
+			<RowDefinition Height="1*"></RowDefinition>
+			<RowDefinition Height="30"></RowDefinition>
+		</Grid.RowDefinitions>
+		<TabControl Grid.Row="0" Margin="5,5,5,5">
 			<TabItem>
-				<StackPanel></StackPanel>
-				
+				<StackPanel>
+					<Grid x:Name="display">
+						<Grid.RowDefinitions>
+							<RowDefinition/>
+							<RowDefinition/>
+							<RowDefinition/>
+							<RowDefinition/>
+							<RowDefinition/>
+						</Grid.RowDefinitions>
+					</Grid>
+					<DockPanel Grid.Row="0">
+						<TextBlock Width="250">doc,docx</TextBlock>
+						<CheckBox x:Name="viewDocDocx" DockPanel.Dock="Right" Width="20" Height="20" Margin="0,0,5,0"></CheckBox>
+					</DockPanel>
+
+					<DockPanel Grid.Row="1">
+						<TextBlock Width="250">xls, xlsx</TextBlock>
+						<CheckBox x:Name="viewXlsXlsx" DockPanel.Dock="Right" Width="20" Height="20" Margin="0,0,5,0"></CheckBox>
+					</DockPanel>
+
+					<DockPanel Grid.Row="2">
+						<TextBlock Width="250">pdf</TextBlock>
+						<CheckBox x:Name="viewPdf" DockPanel.Dock="Right" Width="20" Height="20" Margin="0,0,5,0"></CheckBox>
+					</DockPanel>
+
+					<DockPanel Grid.Row="3">
+						<TextBlock Width="250">jpeg, tiff, jpg, png</TextBlock>
+						<CheckBox x:Name="viewJpegTiffJpgPng" DockPanel.Dock="Right" Width="20" Height="20" Margin="0,0,5,0"></CheckBox>
+					</DockPanel>
+					<DockPanel Grid.Row="4">
+						<TextBlock Width="250">txt, csv</TextBlock>
+						<CheckBox x:Name="viewTxtCsv" DockPanel.Dock="Right" Width="20" Height="20" Margin="0,0,5,0"></CheckBox>
+					</DockPanel>
+					<DockPanel Grid.Row="4">
+						<TextBlock Width="250">После загрузки попытаться открыть файл <LineBreak/>сразу во внешнем приложении *</TextBlock>
+						<CheckBox x:Name="openNow" DockPanel.Dock="Right" Width="20" Height="20" Margin="0,0,5,0"></CheckBox>
+					</DockPanel>
+				</StackPanel>
+
 				<TabItem.Header>
 					<StackPanel Orientation="Horizontal">
 						<Image Height="20" Width="20" Margin="0,0,5,0" Source="pack://siteoforigin:,,,/resources/view_settings.png"/>
@@ -20,14 +61,40 @@
 			</TabItem>
 			<TabItem>
 				<StackPanel>
-					<StackPanel Orientation="Horizontal">
-						<TextBlock Text="IP адрес сервера"/>
-					</StackPanel>
-					<StackPanel Orientation="Horizontal">
-						<TextBlock Text="Время обновления каталогов (сек)"/>
-					</StackPanel>
+					<Grid>
+						<Grid.RowDefinitions>
+							<RowDefinition/>
+							<RowDefinition/>
+							<RowDefinition/>
+							<RowDefinition/>
+							<RowDefinition/>
+						</Grid.RowDefinitions>
+					</Grid>
+					<DockPanel Grid.Row="0">
+						<TextBlock Width="180" VerticalAlignment="Center">IP адрес *</TextBlock>
+						<TextBox x:Name="ipTextbox" DockPanel.Dock="Right" Width="90" Height="25"></TextBox>
+					</DockPanel>
+
+					<DockPanel Grid.Row="1">
+						<TextBlock Width="230">Порт быстрого обмена сообщениями *</TextBlock>
+						<TextBox x:Name="portFastTextbox" DockPanel.Dock="Right" Width="40" Height="20"></TextBox>
+					</DockPanel>
+
+					<DockPanel Grid.Row="2">
+						<TextBlock Width="230">Порт файлового обмена сообщениями *</TextBlock>
+						<TextBox  x:Name="portFtpTextbox" DockPanel.Dock="Right" Width="40" Height="20"></TextBox>
+					</DockPanel>
+
+					<DockPanel Grid.Row="3">
+						<TextBlock Width="230">Порт резервного соединения *</TextBlock>
+						<TextBox x:Name="portReserveTextbox" DockPanel.Dock="Right" Width="40" Height="20"></TextBox>
+					</DockPanel>
+					<DockPanel Grid.Row="4">
+						<TextBlock Width="230">Интервал обновления каталогов (сек) *</TextBlock>
+						<TextBox x:Name="intervalUpdate" DockPanel.Dock="Right" Width="40" Height="20"></TextBox>
+					</DockPanel>
 				</StackPanel>
-				
+
 				<TabItem.Header>
 					<StackPanel Orientation="Horizontal">
 						<Image Height="20" Width="20" Margin="0,0,5,0" Source="pack://siteoforigin:,,,/resources/network_settings.png"/>
@@ -36,5 +103,18 @@
 				</TabItem.Header>
 			</TabItem>
 		</TabControl>
+		<StackPanel Grid.Row="1" Orientation="Horizontal">
+			<Button Click="saveSettings" Margin="5" Height="20">
+				<TextBlock Margin="5,0,5,0">
+					Сохранить
+				</TextBlock>
+			</Button>
+			<Button Margin="5" Height="20">
+				<TextBlock Margin="5,0,5,0">
+					Отмена
+				</TextBlock>
+			</Button>
+			<TextBlock Margin="5,0,0,0" HorizontalAlignment="Right" FontFamily="Sitka Banner">Поля помеченные *, не рекомендуется<LineBreak /> менять обычному пользователю</TextBlock>
+		</StackPanel>
 	</Grid>
 </Window>
