@@ -222,6 +222,19 @@ namespace contact_center_application.core
 				param2 = index.ToString()
 			};
 
+			string outputSizeFile = getHumanSize(expectedSize);
+			string output = "Получение содержимого файла... Общий размер: " + outputSizeFile;
+
+			ConnectWithFtpSocket.createSocket(addressServer, portFtp);
+			resultJson = JsonConvert.SerializeObject(objForSendToFtpSocket);
+			byte[] answerFromFunction = ConnectWithFtpSocket.sendMessageGetContentFile(resultJson, expectedSize);
+			ConnectWithFtpSocket.closeSocket();
+
+			return answerFromFunction;
+		}
+
+		private static string getHumanSize(int expectedSize)
+		{
 			string outputSizeFile = "";
 			if (expectedSize < 1024)
 				outputSizeFile = String.Format(
@@ -237,16 +250,7 @@ namespace contact_center_application.core
 			else
 				outputSizeFile = String.Format(
 					"{0} гб", (expectedSize / 1073741824.0).ToString("0.00", CultureInfo.InvariantCulture));
-
-
-			string output = "Получение содержимого файла... Общий размер: " + outputSizeFile;
-
-			ConnectWithFtpSocket.createSocket(addressServer, portFtp);
-			resultJson = JsonConvert.SerializeObject(objForSendToFtpSocket);
-			byte[] answerToFunction = ConnectWithFtpSocket.sendMessageGetContentFile(resultJson, expectedSize);
-			ConnectWithFtpSocket.closeSocket();
-
-			return answerToFunction;
+			return outputSizeFile;
 		}
 
 		public static int getFtpPort()

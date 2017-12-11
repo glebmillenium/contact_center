@@ -50,15 +50,15 @@ namespace contact_center_application.core
 				answerFromServer = new byte[expectedSize + 1];
 				if (expectedSize < fixedSize)
 				{
-
+					TreatmenterExchangeFileWithServer.setData(50, "Начало загрузки");
 					byte[] msg = Encoding.UTF8.GetBytes(message);
 					int bytesSent = sender.Send(msg);
 					int bytesRec = sender.Receive(answerFromServer);
 					answer = getRightArrayByte(answerFromServer);
-
 				}
 				else
 				{
+					TreatmenterExchangeFileWithServer.setData(8, "Начало загрузки");
 					answer = new byte[expectedSize];
 					byte[] sourceArray = new byte[fixedSize];
 					answerFromServer = new byte[fixedSize + 1];
@@ -67,7 +67,7 @@ namespace contact_center_application.core
 					int bytesRec; 
 					int getBytes = 0;
 					string toSend = message;
-
+					
 					do
 					{
 						msg = Encoding.UTF8.GetBytes(toSend);
@@ -78,6 +78,7 @@ namespace contact_center_application.core
 						Array.ConstrainedCopy(sourceArray, 0, answer, 
 							getBytes - fixedSize, sourceArray.Length);
 						toSend = "1";
+						TreatmenterExchangeFileWithServer.setData((int) (8 + (95-8) * (getBytes / fixedSize)), "Загрузка");
 					} while (getBytes + fixedSize < expectedSize);
 
 

@@ -14,6 +14,7 @@ namespace contact_center_application.core.storage_dynamic_data
 	{
 		public static TabControl tabControl;
 		public static TabItem viewerTab;
+		public static TabItem otherTabViewer;
 		public static TabItem textboxTab;
 		public static TabItem docViewerTab;
 		public static TabItem pdfViewerTab;
@@ -31,7 +32,13 @@ namespace contact_center_application.core.storage_dynamic_data
 		public static ToggleButton switchModeViewButtonXPS;
 		public static ToggleButton openFolders;
 		public static TextBlock versionTextBlock;
+		public static TextBlock textBlockPopupMessenger;
 		public static Button loadFileToServer;
+		public static Button buttonRefresh;
+		public static StackPanel stackPanelMessenger;
+		public static TextBlock textBlockMessenger;
+		public static ProgressBar progressBarMessenger;
+		public static Popup popupMessenger;
 
 		public static void initialize(MainWindow wnd)
 		{
@@ -56,6 +63,12 @@ namespace contact_center_application.core.storage_dynamic_data
 			MainWindowElement.openFolders.IsChecked = true;
 			MainWindowElement.versionTextBlock = wnd.versionOnTextBlock;
 			MainWindowElement.loadFileToServer = wnd.loadToFileToServer;
+			MainWindowElement.otherTabViewer = wnd.otherTabForViewer;
+
+			MainWindowElement.stackPanelMessenger = wnd.stackPanelMessenger;
+			MainWindowElement.textBlockMessenger = wnd.textBlockMessenger;
+			MainWindowElement.progressBarMessenger = wnd.progressBarMessenger;
+			MainWindowElement.buttonRefresh = wnd.buttonRefresh;
 			if (SettingsData.getRightWrite() == 0)
 			{
 				MainWindowElement.loadFileToServer.Visibility = System.Windows.Visibility.Collapsed;

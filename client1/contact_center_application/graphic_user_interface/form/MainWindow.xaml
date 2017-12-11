@@ -13,9 +13,9 @@
 		<Grid.RowDefinitions>
 			<RowDefinition Height="10"></RowDefinition>
 			<RowDefinition Height="30"></RowDefinition>
-			<RowDefinition Height="25"></RowDefinition>
+			<RowDefinition Height="35"></RowDefinition>
 			<RowDefinition x:Name="row3"></RowDefinition>
-			<RowDefinition Height="25"></RowDefinition>
+			<RowDefinition Height="30"></RowDefinition>
 		</Grid.RowDefinitions>
 
 
@@ -58,17 +58,25 @@
 
 		<DockPanel Grid.Row="2">
 			<StackPanel DockPanel.Dock="Left" Orientation="Horizontal">
-				<TextBlock x:Name="UpdateCatalogs" Margin="5" TextWrapping="Wrap" TextAlignment="Center" VerticalAlignment="Bottom">Меню просмотра каталогов</TextBlock>
-				<Button x:Name="ButtonUpdateCatalogs" VerticalAlignment="Top"  Width="25" Height="25" Click="ButtonUpdateCatalogs_Click">
-					<Image Width="22" Height="22" Source="pack://siteoforigin:,,,/resources/update.ico" ToolTip="Обновить"/>
-				</Button>
+				<TextBlock x:Name="UpdateCatalogs" Margin="5" TextWrapping="Wrap" TextAlignment="Center" VerticalAlignment="Center" FontFamily="Segoe UI Semibold">Меню просмотра каталогов</TextBlock>
 			</StackPanel>
 
+			<StackPanel Visibility="Hidden" x:Name="stackPanelMessenger" 
+						DockPanel.Dock="Right" HorizontalAlignment="Right" VerticalAlignment="Bottom" 
+						Orientation="Vertical" Margin="0,0,0,7">
+				<Popup Name="popupMessenger" StaysOpen="False"
+					   PlacementTarget="{Binding ElementName=stackPanelMessenger}" 
+					   >
+					<TextBlock Height="13" x:Name="textBlockPopupMessenger" HorizontalAlignment="Center" FontSize="10" Text="dasdasdsa" Foreground="#FFA24C4C"/>
+				</Popup>
+
+				<TextBlock Height="13" x:Name="textBlockMessenger" HorizontalAlignment="Center" FontSize="10" Text="nothing"/>
+				<ProgressBar Height="15" Width="300" x:Name="progressBarMessenger" />
+			</StackPanel>
 		</DockPanel>
 
 
 		<DockPanel Grid.Row="3">
-
 			<DockPanel  DockPanel.Dock="Left">
 				<StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
 					<Label  Content="Поиск"/>
@@ -166,13 +174,20 @@
 							</ScrollViewer>
 						</StackPanel>
 					</TabItem>
+
+					<TabItem x:Name="otherTabForViewer" Visibility="Collapsed">
+						<TextBlock x:Name="otherOnViewer" TextWrapping="Wrap" />
+					</TabItem>
 				</TabControl>
 
 			</StackPanel>
 		</DockPanel>
 
-		<StackPanel Margin="5" Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right" >
-			<TextBlock Text="Версия: " x:Name="versionOnTextBlock" FontSize="10"/>
-		</StackPanel>
+		<DockPanel  Margin="5" Grid.Row="4">
+			<Button ToolTip="Сведения о соединении" DockPanel.Dock="Left" x:Name="ButtonUpdateCatalogs" VerticalAlignment="Top"  Width="20" Height="20">
+				<Image Width="22" Height="22" Source="pack://siteoforigin:,,,/resources/update.ico" ToolTip="Сведения о соединении"/>
+			</Button>
+			<TextBlock HorizontalAlignment="Right" VerticalAlignment="Center" DockPanel.Dock="Right" Text="Версия: " x:Name="versionOnTextBlock" FontSize="10"/>
+		</DockPanel>
 	</Grid>
 </Window>

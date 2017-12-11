@@ -1,8 +1,10 @@
-﻿using System;
+﻿using contact_center_application.graphic_user_interface.manage_graphical_component.tree_view;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace contact_center_application.core.storage_dynamic_data
@@ -62,6 +64,27 @@ namespace contact_center_application.core.storage_dynamic_data
 				}
 			}
 			CurrentDataFileSystem.listTreeView = temporaryListTreeView;
+		}
+
+		/// <summary>
+		/// Получает содержимое, выбранной файловой системы
+		/// </summary>
+		public static void getContentFileSystem()
+		{
+			try
+			{
+				int index = Int32.Parse(
+					CurrentDataFileSystem.alianceIdPolicy[
+						CurrentDataFileSystem.ComboboxFileSystem.SelectedItem.ToString()].Item1);
+				string answer =
+					RequestDataFromServer.getCatalog(index.ToString());
+				ProcessTreeViewItem.fullingTreeView(answer);
+				MainWindowElement.buttonRefresh.Visibility = Visibility.Hidden;
+			}
+			catch (System.NullReferenceException e)
+			{
+				Logger.log(e.Message);
+			}
 		}
 	}
 }

@@ -3,11 +3,7 @@ using contact_center_application.core.storage_dynamic_data;
 using contact_center_application.graphic_user_interface.form;
 using contact_center_application.graphic_user_interface.manage_graphical_component.viewer;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -49,11 +45,11 @@ namespace contact_center_application.graphic_user_interface.manage_graphical_com
 				Tuple<bool, TreeViewItem> selectedItem = CurrentDataFileSystem.searchSelectedItem();
 
 				string relativeWay = CurrentDataFileSystem.listTreeView[selectedItem.Item2].Item2;
-				UploadWindow download = new UploadWindow(index.ToString(), relativeWay,
+				UploadWindow upload = new UploadWindow(index.ToString(), relativeWay,
 					OPF.FileName, "0");
 				try
 				{
-					download.sendFileToServer();
+					upload.sendFileToServer();
 
 				}
 				catch (Exception exp)
@@ -205,6 +201,7 @@ namespace contact_center_application.graphic_user_interface.manage_graphical_com
 		{
 			try
 			{
+				MainWindowElement.stackPanelMessenger.Visibility = Visibility.Visible;
 				Tuple<bool, TreeViewItem> selectedItem = CurrentDataFileSystem.searchSelectedItem();
 				if (selectedItem.Item1)
 				{
@@ -224,10 +221,9 @@ namespace contact_center_application.graphic_user_interface.manage_graphical_com
 					{
 						int index = Int32.Parse(CurrentDataFileSystem.alianceIdPolicy[
 							CurrentDataFileSystem.ComboboxFileSystem.SelectedItem.ToString()].Item1);
-						DownloadWindow download = new DownloadWindow(index.ToString(),
-							relativeWay);
 						MainWindowElement.window.IsEnabled = false;
-						download.getContentFileAndWriteToFile(CurrentDataOpenFile.openFile);
+						TreatmenterExchangeFileWithServer.getContentFileAndWriteToFile(
+							relativeWay);
 						MainWindowElement.window.IsEnabled = true;
 						MainWindowElement.progressConvertation.Visibility = Visibility.Visible;
 						try

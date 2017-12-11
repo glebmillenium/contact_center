@@ -88,5 +88,10 @@ namespace contact_center_application.graphic_user_interface.form
 				this.Close();
 			}
 		}
+
+		private void Button_Click_1(object sender, RoutedEventArgs e)
+		{
+			new Settings(true).ShowDialog();
+		}
 	}
 }

@@ -6,6 +6,7 @@ namespace contact_center_application.core.storage_dynamic_data
 {
 	class SettingsData
 	{
+
 		private static string directoryVersion = @"settings/version";
 		private static string directoryView = @"settings/view";
 		private static string directoryNetwork = @"settings/network";

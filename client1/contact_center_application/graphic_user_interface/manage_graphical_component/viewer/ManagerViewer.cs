@@ -24,6 +24,7 @@ namespace contact_center_application.graphic_user_interface.manage_graphical_com
 	class ManagerViewer
 	{
 		public static DocumentViewer viewer = new DocumentViewer(); //viewerTab
+		public static TextBlock otherViewer = new TextBlock(); //otherViewer
 		public static MoonPdfPanel moonPdfPanel = new MoonPdfPanel(); //background light-gray
 		public static DocViewer docViewer = new DocViewer();
 		public static Image image = new Image();
@@ -62,97 +63,166 @@ namespace contact_center_application.graphic_user_interface.manage_graphical_com
 				if (extension.Equals(".txt") || extension.Equals(".csv") ||
 					extension.Equals(".xml") || extension.Equals(".html"))
 				{
-					Logger.log("Отображение файла будет в TextBox");
-					MainWindowElement.tabControl.SelectedItem = MainWindowElement.textboxTab;
-					displayTextbox(way);
+					if (SettingsData.isViewTxtCsv())
+					{
+						viewTxtCsvHtmlXml(way);
+					}
+					else
+					{
+						notViewContentFile();
+					}
 				}
 				else if (extension.Equals(".jpeg") || extension.Equals(".tiff") ||
 					extension.Equals(".jpg") || extension.Equals(".png"))
 				{
-					Logger.log("Отображение файла будет в Image");
-					string fullWay = Path.Combine(Path.GetDirectoryName(
-									Assembly.GetExecutingAssembly().Locati‌​on), way);
-					byte[] buffer = System.IO.File.ReadAllBytes(fullWay);//сюда подставляются image
-					MemoryStream ms = new MemoryStream(buffer);
-					BitmapImage bitmap33 = new BitmapImage();
-					bitmap33.BeginInit();
-					bitmap33.StreamSource = ms;
-					bitmap33.EndInit();
-					bitmap33.Freeze();
-					ManagerViewer.image.Source = bitmap33;
-					MainWindowElement.tabControl.SelectedItem = MainWindowElement.imageTab;
-				}
-				else if (extension.Equals(".doc") || extension.Equals(".docx"))
-				{
-					if ((bool)MainWindowElement.switchModelViewButton.IsChecked)
+					if (SettingsData.isViewJpegTiffJpgPng())
 					{
-						Logger.log("Отображение файла будет в DocumentViewer");
-						MainWindowElement.tabControl.SelectedItem = MainWindowElement.viewerTab;
-
-						ManagerViewer.viewer.Document = null;
-						ManagerViewer.viewer.DataContext = null;
-						if (ManagerViewer.doc != null)
-						{
-							ManagerViewer.doc.Close();
-						}
-
-						convertDocxDocToXps(way, viewWay);
-						ManagerViewer.doc = new XpsDocument(viewWay, FileAccess.Read);
-						ManagerViewer.viewer.Document = ManagerViewer.doc.GetFixedDocumentSequence();
-						ManagerViewer.doc.Close();
+						viewJpegTiffJpgPng(way);
 					}
 					else
 					{
-						Logger.log("Отображение файла будет в docViewer");
-						ManagerViewer.docViewer.CloseDocument();
-						ManagerViewer.docViewer.LoadFromFile(way);
-						MainWindowElement.tabControl.SelectedItem = MainWindowElement.docViewerTab;
+						notViewContentFile();
+					}
+				}
+				else if (extension.Equals(".doc") || extension.Equals(".docx"))
+				{
+					if (SettingsData.isViewDocDocx())
+					{
+						viewDocDocx(way, viewWay);
+					}
+					else
+					{
+						notViewContentFile();
 					}
 				}
 				else if (extension.Equals(".xlsx") || extension.Equals(".xls"))
 				{
-					Logger.log("Отображение файла будет в viewer");
-					MainWindowElement.tabControl.SelectedItem = MainWindowElement.viewerTab;
-					ManagerViewer.viewer.Document = null;
-					ManagerViewer.viewer.DataContext = null;
-					if (ManagerViewer.doc != null)
+					if (SettingsData.isViewXlsXlsx())
 					{
-						ManagerViewer.doc.Close();
+						viewXlsXlsx(way, viewWay);
 					}
-					ManagerViewer.doc = null;
-
-					try
+					else
 					{
-						convertXlsToXps(way, viewWay);
-						ManagerViewer.doc = new XpsDocument(viewWay, FileAccess.Read);
-						ManagerViewer.viewer.Document = ManagerViewer.doc.GetFixedDocumentSequence();
-						ManagerViewer.doc.Close();
-					}
-					catch (Exception exp)
-					{
-						ManagerViewer.doc = null;
-						ManagerViewer.viewer.Document = null;
-						ManagerViewer.viewer.DataContext = null;
-						Logger.log(exp.Message);
+						notViewContentFile();
 					}
 				}
 				else if (extension.Equals(".pdf"))
 				{
-					Logger.log("Отображение файла будет в pdfviewer");
-					MainWindowElement.tabControl.SelectedItem = MainWindowElement.pdfViewerTab;
-					byte[] bytes = File.ReadAllBytes(way);
-					var source = new MemorySource(bytes);
-
-					ManagerViewer.moonPdfPanel.Open(source);
-					ManagerViewer.moonPdfPanel.PageRowDisplay =
-						MoonPdfLib.PageRowDisplayType.ContinuousPageRows;
+					if (SettingsData.isViewPdf())
+					{
+						viewPdf(way);
+					}
+					else
+					{
+						notViewContentFile();
+					}
 				}
 				else
 				{
+					MainWindowElement.tabControl.SelectedItem = MainWindowElement.otherTabViewer;
+					otherViewer.Text = "Формат загруженного файла неизвестен";
+				}
+			}
+		}
 
+		private static void notViewContentFile()
+		{
+			MainWindowElement.tabControl.SelectedItem = MainWindowElement.otherTabViewer;
+			otherViewer.Text = "Режим отображения файла отключен, " +
+				"Содержимое файла можно просмотреть в любом внешнем приложении. " +
+				"Для просмотра в программе установите соотвествующий" +
+				" флаг в настройках приложения";
+		}
+
+		private static void viewPdf(string way)
+		{
+			Logger.log("Отображение файла будет в pdfviewer");
+			MainWindowElement.tabControl.SelectedItem = MainWindowElement.pdfViewerTab;
+			byte[] bytes = File.ReadAllBytes(way);
+			var source = new MemorySource(bytes);
+
+			ManagerViewer.moonPdfPanel.Open(source);
+			ManagerViewer.moonPdfPanel.PageRowDisplay =
+				MoonPdfLib.PageRowDisplayType.ContinuousPageRows;
+		}
+
+		private static void viewXlsXlsx(string way, string viewWay)
+		{
+			Logger.log("Отображение файла будет в viewer");
+			MainWindowElement.tabControl.SelectedItem = MainWindowElement.viewerTab;
+			ManagerViewer.viewer.Document = null;
+			ManagerViewer.viewer.DataContext = null;
+			if (ManagerViewer.doc != null)
+			{
+				ManagerViewer.doc.Close();
+			}
+			ManagerViewer.doc = null;
+
+			try
+			{
+				convertXlsToXps(way, viewWay);
+				ManagerViewer.doc = new XpsDocument(viewWay, FileAccess.Read);
+				ManagerViewer.viewer.Document = ManagerViewer.doc.GetFixedDocumentSequence();
+				ManagerViewer.doc.Close();
+			}
+			catch (Exception exp)
+			{
+				ManagerViewer.doc = null;
+				ManagerViewer.viewer.Document = null;
+				ManagerViewer.viewer.DataContext = null;
+				Logger.log(exp.Message);
+			}
+		}
+
+		private static void viewDocDocx(string way, string viewWay)
+		{
+			if ((bool)MainWindowElement.switchModelViewButton.IsChecked)
+			{
+				Logger.log("Отображение файла будет в DocumentViewer");
+				MainWindowElement.tabControl.SelectedItem = MainWindowElement.viewerTab;
+
+				ManagerViewer.viewer.Document = null;
+				ManagerViewer.viewer.DataContext = null;
+				if (ManagerViewer.doc != null)
+				{
+					ManagerViewer.doc.Close();
 				}
 
+				convertDocxDocToXps(way, viewWay);
+				ManagerViewer.doc = new XpsDocument(viewWay, FileAccess.Read);
+				ManagerViewer.viewer.Document = ManagerViewer.doc.GetFixedDocumentSequence();
+				ManagerViewer.doc.Close();
 			}
+			else
+			{
+				Logger.log("Отображение файла будет в docViewer");
+				ManagerViewer.docViewer.CloseDocument();
+				ManagerViewer.docViewer.LoadFromFile(way);
+				MainWindowElement.tabControl.SelectedItem = MainWindowElement.docViewerTab;
+			}
+		}
+
+		private static void viewJpegTiffJpgPng(string way)
+		{
+			Logger.log("Отображение файла будет в Image");
+			string fullWay = Path.Combine(Path.GetDirectoryName(
+							Assembly.GetExecutingAssembly().Locati‌​on), way);
+			byte[] buffer = System.IO.File.ReadAllBytes(fullWay);//сюда подставляются image
+			MemoryStream ms = new MemoryStream(buffer);
+			BitmapImage bitmap33 = new BitmapImage();
+			bitmap33.BeginInit();
+			bitmap33.StreamSource = ms;
+			bitmap33.EndInit();
+			bitmap33.Freeze();
+			ManagerViewer.image.Source = bitmap33;
+			MainWindowElement.tabControl.SelectedItem = MainWindowElement.imageTab;
+		}
+
+		private static void viewTxtCsvHtmlXml(string way)
+		{
+			Logger.log("Отображение файла будет в TextBox");
+			MainWindowElement.tabControl.SelectedItem = MainWindowElement.textboxTab;
+			displayTextbox(way);
 		}
 
 		/// <summary>
@@ -304,6 +374,8 @@ namespace contact_center_application.graphic_user_interface.manage_graphical_com
 			ManagerViewer.docViewer.Width = ManagerViewer.viewer.Width;
 			ManagerViewer.moonPdfPanel.Height = ManagerViewer.viewer.Height;
 			ManagerViewer.moonPdfPanel.Width = ManagerViewer.viewer.Width;
+			ManagerViewer.otherViewer.Height = ManagerViewer.viewer.Height;
+			ManagerViewer.otherViewer.Width = ManagerViewer.viewer.Width;
 		}
 
 		public static void switchViewXPSMode()

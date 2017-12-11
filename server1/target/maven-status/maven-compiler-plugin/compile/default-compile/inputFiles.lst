@@ -2,6 +2,7 @@ C:\contact_center\server1\src\main\java\es\irkutskenergo\other\Logging.java
 C:\contact_center\server1\src\main\java\es\irkutskenergo\server\netty\PlayerWorkerThread.java
 C:\contact_center\server1\src\main\java\es\irkutskenergo\server\netty\Packet.java
 C:\contact_center\server1\src\main\java\es\irkutskenergo\server\ftp\SenderData.java
+C:\contact_center\server1\src\main\java\es\irkutskenergo\core\command\InteractiveWithDataBase.java
 C:\contact_center\server1\src\main\java\es\irkutskenergo\server\netty\fast\FastServerPipeLineFactory.java
 C:\contact_center\server1\src\main\java\es\irkutskenergo\server\netty\Server.java
 C:\contact_center\server1\src\main\java\es\irkutskenergo\server\netty\PacketFrameEncoder.java
@@ -18,6 +19,7 @@ C:\contact_center\server1\src\main\java\es\irkutskenergo\server\netty\ServerPipe
 C:\contact_center\server1\src\main\java\es\irkutskenergo\serialization\CatalogForSerialization.java
 C:\contact_center\server1\src\main\java\es\irkutskenergo\server\netty\PacketFrameDecoder.java
 C:\contact_center\server1\src\main\java\es\irkutskenergo\server\netty\PlayerHandler.java
+C:\contact_center\server1\src\main\java\es\irkutskenergo\core\command\ProcessFileCommands.java
 C:\contact_center\server1\src\main\java\es\irkutskenergo\server\netty\fast\FastServer.java
 C:\contact_center\server1\src\main\java\es\irkutskenergo\main\Main.java
 C:\contact_center\server1\src\main\java\es\irkutskenergo\other\ExceptionServer.java

@@ -21,7 +21,21 @@ namespace contact_center_application.graphic_user_interface.form
     public partial class Settings : Window
     {
 		public static int maxSecondsWaitUploadFileSystem = 5;
-        public Settings()
+
+		public Settings(bool auth)
+		{
+
+			InitializeComponent();
+			if (auth)
+			{
+				this.tabItemView.Visibility = Visibility.Collapsed;
+				this.tabItemNetwork.Visibility = Visibility.Collapsed;
+				tabControl.SelectedItem = this.tabItemNetwork;
+			}
+			setDataInView();
+		}
+
+		public Settings()
         {
             InitializeComponent();
 			setDataInView();
@@ -59,11 +73,23 @@ namespace contact_center_application.graphic_user_interface.form
 				SettingsData.setFtpPort(Int32.Parse(this.portFtpTextbox.Text));
 				SettingsData.setReservePort(Int32.Parse(this.portReserveTextbox.Text));
 				SettingsData.setIntervalUpdate(Int32.Parse(this.intervalUpdate.Text));
+				MessageBox.Show("Настройки успешно сохранены", "Успешное выполнение");
+				this.Close();
 			}
 			catch (FormatException formatException)
 			{
-				MessageBox.Show("","", MessageBoxButton.YesNo);
+				if (MessageBox.Show("Произошла ошибка записи, некоторые данные некорретны. Желаете изменить данные?",
+					"Ошибка сохранения", MessageBoxButton.YesNo) == MessageBoxResult.No)
+				{
+					this.Close();
+				};
 			}
+
+		}
+
+		private void Button_Click(object sender, RoutedEventArgs e)
+		{
+			this.Close();
 		}
 	}
 }

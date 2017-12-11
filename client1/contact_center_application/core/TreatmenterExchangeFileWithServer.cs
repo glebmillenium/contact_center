@@ -1,9 +1,15 @@
-﻿using contact_center_application.core.storage_dynamic_data;
+﻿using contact_center_application.core.serialization;
+using contact_center_application.core.storage_dynamic_data;
 using contact_center_application.graphic_user_interface.form;
 using contact_center_application.graphic_user_interface.manage_graphical_component.viewer;
+using Newtonsoft.Json;
 using System;
+using System.Globalization;
 using System.IO;
+using System.Net;
+using System.Net.Sockets;
 using System.Reflection;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -11,6 +17,7 @@ namespace contact_center_application.core
 {
 	class TreatmenterExchangeFileWithServer
 	{
+
 		public static void sendFileToServer()
 		{
 			int index = Int32.Parse(CurrentDataFileSystem.alianceIdPolicy[
@@ -57,22 +64,6 @@ namespace contact_center_application.core
 			}
 		}
 
-		/// <summary>
-		/// Функция осуществляет побайтовую запись в файл
-		/// </summary>
-		/// <param name="relativeWay"></param>
-		/// <param name="contentFile"></param>
-		public static void writeToFile(string relativeWay, byte[] contentFile)
-		{
-			string directoryWay = Path.GetDirectoryName(relativeWay);
-			Directory.CreateDirectory(directoryWay);
-			if (File.Exists(relativeWay))
-			{
-				File.Delete(relativeWay);
-			}
-			File.WriteAllBytes(relativeWay, contentFile);
-		}
-
 		public static void loadFileToServer()
 		{
 			if (!CurrentDataOpenFile.dateOpenFile.Equals(File.GetLastWriteTime(CurrentDataOpenFile.openFile)))
@@ -91,6 +82,78 @@ namespace contact_center_application.core
 					TreatmenterExchangeFileWithServer.sendFileToServer();
 				}
 			}
+		}
+
+		public static void getContentFileAndWriteToFile(string relativeWay)
+		{
+			setData(2, "Сбор сведений о файле");
+			try
+			{
+				clearFilesFromTempDirectory(relativeWay);
+				setData(5, "Сбор сведений о файле");
+				string aliance = CurrentDataFileSystem.alianceIdPolicy[
+					CurrentDataFileSystem.ComboboxFileSystem.SelectedItem.ToString()].Item1;
+				setData(7, "Загрузка файла");
+				byte[] result = RequestDataFromServer.getContentFile(aliance, relativeWay);
+				setData(95, "Файл успешно загружен");
+				writeToFile("tmp\\" + relativeWay, result);
+			}
+			catch (Exception e)
+			{
+				throw e;
+			}
+		}
+
+		private static void clearFilesFromTempDirectory(string relativeWay)
+		{
+			string directoryWay = System.IO.Path.GetDirectoryName(relativeWay);
+			Directory.CreateDirectory(directoryWay);
+			if (File.Exists(relativeWay))
+			{
+				File.Delete(relativeWay);
+			}
+		}
+
+		/// <summary>
+		/// Функция осуществляет побайтовую запись в файл
+		/// </summary>
+		/// <param name="relativeWay"></param>
+		/// <param name="contentFile"></param>
+		public static void writeToFile(string relativeWay, byte[] contentFile)
+		{
+			string directoryWay = Path.GetDirectoryName(relativeWay);
+			Directory.CreateDirectory(directoryWay);
+			if (File.Exists(relativeWay))
+			{
+				File.Delete(relativeWay);
+			}
+			File.WriteAllBytes(relativeWay, contentFile);
+		}
+
+		private static string getHumanSize(int expectedSize)
+		{
+			string outputSizeFile = "";
+			if (expectedSize < 1024)
+				outputSizeFile = String.Format(
+					"{0} байт", expectedSize);
+			else if (expectedSize < 1048576)
+				outputSizeFile = String.Format(
+					"{0} кб", (expectedSize / 1024.0).ToString(
+					"0.00", CultureInfo.InvariantCulture));
+			else if (expectedSize < 1073741824)
+				outputSizeFile = String.Format(
+					"{0} мб", (expectedSize / 1048576.0).ToString(
+					"0.00", CultureInfo.InvariantCulture));
+			else
+				outputSizeFile = String.Format(
+					"{0} гб", (expectedSize / 1073741824.0).ToString("0.00", CultureInfo.InvariantCulture));
+			return outputSizeFile;
+		}
+
+		public static void setData(int value, string describe)
+		{
+			MainWindowElement.progressBarMessenger.Value = value;
+			MainWindowElement.textBlockMessenger.Text = describe;
 		}
 	}
 }

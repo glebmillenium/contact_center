@@ -8,7 +8,6 @@ using System;
 using System.IO;
 using System.Diagnostics;
 using System.Threading;
-using contact_center_application.graphic_user_interface.manage_graphical_component;
 using System.Reflection;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -31,13 +30,12 @@ namespace contact_center_application.graphic_user_interface.form
 		{
 			Logger.initialize();
 			InitializeComponent();
-	
 			MainWindowElement.initialize(this);
 			ManagerViewer.textbox = this.textboxDisplay;
+			ManagerViewer.otherViewer = this.otherOnViewer;
 			CurrentDataFileSystem.ComboboxFileSystem = this.ComboboxChooseFileSystem;
 			CurrentDataFileSystem.treeViewCatalog = treeViewCatalogFileSystem;
 			MainWindowElement.versionTextBlock.Text += SettingsData.getVersion();
-
 			//  DispatcherTimer setup
 			System.Windows.Threading.DispatcherTimer dispatcherTimer = new System.Windows.Threading.DispatcherTimer();
 			dispatcherTimer.Tick += new EventHandler(dispatcherTimer_Tick);
@@ -67,27 +65,6 @@ namespace contact_center_application.graphic_user_interface.form
 		{
 			SynchronizationContext uiContext = state as SynchronizationContext;
 			uiContext.Post(firstExchangeWithServer, "");
-		}
-
-		/// <summary>
-		/// Получает содержимое, выбранной файловой системы
-		/// </summary>
-		private void getContentFileSystem()
-		{
-			try
-			{
-				int index = Int32.Parse(
-					CurrentDataFileSystem.alianceIdPolicy[
-						CurrentDataFileSystem.ComboboxFileSystem.SelectedItem.ToString()].Item1);
-				string answer =
-					RequestDataFromServer.getCatalog(index.ToString());
-				ProcessTreeViewItem.fullingTreeView(answer);
-				buttonRefresh.Visibility = Visibility.Hidden;
-			}
-			catch (System.NullReferenceException e)
-			{
-				Logger.log(e.Message);
-			}
 		}
 
 		/// <summary>
@@ -130,7 +107,7 @@ namespace contact_center_application.graphic_user_interface.form
 			SelectionChangedEventArgs e)
 		{
 			ManagerViewer.callGarbage();
-			getContentFileSystem();
+			CurrentDataFileSystem.getContentFileSystem();
 		}		
 
 		/// <summary>
@@ -178,15 +155,9 @@ namespace contact_center_application.graphic_user_interface.form
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
-		private void ButtonUpdateCatalogs_Click(object sender, RoutedEventArgs e)
+		public static void ButtonUpdateCatalogs_Click(object sender, RoutedEventArgs e)
 		{
-			ManagerViewer.updateCatalog = true;
-			TreeViewItem selectedItem = CurrentDataFileSystem.searchSelectedItem().Item2;
-			FilterTreeViewItem.resetFlagsInTreeViewItem();
-			getContentFileSystem();
-			CurrentDataFileSystem.deleteNotNeedItemsInTreeViewItem(selectedItem);
-			selectedItem.IsSelected = true;
-			ManagerViewer.updateCatalog = false;
+			EventsForButtons.ButtonUpdateCatalogs_Click(sender, e);
 		}
 
 		/// <summary>

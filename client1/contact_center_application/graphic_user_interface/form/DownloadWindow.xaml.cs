@@ -37,6 +37,7 @@ namespace contact_center_application.graphic_user_interface.form
 		public void getContentFileAndWriteToFile(string relativeWay)
 		{
 			this.Show();
+			MainWindowElement.stackPanelMessenger.Visibility = Visibility.Visible;
 			try
 			{
 				string directoryWay = System.IO.Path.GetDirectoryName(relativeWay);
@@ -170,8 +171,8 @@ namespace contact_center_application.graphic_user_interface.form
 
 		private void setData(int value, string describe)
 		{
-			progressBar.Value = value;
-			info.Text = describe;
+			MainWindowElement.progressBarMessenger.Value = value;
+			MainWindowElement.textBlockMessenger.Text = describe;
 			Refresh();
 		}
 
