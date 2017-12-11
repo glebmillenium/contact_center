@@ -259,6 +259,7 @@ namespace contact_center_application.graphic_user_interface.manage_graphical_com
 					}
 					MainWindowElement.managerPanel.Visibility = Visibility.Visible;
 					MainWindowElement.cursor = Cursors.Arrow;
+					MainWindowElement.stackPanelMessenger.Visibility = Visibility.Hidden;
 				}
 			}
 			catch (Exception exp)

@@ -78,7 +78,8 @@ namespace contact_center_application.core
 						Array.ConstrainedCopy(sourceArray, 0, answer, 
 							getBytes - fixedSize, sourceArray.Length);
 						toSend = "1";
-						TreatmenterExchangeFileWithServer.setData((int) (8 + (95-8) * (getBytes / fixedSize)), "Загрузка");
+						double track = 8.0 + (95.0 - 8.0) * ((double) getBytes / expectedSize);
+						TreatmenterExchangeFileWithServer.setData((int) track, "Загрузка");
 					} while (getBytes + fixedSize < expectedSize);
 
 
