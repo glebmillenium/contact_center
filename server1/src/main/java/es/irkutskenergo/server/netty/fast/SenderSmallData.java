@@ -161,7 +161,7 @@ public class SenderSmallData {
      */
     private void sendToClient(String response) throws UnsupportedEncodingException
     {
-        if(ctx.channel().isWritable())
+        if (ctx.channel().isWritable())
         {
             ctx.channel().writeAndFlush(Unpooled.wrappedBuffer((response + "\0").getBytes("UTF-8")));
         }
@@ -217,6 +217,12 @@ public class SenderSmallData {
                         + ctx.channel().toString() + ") Номер запроса: "
                         + this.numberConnect, 1);
                 result = getContentFile(obj);
+            } else if (obj.command.equals("get_update"))
+            {
+                Logging.log("Обработка запроса на получение содержимого файла "
+                        + "для обновления " + ctx.channel().toString()
+                        + ") Номер запроса: " + this.numberConnect, 1);
+                result = getFileForRemoteUpdate(obj);
             } else if (obj.command.equals("try_remove"))
             {
                 Logging.log("Обработка запроса на удаление файла из файловой "
@@ -247,6 +253,18 @@ public class SenderSmallData {
                         + ctx.channel().toString()
                         + ") Номер запроса: " + this.numberConnect, 1);
                 result = testConnectionWithFastSocket(obj);
+            } else if (obj.command.equals("get_version"))
+            {
+                Logging.log("Получение версии " + obj.param1 + " "
+                        + ctx.channel().toString()
+                        + ") Номер запроса: " + this.numberConnect, 1);
+                result = getVersion(obj);
+            } else if (obj.command.equals("get_difference_version"))
+            {
+                Logging.log("Получение расхождений в версиях "
+                        + ctx.channel().toString()
+                        + ") Номер запроса: " + this.numberConnect, 1);
+                result = getDifferenceInVersion(obj);
             } else if (obj.command.equals("auth"))
             {
                 Logging.log("Авторизация пользователя с сервером "
@@ -357,6 +375,24 @@ public class SenderSmallData {
                 resultInFtp.length);
         String result = this.mapper.writeValueAsString(
                 new ObjectForSerialization("catalog",
+                        expectedSize, Storage.sendToStorageInFtpServer(false,
+                                obj.command, resultInFtp, new byte[]
+                                {
+                })
+                ));
+        return result;
+    }
+
+    private String getVersion(ObjectForSerialization obj) throws IOException
+    {
+        byte[] resultInFtp
+                = (getAllFolder("update_storage//" + obj.param1)
+                        + "\0").getBytes("UTF-8");
+
+        String expectedSize = Integer.toString(
+                resultInFtp.length);
+        String result = this.mapper.writeValueAsString(
+                new ObjectForSerialization("version",
                         expectedSize, Storage.sendToStorageInFtpServer(false,
                                 obj.command, resultInFtp, new byte[]
                                 {
@@ -638,7 +674,7 @@ public class SenderSmallData {
     {
         String login;
         String password;
-        
+
         try
         {
             login = new String(obj.param4_array, "UTF-8");
@@ -687,5 +723,39 @@ public class SenderSmallData {
         }
 
         return result;
+    }
+
+    private String getDifferenceInVersion(ObjectForSerialization obj) throws IOException
+    {
+        String currentVersion = obj.param1;
+        String[] differenceInVersions = InteractiveWithDataBase.getDifferenceVersion(currentVersion);
+
+        byte[] resultInFtp
+                = (this.mapper.writeValueAsString(differenceInVersions)
+                        + "\0").getBytes("UTF-8");
+
+        String expectedSize = Integer.toString(resultInFtp.length);
+        return this.mapper.writeValueAsString(
+                new ObjectForSerialization("version",
+                        expectedSize, Storage.sendToStorageInFtpServer(false,
+                                obj.command, resultInFtp, new byte[]
+                                {
+                })));
+    }
+
+    private String getFileForRemoteUpdate(ObjectForSerialization obj) throws UnsupportedEncodingException, IOException
+    {
+        String path = obj.param1 + "//" + (new String(obj.param4_array, "UTF-8"));
+        Logging.log("Обработка запроса на получение файла по пути: " + path
+                + " Канал " + ctx.channel().toString() + ") Номер запроса: "
+                + this.numberConnect, 1);
+        byte[] resultInFtp = getFileInArrayByte(path);
+        String expectedSize = Integer.toString(resultInFtp.length);
+        return this.mapper.writeValueAsString(
+                new ObjectForSerialization("update",
+                        expectedSize, Storage.sendToStorageInFtpServer(false,
+                                obj.command, resultInFtp, new byte[]
+                                {
+                })));
     }
 }

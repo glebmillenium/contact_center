@@ -20,7 +20,9 @@
 		<StackPanel Margin="7" Grid.Row="0">
 			
 		</StackPanel>
-			<ProgressBar Margin="10" Grid.Row="1"></ProgressBar>
-		<StackPanel Margin="7" Grid.Row="2"></StackPanel>
+		
+		<ProgressBar x:Name="bar" Margin="10" Grid.Row="1"></ProgressBar>
+		<TextBlock HorizontalAlignment="Center" x:Name="info" Grid.Row="2"></TextBlock>
+
 	</Grid>
 </Window>

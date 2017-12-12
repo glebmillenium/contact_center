@@ -61,12 +61,13 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="CatalogForSerialization.cs" />
     <Compile Include="ConnectWithFastSocket.cs" />
     <Compile Include="ConnectWithFtpSocket.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="ObjectForSerialization.cs" />
+    <Compile Include="RequestDataFromServer.cs" />
     <Compile Include="SettingsData.cs" />
-    <Compile Include="UpdateRootCatalog.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

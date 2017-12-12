@@ -9,8 +9,13 @@ import es.irkutskenergo.other.Triple;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -33,6 +38,35 @@ public class InteractiveWithDataBase {
             right = -1;
         }
         return right;
+    }
+
+    public static String[] getDifferenceVersion(String version)
+    {
+        BufferedReader reader = null;
+        try
+        {
+            List<String> result = new ArrayList<String>();
+            reader = new BufferedReader(new FileReader("history_update"));
+            String line;
+            boolean find = false;
+            while ((line = reader.readLine()) != null)
+            {
+                if(find || line.equals(version))
+                {
+                    result.add(line);
+                    find = true;
+                }
+            }   
+            String[] result2 = new String[result.size()];
+            for(int i = 0; i < result.size(); i++)
+            {
+                result2[i] = result.get(i);
+            }
+            return result2;
+        } catch (IOException ex)
+        {
+            return new String[] {};
+        }
     }
 
     public static Map<String, Triple<String, String, String>> getRootAliance()

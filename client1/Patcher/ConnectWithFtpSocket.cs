@@ -20,7 +20,7 @@ namespace Patcher
 
 			sender = new Socket(ipAddr.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
 			sender.Connect(ipEndPoint);
-			//sender.SendTimeout = 10000;
+			sender.SendTimeout = 4000;
 			realization = true;
 		}
 
@@ -50,15 +50,15 @@ namespace Patcher
 				answerFromServer = new byte[expectedSize + 1];
 				if (expectedSize < fixedSize)
 				{
-
+					//TreatmenterExchangeFileWithServer.setData(50, "Начало загрузки");
 					byte[] msg = Encoding.UTF8.GetBytes(message);
 					int bytesSent = sender.Send(msg);
 					int bytesRec = sender.Receive(answerFromServer);
 					answer = getRightArrayByte(answerFromServer);
-
 				}
 				else
 				{
+					//TreatmenterExchangeFileWithServer.setData(8, "Начало загрузки");
 					answer = new byte[expectedSize];
 					byte[] sourceArray = new byte[fixedSize];
 					answerFromServer = new byte[fixedSize + 1];
@@ -67,7 +67,7 @@ namespace Patcher
 					int bytesRec; 
 					int getBytes = 0;
 					string toSend = message;
-
+					
 					do
 					{
 						msg = Encoding.UTF8.GetBytes(toSend);
@@ -78,6 +78,8 @@ namespace Patcher
 						Array.ConstrainedCopy(sourceArray, 0, answer, 
 							getBytes - fixedSize, sourceArray.Length);
 						toSend = "1";
+						double track = 8.0 + (95.0 - 8.0) * ((double) getBytes / expectedSize);
+						//TreatmenterExchangeFileWithServer.setData((int) track, "Загрузка");
 					} while (getBytes + fixedSize < expectedSize);
 
 

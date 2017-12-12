@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿using Newtonsoft.Json;
+using System;
+using System.IO;
 using System.Windows;
 
 namespace Patcher
@@ -11,35 +13,73 @@ namespace Patcher
 		public MainWindow()
 		{
 			InitializeComponent();
-
-			/**string PathFolderBack = Path.GetDirectoryName(Directory.GetCurrentDirectory());
-			SettingsData.setDirectorySettings(PathFolderBack + @"/settings/ip_connect",
-				PathFolderBack + @"/settings/port_ftp", PathFolderBack + @"/settings/port_fast",
-				PathFolderBack + @"/settings/version");
-
-			string address = SettingsData.getAddress();
-			int fastPort = SettingsData.getFastPort();
-			int ftpPort = SettingsData.getFtpPort();
-			ObjectForSerialization objForSendToFastSocket = new ObjectForSerialization
+			setData(0, "Все компоненты программы обновлены");
+			RequestDataFromServer.createConnection();
+			string version = SettingsData.getVersion();
+			string[] requirementVersionForUpdate = RequestDataFromServer.getDifferenceVersion(version);
+			if (requirementVersionForUpdate == null || requirementVersionForUpdate.Length == 0)
 			{
-				command = "test_fast_socket",
-			};
-			string resultJson = JsonConvert.SerializeObject(objForSendToFastSocket);
-			ConnectWithFastSocket.createSocket(address, port);
-			string answer = ConnectWithFastSocket.sendMessage(resultJson, 8192);
-			ObjectForSerialization objResponseFromFastSocket =
-				JsonConvert.DeserializeObject<ObjectForSerialization>(answer);
-			if (objResponseFromFastSocket != null
-				|| objResponseFromFastSocket.command.Equals("answer_on_test_fast_socket")
-				&& objResponseFromFastSocket.param1.Equals("true"))
-			{
-
-				Logger.log("Сокет передачи данных по fast_server - открыт");
+				MessageBox.Show("Приложение имеет актуальную версию", "");
+				setData(100, "Все компоненты программы обновлены");
+			} else {
+				string versionString = "";
+				foreach (var arg in requirementVersionForUpdate)
+				{
+					versionString += arg + ", ";
+				}
+				versionString = versionString.Remove(versionString.Length - 2, 2);
+				if (MessageBox.Show("Приложение будет обновлено до версии: "
+					+ versionString,
+					"Обновление", MessageBoxButton.OKCancel) == MessageBoxResult.OK)
+				{
+					setData(10, "Начало обновления");
+					int i = 0;
+					foreach (var arg in requirementVersionForUpdate)
+					{
+						setData((int) (10 + 90.0 * i / requirementVersionForUpdate.Length), 
+							"Обновление до версии: " + arg);
+						updateFilesApplication(RequestDataFromServer.getVersion(arg), arg);
+						i++;
+					}
+					SettingsData.setVersion(requirementVersionForUpdate[requirementVersionForUpdate.Length - 1]);
+					setData(100, "Все компоненты программы обновлены");
+				}
+				else
+				{
+					this.Close();
+				};
 			}
-			else
+		}
+
+		private void updateFilesApplication(string[] json, string version, string currentWay = "")
+		{
+			CatalogForSerialization catalogSerialization;
+			foreach (var arg1 in json)
 			{
-				Logger.log("Сокет передачи данных по fast_server - закрыт");
-			}*/
+				catalogSerialization =
+					JsonConvert.DeserializeObject<CatalogForSerialization>(arg1);
+				byte[] dataWriteToFile;
+				if (catalogSerialization.file)
+				{
+					if (!Directory.Exists(".\\" + currentWay))
+					{
+						Directory.CreateDirectory(".\\" + currentWay);
+					}
+					dataWriteToFile = RequestDataFromServer.getFileForUpdateNewVersion(version, currentWay);
+					File.WriteAllBytes(".\\" + currentWay + "\\" + catalogSerialization.name, dataWriteToFile);
+				}
+				if (catalogSerialization.content != null)
+				{
+					updateFilesApplication(JsonConvert.DeserializeObject<string[]>(catalogSerialization.content), version, 
+						currentWay + "\\" + catalogSerialization.name);
+				}
+			}
+		}
+
+		private void setData(int value, string info)
+		{
+			this.bar.Value = value;
+			this.info.Text = info;
 		}
 	}
 }
