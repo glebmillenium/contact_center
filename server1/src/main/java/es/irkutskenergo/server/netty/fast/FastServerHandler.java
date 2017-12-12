@@ -1,14 +1,19 @@
 package es.irkutskenergo.server.netty.fast;
 
 import es.irkutskenergo.other.Logging;
-import org.jboss.netty.channel.ChannelEvent;
-import org.jboss.netty.channel.ChannelHandlerContext;
-import org.jboss.netty.channel.ChannelStateEvent;
-import org.jboss.netty.channel.ExceptionEvent;
-import org.jboss.netty.channel.MessageEvent;
-import org.jboss.netty.channel.SimpleChannelUpstreamHandler;
+//import org.jboss.netty.channel.ChannelEvent;
+//import org.jboss.netty.channel.ChannelHandlerContext;
+//import org.jboss.netty.channel.ChannelStateEvent;
+//import org.jboss.netty.channel.ExceptionEvent;
+//import org.jboss.netty.channel.MessageEvent;
+//import org.jboss.netty.channel.SimpleChannelUpstreamHandler;
 
-public class FastServerHandler extends SimpleChannelUpstreamHandler {
+import io.netty.buffer.ByteBuf;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelInboundHandlerAdapter;
+import java.nio.charset.Charset;
+
+public class FastServerHandler extends ChannelInboundHandlerAdapter {
 
     SenderSmallData senderSmallData;
 
@@ -18,61 +23,53 @@ public class FastServerHandler extends SimpleChannelUpstreamHandler {
     }
 
     @Override
-    public void handleUpstream(ChannelHandlerContext ctx, ChannelEvent e) throws Exception
-    {
-        super.handleUpstream(ctx, e);
-    }
-
-    @Override
-    public void channelConnected(ChannelHandlerContext ctx, ChannelStateEvent e) throws Exception
+    public void channelRegistered(ChannelHandlerContext ctx) throws Exception
     {
         Logging.log("Клиент присоединился к серверу: "
-                + ctx.getChannel().getRemoteAddress() + " (" + ctx.getChannel()
-                .getId() + ")", 1);
-        senderSmallData = new SenderSmallData(e.getChannel());
+                + ctx.channel().remoteAddress().toString() + " (" + ctx.channel()
+                .id() + ")", 1);
     }
 
     @Override
-    public void channelClosed(ChannelHandlerContext ctx, ChannelStateEvent e) throws Exception
+    public void channelRead(ChannelHandlerContext ctx, Object msg)
     {
-        Logging.log("Соединение с сервером было закрыто " + ctx.getChannel().getRemoteAddress()
-                + " (" + ctx.getChannel().getId() + ")", 1);
-        this.senderSmallData = null;
-        ctx.getChannel().close();
-        ctx.getChannel().disconnect();
-        System.gc();
-    }
-
-    @Override
-    public void messageReceived(ChannelHandlerContext ctx, MessageEvent e)
-    {
+        // (2)
+        // Discard the received data silently.
+        SenderSmallData senderSmallData = new SenderSmallData(ctx);
         try
         {
-            Logging.log("Получено сообщение от " + ctx.getChannel().getRemoteAddress()
-                    + " (" + ctx.getChannel().getId() + ")", 1);
+            Logging.log("Получено сообщение от " + ctx.channel().remoteAddress()
+                    + " (" + ctx.channel().id() + ")", 1);
 
             System.out.println("Thread: Main FAST");
             Logging.log("Thread: Main FAST", 4);
-            senderSmallData.process(e.getMessage().toString());
+            senderSmallData.process(((ByteBuf) msg).toString(Charset.forName("UTF-8")));
         } catch (Exception ex)
         {
             Logging.log("Критическая ошибка в главном потоке Netty: "
                     + ex.getMessage(), 1);
         }
+        //((ByteBuf) msg).release(); // (3)
     }
 
+
     @Override
-    public void channelDisconnected(ChannelHandlerContext ctx, ChannelStateEvent e) throws Exception
+    public void channelUnregistered(ChannelHandlerContext ctx) throws Exception
     {
-        channelClosed(ctx, e);
+        Logging.log("Соединение с сервером было закрыто " + ctx.channel().remoteAddress()
+                + " (" + ctx.channel().id() + ")", 1);
+        this.senderSmallData = null;
+        ctx.channel().disconnect();
+        ctx.channel().close();
+        System.gc();
     }
 
     @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, ExceptionEvent e)
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause)
     {
         Logging.log("Ошибка при передаче данных ("
-                + ctx.getChannel().getRemoteAddress() + "): "
-                + e.getCause() + " (" + ctx.getChannel().getId() + ")", 1);
-        e.getChannel().close();
+                + ctx.channel().remoteAddress() + "): "
+                + cause.getMessage() + " (" + ctx.channel().id() + ")", 1);
+        ctx.close();
     }
 }

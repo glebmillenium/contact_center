@@ -5,11 +5,13 @@ import es.irkutskenergo.other.ExceptionServer;
 import es.irkutskenergo.other.Logging;
 import es.irkutskenergo.other.Storage;
 import es.irkutskenergo.other.Triple;
-import org.jboss.netty.channel.Channel;
+import io.netty.channel.Channel;
 import es.irkutskenergo.serialization.ObjectForSerialization;
 import java.io.IOException;
 import org.codehaus.jackson.map.ObjectMapper;
 import es.irkutskenergo.serialization.CatalogForSerialization;
+import io.netty.buffer.Unpooled;
+import io.netty.channel.ChannelHandlerContext;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -45,7 +47,7 @@ public class SenderSmallData {
     /**
      * @param Channel
      */
-    private Channel channel;
+    private ChannelHandlerContext ctx;
     /**
      * Команда поступившая от клиента в форме JSON запроса
      *
@@ -94,11 +96,11 @@ public class SenderSmallData {
      * @param channel
      * @param commandFromClient
      */
-    public SenderSmallData(Channel channel)
+    public SenderSmallData(ChannelHandlerContext ctx)
     {
         super();
         //setName("Fast Swap Server");
-        this.channel = channel;
+        this.ctx = ctx;
         this.mapper = new ObjectMapper();
         SenderSmallData.aliance = InteractiveWithDataBase.getRootAliance();
 
@@ -134,7 +136,7 @@ public class SenderSmallData {
                         new ObjectForSerialization("error",
                                 "0", "Произошла ошибка при выполнении команды"));
                 Logging.log("Произошла ошибка при выполнении команды."
-                        + " Клиент " + channel.toString()
+                        + " Клиент " + ctx.channel().toString()
                         + " Номер запроса " + this.numberConnect
                         + ". Сообщение от клиента: "
                         + commandFromClient, 1);
@@ -143,7 +145,7 @@ public class SenderSmallData {
         } catch (Exception ex)
         {
             Logging.log("Произошла критическая ошибка при выполнении команды и её отправке."
-                    + " Клиент " + channel.toString()
+                    + " Клиент " + ctx.channel().toString()
                     + " Номер запроса " + this.numberConnect
                     + ". Сообщение от клиента: "
                     + commandFromClient + " " + ex.getMessage(), 1);
@@ -157,9 +159,13 @@ public class SenderSmallData {
      *
      * @param response текст сообщения
      */
-    private void sendToClient(String response)
+    private void sendToClient(String response) throws UnsupportedEncodingException
     {
-        this.channel.write(response + "\0");
+        if(ctx.channel().isWritable())
+        {
+            ctx.channel().writeAndFlush(Unpooled.wrappedBuffer((response + "\0").getBytes("UTF-8")));
+        }
+        //this.channel.write(response + "\0");
     }
 
     private ObjectForSerialization getObjectFromJson(String jsonInString)
@@ -189,12 +195,12 @@ public class SenderSmallData {
             if (obj.command.equals("error"))
             {
                 throw new ExceptionServer("Случилась неизвестная ошибка "
-                        + "на стороне клиента " + channel.toString()
+                        + "на стороне клиента " + ctx.channel().toString()
                         + " номер подключения " + numberConnect);
             } else if (obj.command.equals("get_aliance"))
             {
                 Logging.log("Обработка запроса на получение всех файловых систем "
-                        + this.channel.toString() + ") Номер запроса: "
+                        + ctx.channel().toString() + ") Номер запроса: "
                         + this.numberConnect, 1);
                 result = getAliance(obj);
             } else if (obj.command.equals("get_catalog"))
@@ -202,49 +208,49 @@ public class SenderSmallData {
                 Logging.log("Обработка запроса на получение "
                         + "содержимого файловой системы "
                         + this.aliance.get(obj.param1).param2 + " Канал"
-                        + this.channel.toString() + ") Номер запроса: "
+                        + ctx.channel().toString() + ") Номер запроса: "
                         + this.numberConnect, 3);
                 result = getCatalog(obj);
             } else if (obj.command.equals("get_content_file"))
             {
                 Logging.log("Обработка запроса на получение содержимого файла "
-                        + this.channel.toString() + ") Номер запроса: "
+                        + ctx.channel().toString() + ") Номер запроса: "
                         + this.numberConnect, 1);
                 result = getContentFile(obj);
             } else if (obj.command.equals("try_remove"))
             {
                 Logging.log("Обработка запроса на удаление файла из файловой "
-                        + "системы " + this.channel.toString()
+                        + "системы " + ctx.channel().toString()
                         + ") Номер запроса: " + this.numberConnect, 1);
                 result = tryRemoveFile(obj);
             } else if (obj.command.equals("try_create_dir"))
             {
                 Logging.log("Обработка запроса на создание каталога в системе "
-                        + "файловой системы" + this.channel.toString()
+                        + "файловой системы" + ctx.channel().toString()
                         + ") Номер запроса: " + this.numberConnect, 1);
                 result = tryCreateDir(obj);
             } else if (obj.command.equals("try_rename"))
             {
                 Logging.log("Обработка запроса на переименование ресурса "
-                        + "файловой системы" + this.channel.toString()
+                        + "файловой системы" + ctx.channel().toString()
                         + ") Номер запроса: " + this.numberConnect, 1);
                 result = tryRenameFile(obj);
             } else if (obj.command.equals("try_upload"))
             {
                 Logging.log("Обработка запроса на загрузку нового файла в "
-                        + "файловую систему " + this.channel.toString()
+                        + "файловую систему " + ctx.channel().toString()
                         + ") Номер запроса: " + this.numberConnect, 1);
                 result = setupToUpload(obj);
             } else if (obj.command.equals("test_fast_socket"))
             {
                 Logging.log("Тестирование соединения клиента с сервером "
-                        + this.channel.toString()
+                        + ctx.channel().toString()
                         + ") Номер запроса: " + this.numberConnect, 1);
                 result = testConnectionWithFastSocket(obj);
             } else if (obj.command.equals("auth"))
             {
                 Logging.log("Авторизация пользователя с сервером "
-                        + this.channel.toString()
+                        + ctx.channel().toString()
                         + ") Номер запроса: " + this.numberConnect
                         + " Имя пользователя: "
                         + new String(obj.param4_array, "UTF-8"), 1);
@@ -253,12 +259,12 @@ public class SenderSmallData {
             {
                 Logging.log("Полученный запрос содержит "
                         + "неизвестную для сервера команду "
-                        + this.channel.toString()
+                        + ctx.channel().toString()
                         + ") Номер запроса: " + this.numberConnect, 1);
                 result = getResponseWhenUnknownCommand();
             }
             Logging.log("Запрос успешно выполнен, отправление данных: "
-                    + this.channel.toString() + ") Номер запроса: "
+                    + ctx.channel().toString() + ") Номер запроса: "
                     + this.numberConnect, 1);
         } catch (Exception e)
         {
@@ -286,7 +292,7 @@ public class SenderSmallData {
         } catch (IOException ex)
         {
             Logging.log("Ошибка при сериализации объекта "
-                    + this.channel.toString() + ") Номер запроса: "
+                    + ctx.channel().toString() + ") Номер запроса: "
                     + this.numberConnect + " Ошибка: " + ex.getMessage(), 1);
 
             result = this.mapper.writeValueAsString(
@@ -413,7 +419,7 @@ public class SenderSmallData {
         String path = this.aliance.get(obj.param1).param2
                 + (new String(obj.param4_array, "UTF-8"));
         Logging.log("Обработка запроса на получение файла по пути: " + path
-                + " Канал " + this.channel.toString() + ") Номер запроса: "
+                + " Канал " + ctx.channel().toString() + ") Номер запроса: "
                 + this.numberConnect, 1);
         byte[] resultInFtp = getFileInArrayByte(path);
         String expectedSize = Integer.toString(resultInFtp.length);
@@ -519,7 +525,7 @@ public class SenderSmallData {
             String relativeWay = ftpPath + relativeOldPath;
             Path source = Paths.get(relativeWay);
             Logging.log("Переименовывание ресурса по пути: " + relativeWay
-                    + " Канал " + this.channel.toString() + ") Номер запроса: "
+                    + " Канал " + ctx.channel().toString() + ") Номер запроса: "
                     + this.numberConnect, 1);
             Files.move(source, source.resolveSibling(newName));
             result = this.mapper.writeValueAsString(
@@ -547,7 +553,7 @@ public class SenderSmallData {
             {
                 folder.mkdir();
                 Logging.log("Создание каталога по пути: " + relativeWay
-                        + " Канал " + this.channel.toString() + ") Номер запроса: "
+                        + " Канал " + ctx.channel().toString() + ") Номер запроса: "
                         + this.numberConnect, 1);
                 result = this.mapper.writeValueAsString(
                         new ObjectForSerialization("create_dir", "1"));
@@ -581,7 +587,7 @@ public class SenderSmallData {
             String relativeWay = ftpPath + relativePath;
             deleteObjectFileSystem(new File(relativeWay));
             Logging.log("Удаление ресурса по пути: " + relativeWay
-                    + " Канал " + this.channel.toString() + ") Номер запроса: "
+                    + " Канал " + ctx.channel().toString() + ") Номер запроса: "
                     + this.numberConnect, 1);
             result = this.mapper.writeValueAsString(
                     new ObjectForSerialization("remove", "1"));
@@ -622,7 +628,7 @@ public class SenderSmallData {
         } catch (IOException ex)
         {
             Logging.log("Не удалось произвести сериализацию файла "
-                    + " Канал " + this.channel.toString() + " Номер запроса: "
+                    + " Канал " + ctx.channel().toString() + " Номер запроса: "
                     + this.numberConnect, 1);
         }
         return result;
@@ -641,7 +647,7 @@ public class SenderSmallData {
         {
             Logging.log("Не удалось получить права доступа для выбранного логина"
                     + "(ошибка кодировки) "
-                    + " Канал " + this.channel.toString() + " Номер запроса: "
+                    + " Канал " + ctx.channel().toString() + " Номер запроса: "
                     + this.numberConnect, 1);
             login = "";
             password = "";

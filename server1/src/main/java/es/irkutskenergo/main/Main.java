@@ -23,15 +23,17 @@ public class Main {
             Logging.writeToConsole = true;
             int portFast = 6500;
             int portFtp = 6502;
-            FastServer NT = new FastServer(portFast);
+
             FtpServer fs = new FtpServer(portFtp);
-            
+
             String version = new String(Files.readAllBytes(Paths.get("version")));
             Logging.log("Версия сервера: " + version);
             Logging.log(" Сервер ЕЭИСЦ успешно запущен:"
                     + "\r\nПорт обмена сообщений - " + portFast
                     + "\r\nПорт файлового обмена - " + portFtp + "\r\n", 0);
-            fs.run();
+            fs.start();
+            FastServer NT = new FastServer(portFast);
+            NT.run();
         } catch (Exception ex)
         {
             System.out.println("Сервер не удалось запустить " + ex.getMessage());

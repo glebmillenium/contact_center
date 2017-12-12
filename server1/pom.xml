@@ -45,10 +45,10 @@
             <version>1.9.0</version>
         </dependency>
         <dependency>
-            <groupId>org.jboss.netty</groupId>
-            <artifactId>netty</artifactId>
-            <version>3.2.10.Final</version>
-            <type>jar</type>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-all</artifactId>
+            <version>4.1.18.Final</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
     <name>server</name>

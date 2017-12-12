@@ -10,7 +10,7 @@ import java.net.Socket;
  *
  * @author admin
  */
-public class FtpServer {
+public class FtpServer extends Thread {
 
     private ServerSocket server;
     private int port;
@@ -24,13 +24,20 @@ public class FtpServer {
     }
 
     @Override
-    public void finalize()
+    public void finalize() throws Throwable
     {
-        this.canWork = false;
-        Logging.log("Сервер открытый по порту: " + this.port + " был закрыт", 2);
+        try
+        {
+            this.canWork = false;
+            Logging.log("Сервер открытый по порту: " + this.port + " был закрыт", 2);
+        } finally
+        {
+            super.finalize();
+        }
     }
 
     
+    @Override
     public void run()
     {
         if (this.canWork)

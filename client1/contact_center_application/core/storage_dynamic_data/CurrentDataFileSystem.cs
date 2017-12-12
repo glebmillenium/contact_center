@@ -85,6 +85,10 @@ namespace contact_center_application.core.storage_dynamic_data
 			{
 				Logger.log(e.Message);
 			}
+			catch (System.FormatException e)
+			{
+				Logger.log(e.Message);
+			}
 		}
 	}
 }

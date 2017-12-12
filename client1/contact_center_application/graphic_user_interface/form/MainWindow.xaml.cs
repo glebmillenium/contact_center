@@ -76,7 +76,7 @@ namespace contact_center_application.graphic_user_interface.form
 			try
 			{
 				string address = SettingsData.getAddress();
-				string[] aliance = RequestDataFromServer.primaryExchangeWithSocket(address);
+				string[] aliance = RequestDataFromServer.primaryExchangeWithSocket();
 				CurrentDataFileSystem.alianceIdPolicy.Clear();
 				CurrentDataFileSystem.ComboboxFileSystem.Items.Clear();
 				for (int i = 0; i < aliance.Length; i++)

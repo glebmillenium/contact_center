@@ -267,6 +267,12 @@ namespace contact_center_application.graphic_user_interface.manage_graphical_com
 				Logger.log(exp.ToString());
 				System.Windows.MessageBox.Show("Отказали системные компоненты приложения. " +
 					"Попробуйте повторить действие. В случае повторного возникновения ошибки перезапустите приложение.", "Критическая ошибка");
+				MainWindowElement.managerPanel.Visibility = Visibility.Visible;
+				MainWindowElement.cursor = Cursors.Arrow;
+				MainWindowElement.stackPanelMessenger.Visibility = Visibility.Hidden;
+				MainWindowElement.window.IsEnabled = true;
+
+				RequestDataFromServer.rebootFastServer();
 			}
 		}
 

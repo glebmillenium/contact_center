@@ -18,7 +18,13 @@ namespace contact_center_application.core
 			ConnectWithFastSocket.closeSocket();
 		}
 
-		public static string[] primaryExchangeWithSocket(string address = "localhost")
+		public static void rebootFastServer()
+		{
+			closeConnection();
+			primaryExchangeWithSocket();
+		}
+
+		public static string[] primaryExchangeWithSocket()
 		{
 			addressServer = SettingsData.getAddress();
 			portFtp = SettingsData.getFtpPort();
@@ -163,36 +169,44 @@ namespace contact_center_application.core
 
 		public static string getCatalog(string aliance)
 		{
-			ObjectForSerialization objForSendToFastSocket = new ObjectForSerialization
+			try
 			{
-				command = "get_catalog",
-				param1 = aliance
-			};
-			string resultJson = JsonConvert.SerializeObject(objForSendToFastSocket);
-			string answer = ConnectWithFastSocket.sendMessage(resultJson, 8192);
-			ObjectForSerialization objResponseFromFastSocket =
-				JsonConvert.DeserializeObject<ObjectForSerialization>(answer);
-			string result = null;
+				ObjectForSerialization objForSendToFastSocket = new ObjectForSerialization
+				{
+					command = "get_catalog",
+					param1 = aliance
+				};
 
-			int expectedSize = Int32.Parse(objResponseFromFastSocket.param1);
-			int index = Int32.Parse(objResponseFromFastSocket.param2);
-			if (!objResponseFromFastSocket.command.Equals("catalog"))
+				string resultJson = JsonConvert.SerializeObject(objForSendToFastSocket);
+				string answer = ConnectWithFastSocket.sendMessage(resultJson, 8192);
+				ObjectForSerialization objResponseFromFastSocket =
+					JsonConvert.DeserializeObject<ObjectForSerialization>(answer);
+				string result = null;
+
+				int expectedSize = Int32.Parse(objResponseFromFastSocket.param1);
+
+				int index = Int32.Parse(objResponseFromFastSocket.param2);
+				if (!objResponseFromFastSocket.command.Equals("catalog"))
+				{
+					return result;
+				}
+				ObjectForSerialization objForSendToFtpSocket = new ObjectForSerialization
+				{
+					command = "get_catalog",
+					param1 = "",
+					param2 = index.ToString()
+				};
+
+				ConnectWithFtpSocket.createSocket(addressServer, portFtp);
+				resultJson = JsonConvert.SerializeObject(objForSendToFtpSocket);
+				answer = ConnectWithFtpSocket.sendMessage(resultJson, expectedSize);
+				ConnectWithFtpSocket.closeSocket();
+
+				return answer;
+			} catch(FormatException excp)
 			{
-				return result;
+				throw new FormatException();
 			}
-			ObjectForSerialization objForSendToFtpSocket = new ObjectForSerialization
-			{
-				command = "get_catalog",
-				param1 = "",
-				param2 = index.ToString()
-			};
-
-			ConnectWithFtpSocket.createSocket(addressServer, portFtp);
-			resultJson = JsonConvert.SerializeObject(objForSendToFtpSocket);
-			answer = ConnectWithFtpSocket.sendMessage(resultJson, expectedSize);
-			ConnectWithFtpSocket.closeSocket();
-			
-			return answer;
 		}
 
 		public static byte[] getContentFile(string aliance, string relativeWay)
