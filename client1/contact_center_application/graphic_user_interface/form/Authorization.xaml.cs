@@ -2,6 +2,7 @@
 using contact_center_application.core.storage_dynamic_data;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -33,7 +34,6 @@ namespace contact_center_application.graphic_user_interface.form
 			{
 				Tuple<String, int, String> result = RequestDataFromServer.getRightAccess(loginTextBox.Text, passwordTextBox.Password);
 				string version = SettingsData.getVersion();
-				version = "0.8.25";
 				if (result.Item2 == -1)
 				{
 					infoPopup.IsOpen = true;
@@ -50,7 +50,7 @@ namespace contact_center_application.graphic_user_interface.form
 							+ result.Item1 + " Необходимо произвести обновление!",
 							"Требуется обновление", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
 						{
-
+							Process.Start("Patcher.exe");
 							this.Close();
 						}
 						else
