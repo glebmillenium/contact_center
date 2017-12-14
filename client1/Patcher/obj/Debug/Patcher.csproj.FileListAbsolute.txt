@@ -1,7 +1,6 @@
 C:\contact_center\client1\Patcher\bin\Debug\Patcher.exe.config
 C:\contact_center\client1\Patcher\bin\Debug\Patcher.exe
 C:\contact_center\client1\Patcher\bin\Debug\Patcher.pdb
-C:\contact_center\client1\Patcher\obj\Debug\Patcher.csprojResolveAssemblyReference.cache
 C:\contact_center\client1\Patcher\obj\Debug\MainWindow.g.cs
 C:\contact_center\client1\Patcher\obj\Debug\App.g.cs
 C:\contact_center\client1\Patcher\obj\Debug\Patcher_MarkupCompile.cache

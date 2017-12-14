@@ -1,6 +1,8 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Diagnostics;
 using System.IO;
+using System.Threading;
 using System.Windows;
 
 namespace Patcher
@@ -13,41 +15,68 @@ namespace Patcher
 		public MainWindow()
 		{
 			InitializeComponent();
-			setData(0, "Все компоненты программы обновлены");
-			RequestDataFromServer.createConnection();
-			string version = SettingsData.getVersion();
-			string[] requirementVersionForUpdate = RequestDataFromServer.getDifferenceVersion(version);
-			if (requirementVersionForUpdate == null || requirementVersionForUpdate.Length == 0)
+			try
 			{
-				MessageBox.Show("Приложение имеет актуальную версию", "");
-				setData(100, "Все компоненты программы обновлены");
-			} else {
-				string versionString = "";
-				foreach (var arg in requirementVersionForUpdate)
+				setData(0, "Все компоненты программы обновлены");
+				Thread.Sleep(1000);
+				RequestDataFromServer.createConnection();
+				string version = SettingsData.getVersion();
+				string[] requirementVersionForUpdate = RequestDataFromServer.getDifferenceVersion(version);
+				if (requirementVersionForUpdate == null)
 				{
-					versionString += arg + ", ";
-				}
-				versionString = versionString.Remove(versionString.Length - 2, 2);
-				if (MessageBox.Show("Приложение будет обновлено до версии: "
-					+ versionString,
-					"Обновление", MessageBoxButton.OKCancel) == MessageBoxResult.OK)
-				{
-					setData(10, "Начало обновления");
-					int i = 0;
-					foreach (var arg in requirementVersionForUpdate)
-					{
-						setData((int) (10 + 90.0 * i / requirementVersionForUpdate.Length), 
-							"Обновление до версии: " + arg);
-						updateFilesApplication(RequestDataFromServer.getVersion(arg), arg);
-						i++;
-					}
-					SettingsData.setVersion(requirementVersionForUpdate[requirementVersionForUpdate.Length - 1]);
-					setData(100, "Все компоненты программы обновлены");
+					MessageBox.Show("Не удалось получить сведения из сервера", "");
+					setData(0, "");
 				}
 				else
 				{
-					this.Close();
-				};
+					if (requirementVersionForUpdate.Length == 0)
+					{
+						MessageBox.Show("Приложение имеет актуальную версию", "");
+						setData(100, "Все компоненты программы обновлены.");
+						Process.Start("АРМ оператора контакт-центра.exe");
+					}
+					else
+					{
+						string versionString = "";
+						foreach (var arg in requirementVersionForUpdate)
+						{
+							versionString += arg + ", ";
+						}
+						versionString = versionString.Remove(versionString.Length - 2, 2);
+						if (MessageBox.Show("Приложение будет обновлено до версии: "
+							+ versionString,
+							"Обновление", MessageBoxButton.OKCancel) == MessageBoxResult.OK)
+						{
+							setData(10, "Начало обновления");
+							int i = 0;
+							foreach (var arg in requirementVersionForUpdate)
+							{
+								setData((int)(10 + 90.0 * i / requirementVersionForUpdate.Length),
+									"Обновление до версии: " + arg);
+								try
+								{
+									updateFilesApplication(RequestDataFromServer.getVersion(arg), arg);
+								}
+								catch (Exception e)
+								{
+									this.info.Text = e.Message + " " + e.InnerException + " " + e.StackTrace;
+								}
+								i++;
+							}
+							SettingsData.setVersion(requirementVersionForUpdate[requirementVersionForUpdate.Length - 1]);
+							setData(100, "Все компоненты программы успешно обновлены.");
+							Process.Start("АРМ оператора контакт-центра.exe");
+						}
+						else
+						{
+							this.Close();
+						};
+					}
+				}
+			}
+			catch (Exception e)
+			{
+				this.info.Text = e.Message + " " + e.InnerException + " " + e.StackTrace;
 			}
 		}
 
@@ -65,7 +94,7 @@ namespace Patcher
 					{
 						Directory.CreateDirectory(".\\" + currentWay);
 					}
-					dataWriteToFile = RequestDataFromServer.getFileForUpdateNewVersion(version, currentWay);
+					dataWriteToFile = RequestDataFromServer.getFileForUpdateNewVersion(version, currentWay + "//" + catalogSerialization.name);
 					File.WriteAllBytes(".\\" + currentWay + "\\" + catalogSerialization.name, dataWriteToFile);
 				}
 				if (catalogSerialization.content != null)

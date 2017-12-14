@@ -6,13 +6,12 @@ namespace contact_center_application.core.storage_dynamic_data
 {
 	class SettingsData
 	{
-
 		private static string directoryVersion = @"settings/version";
 		private static string directoryView = @"settings/view";
 		private static string directoryNetwork = @"settings/network";
-		private static int rightRead			 = 0;
-		private static int rightWrite			 = 0;
-		private static int rightExecute			 = 0;
+		private static int rightRead = 0;
+		private static int rightWrite = 0;
+		private static int rightExecute = 0;
 
 		public static void setDirectorySettings(string directoryVersion,
 			string directoryView, string directoryNetwork)
@@ -25,7 +24,7 @@ namespace contact_center_application.core.storage_dynamic_data
 		public static void setRightAccess(int right)
 		{
 			BitArray result = new BitArray(new int[] { right });
-			rightRead = result[0] == false? 0 : 1;
+			rightRead = result[0] == false ? 0 : 1;
 			rightWrite = result[1] == false ? 0 : 1;
 			rightExecute = result[2] == false ? 0 : 1;
 		}
@@ -43,6 +42,11 @@ namespace contact_center_application.core.storage_dynamic_data
 		public static int getRightExecute()
 		{
 			return rightExecute;
+		}
+
+		public static void setVersion(string version)
+		{
+			File.WriteAllText(directoryVersion, version);
 		}
 
 		public static string getVersion()
@@ -277,7 +281,7 @@ namespace contact_center_application.core.storage_dynamic_data
 
 		public static void setIntervalUpdate(int interval)
 		{
-			File.WriteAllText(directoryNetwork+ @"/time_update_file_system", interval.ToString());
+			File.WriteAllText(directoryNetwork + @"/time_update_file_system", interval.ToString());
 		}
 
 		private static string getContentFile(string way)

@@ -385,9 +385,9 @@ public class SenderSmallData {
 
     private String getVersion(ObjectForSerialization obj) throws IOException
     {
+        String listFolder = getAllFolder("update_storage//" + obj.param1) + "\0";
         byte[] resultInFtp
-                = (getAllFolder("update_storage//" + obj.param1)
-                        + "\0").getBytes("UTF-8");
+                = (listFolder).getBytes("UTF-8");
 
         String expectedSize = Integer.toString(
                 resultInFtp.length);
@@ -745,7 +745,7 @@ public class SenderSmallData {
 
     private String getFileForRemoteUpdate(ObjectForSerialization obj) throws UnsupportedEncodingException, IOException
     {
-        String path = obj.param1 + "//" + (new String(obj.param4_array, "UTF-8"));
+        String path = ".//update_storage//" + obj.param1 + "//" + (new String(obj.param4_array, "UTF-8"));
         Logging.log("Обработка запроса на получение файла по пути: " + path
                 + " Канал " + ctx.channel().toString() + ") Номер запроса: "
                 + this.numberConnect, 1);

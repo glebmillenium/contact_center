@@ -140,6 +140,12 @@
     <Compile Include="core\storage_dynamic_data\MainWindowElement.cs" />
     <Compile Include="core\storage_dynamic_data\SettingsData.cs" />
     <Compile Include="core\TreatmenterExchangeFileWithServer.cs" />
+    <Compile Include="graphic_user_interface\form\AboutProgram.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="graphic_user_interface\form\AboutProgram.Designer.cs">
+      <DependentUpon>AboutProgram.cs</DependentUpon>
+    </Compile>
     <Compile Include="graphic_user_interface\form\Authorization.xaml.cs">
       <DependentUpon>Authorization.xaml</DependentUpon>
     </Compile>
@@ -149,6 +155,9 @@
     </Compile>
     <Compile Include="graphic_user_interface\form\ConfirmationChooseDialog.xaml.cs">
       <DependentUpon>ConfirmationChooseDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="graphic_user_interface\form\LightMessenger.xaml.cs">
+      <DependentUpon>LightMessenger.xaml</DependentUpon>
     </Compile>
     <Compile Include="graphic_user_interface\form\RenameUnitFileSystem.xaml.cs">
       <DependentUpon>RenameUnitFileSystem.xaml</DependentUpon>
@@ -176,6 +185,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="graphic_user_interface\form\ConfirmationChooseDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="graphic_user_interface\form\LightMessenger.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -232,6 +245,9 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <EmbeddedResource Include="graphic_user_interface\form\AboutProgram.resx">
+      <DependentUpon>AboutProgram.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <SubType>Designer</SubType>
@@ -266,6 +282,7 @@
       <Link>libmupdf.dll</Link>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <None Include="resources\logotip.jpg" />
     <None Include="resources\update.ico" />
     <None Include="resources\exit.ico" />
     <None Include="resources\help.ico" />

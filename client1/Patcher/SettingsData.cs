@@ -11,7 +11,7 @@ namespace Patcher
 	class SettingsData
 	{
 
-		private static string directoryVersion = @"settings/version";
+		public static string directoryVersion = @"settings/version";
 		private static string directoryView = @"settings/view";
 		private static string directoryNetwork = @"settings/network";
 		private static int rightRead = 0;

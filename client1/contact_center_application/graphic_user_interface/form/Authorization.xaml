@@ -22,7 +22,7 @@
 				<Button Width="15" Height="15" Margin="0,0,7,0" ToolTip="Настройки" Click="Button_Click_1">
 					<Image Source="pack://siteoforigin:,,,/resources/settings.png"/>
 				</Button>
-				<Button Width="15" Height="15" Margin="0,0,7,0" ToolTip="О программе">
+				<Button Width="15" Height="15" Margin="0,0,7,0" ToolTip="О программе" Click="Button_Click_2">
 					<Image Source="pack://siteoforigin:,,,/resources/auth_info.png"/>
 				</Button>
 				<Button x:Name="exitButton" Width="15" Height="15" Margin="0,0,7,0" ToolTip="Выход из программы" Click="exitButton_Click">

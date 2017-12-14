@@ -1,0 +1,14 @@
+Save the Host ID and the Product Version numbers listed below.
+
+You will need to supply both the Host ID and the Product Version 
+to your Xerox representative to obtain a license file that enables 
+this version of the FreeFlow(R) VI Suite software.
+
+Remember to contact your Xerox representative for assistance in 
+ordering your FreeFlow VI Suite software license kit.
+
+   Host ID:  28E347CE9025  [Broadcom BCM943228HMB 802.11abgn 2x2 Wi-Fi Adapter]  or
+   Host ID:  C4346B26134C  [Intel(R) Ethernet Connection I217-V]  or
+   Host ID:  28E3473C2DE2  [Bluetooth Device (Personal Area Network)]  or
+   Host ID:  24038C7F-2012-11E4-87DD-D90E850AF0FF  [System UUID]
+   Version:  15.0

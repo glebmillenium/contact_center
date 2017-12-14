@@ -173,6 +173,16 @@ namespace contact_center_application.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap logotip {
+            get {
+                object obj = ResourceManager.GetObject("logotip", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap network_settings {
             get {
                 object obj = ResourceManager.GetObject("network_settings", resourceCulture);

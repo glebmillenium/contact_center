@@ -93,5 +93,10 @@ namespace contact_center_application.graphic_user_interface.form
 		{
 			new Settings(true).ShowDialog();
 		}
+
+		private void Button_Click_2(object sender, RoutedEventArgs e)
+		{
+			new AboutProgram().Show();
+		}
 	}
 }

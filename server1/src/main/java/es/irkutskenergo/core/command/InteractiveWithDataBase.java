@@ -51,10 +51,14 @@ public class InteractiveWithDataBase {
             boolean find = false;
             while ((line = reader.readLine()) != null)
             {
-                if(find || line.equals(version))
+                if(line.equals(version))
+                {
+                    find = true;
+                    continue;
+                }
+                if(find)
                 {
                     result.add(line);
-                    find = true;
                 }
             }   
             String[] result2 = new String[result.size()];

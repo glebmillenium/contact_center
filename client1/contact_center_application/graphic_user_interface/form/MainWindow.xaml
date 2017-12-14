@@ -30,25 +30,26 @@
 				</Button>
 			</StackPanel>
 			<StackPanel DockPanel.Dock="Right" Orientation="Horizontal" HorizontalAlignment="Right">
-				<Button Background="Azure" x:Name="buttonSettings" Margin="0,0,5,0" Height="30" Width="30" Click="buttonSettings_Click" >
+				<Button Background="Azure" x:Name="buttonSettings" ToolTip="Настройки" 
+						Margin="0,0,5,0" Height="30" Width="30" Click="buttonSettings_Click" >
 					<Image Height="25" Width="25" Source="pack://siteoforigin:,,,/resources/settings.png"/>
 				</Button>
-				<Button Margin="0,0,5,0" Height="30" Width="30" >
+				<Button Margin="0,0,5,0" Height="30" Width="30" ToolTip="Руководство пользователя">
 					<Image Height="25" Width="25" Source="pack://siteoforigin:,,,/resources/help.ico"/>
 				</Button>
-				<Menu Margin="0,0,5,0" Height="30" Width="30">
+				<Menu Margin="0,0,5,0" Height="30" Width="30" ToolTip="Выход">
 					<MenuItem Height="30" Width="30">
 						<MenuItem.Icon>
 							<Image Height="20" Width="20" Source="pack://siteoforigin:,,,/resources/exit.ico"/>
 						</MenuItem.Icon>
 						<MenuItem x:Name="goToAuth" Header="Выйти из системы" Click="goToAuth_Click">
 							<MenuItem.Icon>
-								<Image Source="pack://siteoforigin:,,,/resources/exit_from_system.ico"/>
+								<Image Height="20" Width="20" Source="pack://siteoforigin:,,,/resources/exit_from_system.ico"/>
 							</MenuItem.Icon>
 						</MenuItem>
 						<MenuItem x:Name="exitFromSystem" Click="exitFromSystem_Click" Header="Завершить работу приложения">
-							<MenuItem.Icon>
-								<Image Source="pack://siteoforigin:,,,/resources/exit_from_app.ico"/>
+							<MenuItem.Icon >
+								<Image Height="20" Width="20" Source="pack://siteoforigin:,,,/resources/exit_from_app.ico"/>
 							</MenuItem.Icon>
 						</MenuItem>
 					</MenuItem>

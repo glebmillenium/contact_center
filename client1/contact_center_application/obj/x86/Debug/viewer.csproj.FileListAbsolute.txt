@@ -46,3 +46,6 @@ C:\contact_center\client1\contact_center_application\obj\x86\Debug\АРМ опе
 C:\contact_center\client1\contact_center_application\obj\x86\Debug\АРМ оператора контакт-центра.g.resources
 C:\contact_center\client1\contact_center_application\obj\x86\Debug\АРМ оператора контакт-центра.exe
 C:\contact_center\client1\contact_center_application\obj\x86\Debug\АРМ оператора контакт-центра.pdb
+C:\contact_center\client1\contact_center_application\obj\x86\Debug\contact_center_application.graphic_user_interface.form.AboutProgram.resources
+C:\contact_center\client1\contact_center_application\obj\x86\Debug\graphic_user_interface\form\LightMessenger.g.cs
+C:\contact_center\client1\contact_center_application\obj\x86\Debug\graphic_user_interface\form\LightMessenger.baml

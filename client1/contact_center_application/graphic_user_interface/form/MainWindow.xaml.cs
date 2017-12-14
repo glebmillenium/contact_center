@@ -14,6 +14,7 @@ using System.Windows.Media;
 using contact_center_application.core.storage_dynamic_data;
 using contact_center_application.graphic_user_interface.manage_graphical_component.tree_view;
 using contact_center_application.graphic_user_interface.manage_graphical_component.viewer;
+using System.Windows.Threading;
 
 namespace contact_center_application.graphic_user_interface.form
 {
@@ -125,27 +126,42 @@ namespace contact_center_application.graphic_user_interface.form
 				Process currProc = Process.Start(CurrentDataOpenFile.openFile);
 				currProc.WaitForExit();
 				currProc.Close();
-				if (SettingsData.getRightWrite() == 1)
+				if (!oldTime.Equals(File.GetLastWriteTime(CurrentDataOpenFile.openFile)))
 				{
-					if (!oldTime.Equals(File.GetLastWriteTime(CurrentDataOpenFile.openFile)))
+					if (SettingsData.getRightWrite() == 1)
 					{
+
 						if (MessageBox.Show("Отправить измененный файл на сервер?", "Файл был изменен",
 							MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
 						{
 							TreatmenterExchangeFileWithServer.sendFileToServer();
 						}
 					}
-				}
-				else
-				{
-					MessageBox.Show("Вы изменили содержимое файла." +
-						" Но у вас недостаточно прав для отправки измененного файла на сервер.", "Файл был изменен");
+					else
+					{
+						Thread thr = new Thread(startMessage);
+						thr.Start();
+					}
 				}
 			}
 			catch (System.NullReferenceException exceptionWithOpenFile)
 			{
 				Logger.log(exceptionWithOpenFile.Message);
 			}
+		}
+
+		public void startMessage()
+		{
+			this.Dispatcher.BeginInvoke(DispatcherPriority.ApplicationIdle,
+				(ThreadStart)delegate ()
+				{
+					LightMessenger lm = new LightMessenger("Вы изменили содержимое файла." +
+			" Но у вас недостаточно прав для отправки файла на сервер.");
+					lm.Show();
+					lm.run();
+				}
+			);
+
 		}
 
 		/// <summary>

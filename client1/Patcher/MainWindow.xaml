@@ -7,9 +7,7 @@
         mc:Ignorable="d"
         Title="Обновление" Height="200" Width="350"
 			MinWidth="350"
-			MaxWidth="700"
-			MinHeight="200"
-			MaxHeight="400">
+			MinHeight="200">
 	<Grid>
 		<Grid.RowDefinitions>
 			<RowDefinition Height="1.2*"></RowDefinition>
@@ -22,7 +20,9 @@
 		</StackPanel>
 		
 		<ProgressBar x:Name="bar" Margin="10" Grid.Row="1"></ProgressBar>
-		<TextBlock HorizontalAlignment="Center" x:Name="info" Grid.Row="2"></TextBlock>
+		<ScrollViewer Grid.Row="2" PanningMode="Both">
+			<TextBlock HorizontalAlignment="Center" x:Name="info"></TextBlock>
+		</ScrollViewer>
 
 	</Grid>
 </Window>

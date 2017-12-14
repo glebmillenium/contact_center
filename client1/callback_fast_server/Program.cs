@@ -11,10 +11,8 @@ namespace callback_fast_server
 		static void Main(string[] args)
 		{
 			string PathFolderBack = Path.GetDirectoryName(Directory.GetCurrentDirectory());
-			SettingsData.setDirectorySettings(PathFolderBack + @"/settings/ip_connect",
-				PathFolderBack + @"/settings/port_ftp", PathFolderBack + @"/settings/port_fast",
-				PathFolderBack + @"/settings/version",
-				PathFolderBack + @"/settings/update_file_system");
+			SettingsData.setDirectorySettings(PathFolderBack + @"/settings/version",
+				PathFolderBack + @"/settings/view", PathFolderBack + @"/settings/network");
 			Logger logger = new Logger(PathFolderBack + "/log/callback_fast_server_log.txt", 
 				PathFolderBack + "/log/callback_fast_server_exception.txt", PathFolderBack + "/tmp");
 			string address = SettingsData.getAddress();
