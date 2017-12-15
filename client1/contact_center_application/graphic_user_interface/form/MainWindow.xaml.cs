@@ -20,6 +20,9 @@ namespace contact_center_application.graphic_user_interface.form
 	/// </summary>
 	public partial class MainWindow : Window
 	{
+		private BackgroundWorker backgroundWorkerDownload;
+		private BackgroundWorker backgroundWorkerUpload;
+		private BackgroundWorker backgroundWorkerMessenger;
 
 		/// <summary>
 		/// Конструктор, осуществляет чистку папки временных файлов
@@ -28,6 +31,9 @@ namespace contact_center_application.graphic_user_interface.form
 		{
 			Logger.initialize();
 			InitializeComponent();
+			backgroundWorkerDownload = ((BackgroundWorker)this.FindResource("backgroundWorkerDownload"));
+			backgroundWorkerUpload = ((BackgroundWorker)this.FindResource("backgroundWorkerUpload"));
+			backgroundWorkerMessenger = ((BackgroundWorker)this.FindResource("backgroundWorkerMessenger"));
 			MainWindowElement.initialize(this);
 			ManagerViewer.textbox = this.textboxDisplay;
 			ManagerViewer.otherViewer = this.otherOnViewer;
@@ -107,8 +113,6 @@ namespace contact_center_application.graphic_user_interface.form
 			ManagerViewer.callGarbage();
 			CurrentDataFileSystem.getContentFileSystem();
 		}
-
-		private BackgroundWorker backgroundWorker;
 
 		/// <summary>
 		/// Запуск загрузки содержимого файла с сервера и открытия в documentViewer либо 
@@ -269,7 +273,7 @@ namespace contact_center_application.graphic_user_interface.form
 			//LightMessenger lm = (LightMessenger) e.Argument;
 			for (double i = 1.0; i >= 0; i -= 0.1)
 			{
-				backgroundWorker.ReportProgress((int)(i * 100.0));
+				//backgroundWorker.ReportProgress((int)(i * 100.0));
 				message = (i).ToString() + " ";
 				Thread.Sleep(400);
 			}
@@ -282,6 +286,56 @@ namespace contact_center_application.graphic_user_interface.form
 		private void backgroundWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
 		{
 			this.searchTextBox.Text = message;
+		}
+
+		private void backgroundWorkerDownload_DoWork(object sender, DoWorkEventArgs e)
+		{
+
+		}
+
+		private void backgroundWorkerDownload_ProgressChanged(object sender, ProgressChangedEventArgs e)
+		{
+
+		}
+
+		private void backgroundWorkerDownload_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+		{
+
+		}
+
+		private void backgroundWorkerUpload_DoWork(object sender, DoWorkEventArgs e)
+		{
+
+		}
+
+		private void backgroundWorkerUpload_ProgressChanged(object sender, ProgressChangedEventArgs e)
+		{
+
+		}
+
+		private void backgroundWorkerUpload_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+		{
+
+		}
+
+		private void backgroundWorkerMessenger_DoWork(object sender, DoWorkEventArgs e)
+		{
+
+		}
+
+		private void backgroundWorkerMessenger_ProgressChanged(object sender, ProgressChangedEventArgs e)
+		{
+
+		}
+
+		private void backgroundWorkerMessenger_RunWorkerCompleted_3(object sender, RunWorkerCompletedEventArgs e)
+		{
+
+		}
+
+		private void backgroundWorkerMessenger_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+		{
+
 		}
 	}
 }

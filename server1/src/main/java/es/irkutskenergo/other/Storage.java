@@ -136,14 +136,14 @@ public class Storage {
     }
 
     /**
-     * cut Создает объект (4-х местный кортеж), который содержим информацию о
+     * cut Удаляет заявку из хранилища, который содержим информацию о
      * типе заявки, названии команды, несущей заявочной информации,
      * дополнительной информации, и удаляет заявку из хранилища
      *
      * @param key
      * @return
      */
-    public static Quadro<Boolean, String, byte[], byte[]> cut(int key)
+    private static Quadro<Boolean, String, byte[], byte[]> cut(int key)
     {
         Quadro<Boolean, String, byte[], byte[]> obj = get(key);
         remove(key);
@@ -155,7 +155,7 @@ public class Storage {
      *
      * @param key
      */
-    private static void remove(int key)
+    public static void remove(int key)
     {
         queryStorageDate.remove(key);
         queryStorageCommand.remove(key);

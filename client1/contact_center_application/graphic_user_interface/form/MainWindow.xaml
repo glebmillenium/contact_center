@@ -12,13 +12,13 @@
 
 	<Window.Resources>
 		<cm:BackgroundWorker x:Key="backgroundWorkerDownload" 
-		  WorkerReportsProgress="True" WorkerSupportsCancellation="True"
+		  WorkerReportsProgress="True" WorkerSupportsCancellation="True" DoWork="backgroundWorkerDownload_DoWork" ProgressChanged="backgroundWorkerDownload_ProgressChanged" RunWorkerCompleted="backgroundWorkerDownload_RunWorkerCompleted"
 		 />
 		<cm:BackgroundWorker x:Key="backgroundWorkerUpload" 
-		  WorkerReportsProgress="True" WorkerSupportsCancellation="True"
+		  WorkerReportsProgress="True" WorkerSupportsCancellation="True" DoWork="backgroundWorkerUpload_DoWork" ProgressChanged="backgroundWorkerUpload_ProgressChanged" RunWorkerCompleted="backgroundWorkerUpload_RunWorkerCompleted"
 		 />
 		<cm:BackgroundWorker x:Key="backgroundWorkerMessenger" 
-		  WorkerReportsProgress="True" WorkerSupportsCancellation="True"
+		  WorkerReportsProgress="True" WorkerSupportsCancellation="True" DoWork="backgroundWorkerMessenger_DoWork" ProgressChanged="backgroundWorkerMessenger_ProgressChanged" RunWorkerCompleted="backgroundWorkerMessenger_RunWorkerCompleted"
 		 />
 	</Window.Resources>
 

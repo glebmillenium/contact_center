@@ -38,87 +38,89 @@ public class PrimaryQueryTreatmenter implements Runnable {
     public void run()
     {
         Logging.log("Thread: submain FTP start", 4);
-        try{
         try
         {
-            byte[] b = new byte[1024];
-            Logging.log("Новое соединение: "
-                    + socket.getInetAddress(), 2);
-
-            InputStream inputStream = socket.getInputStream();
-            inputStream.read(b);
-            String query = new String(b, "UTF-8");
-            int key = Integer.parseInt(getObjectFromJson(query).param2);
-            if (Storage.containsKey(key))
+            try
             {
-                Quadro<Boolean, String, byte[], byte[]> obj
-                        = Storage.cut(key);
-                byte[] message = obj.param3;
-                if (obj.param1)
-                {
-                    Logging.log("Запрос на прием данных от "
-                            + "клиента: "
-                            + socket.getInetAddress()
-                            + " По запросу №" + key
-                            + " Объем файла: " + message.length
-                            + "байт", 2);
+                byte[] b = new byte[1024];
+                Logging.log("Новое соединение: "
+                        + socket.getInetAddress(), 2);
 
-                    SenderData tcpSessionLocal = new SenderData(
-                            socket,
-                            new String(obj.param3, "UTF-8"),
-                            Integer.parseInt(new String(obj.param4,
-                                    "UTF-8")));
-                    tcpSessionLocal.process();
-                } else
+                InputStream inputStream = socket.getInputStream();
+                inputStream.read(b);
+                String query = new String(b, "UTF-8");
+                int key = Integer.parseInt(getObjectFromJson(query).param2);
+                if (Storage.containsKey(key))
                 {
-                    Logging.log("Запрос на отправку данных клиенту: "
-                            + socket.getInetAddress() + " По запросу №"
-                            + key + " Объем файла: "
-                            + message.length + "байт", 2);
-                    ReceiveData rdSession = new ReceiveData(socket, message);
-                    rdSession.process();
-                }
-            } else
-            {
-                if (key == -1)
-                {
-                    Logging.log("Тестирование соединения клиента с сервером"
-                            + "Клиент: "
-                            + socket.getInetAddress(), 2);
-                    OutputStream outputStream;
-                    outputStream = socket.getOutputStream();
-                    ObjectMapper mapper = new ObjectMapper();;
-                    String resultString = mapper.writeValueAsString(
-                            new ObjectForSerialization("answer_on_test_ftp_socket",
-                                    "true"));
-                    byte[] testPackage = resultString.getBytes();
-                    outputStream.write(testPackage, 0, testPackage.length);
-                } else
-                {
-                    OutputStream outputStream;
-                    outputStream = socket.getOutputStream();
-                    byte[] failPackage = new byte[]
+                    Quadro<Boolean, String, byte[], byte[]> obj
+                            = Storage.get(key);
+                    byte[] message = obj.param3;
+                    if (obj.param1)
                     {
-                    };
-                    outputStream.write(failPackage, 0, failPackage.length);
-                    Logging.log("Такого запроса не существует. "
-                            + "Возможно, он был удален по причине "
-                            + "длительного застоя в системе"
-                            + "Клиент: "
-                            + socket.getInetAddress(), 2);
+                        Logging.log("Запрос на прием данных от "
+                                + "клиента: "
+                                + socket.getInetAddress()
+                                + " По запросу №" + key
+                                + " Объем файла: " + message.length
+                                + "байт", 2);
+
+                        SenderData tcpSessionLocal = new SenderData(
+                                socket,
+                                new String(obj.param3, "UTF-8"),
+                                Integer.parseInt(new String(obj.param4,
+                                        "UTF-8")));
+                        tcpSessionLocal.process();
+                    } else
+                    {
+                        Logging.log("Запрос на отправку данных клиенту: "
+                                + socket.getInetAddress() + " По запросу №"
+                                + key + " Объем файла: "
+                                + message.length + "байт", 2);
+                        ReceiveData rdSession = new ReceiveData(socket, message);
+                        rdSession.process();
+                    }
+                    Storage.remove(key);
+                } else
+                {
+                    if (key == -1)
+                    {
+                        Logging.log("Тестирование соединения клиента с сервером"
+                                + "Клиент: "
+                                + socket.getInetAddress(), 2);
+                        OutputStream outputStream;
+                        outputStream = socket.getOutputStream();
+                        ObjectMapper mapper = new ObjectMapper();;
+                        String resultString = mapper.writeValueAsString(
+                                new ObjectForSerialization("answer_on_test_ftp_socket",
+                                        "true"));
+                        byte[] testPackage = resultString.getBytes();
+                        outputStream.write(testPackage, 0, testPackage.length);
+                    } else
+                    {
+                        OutputStream outputStream;
+                        outputStream = socket.getOutputStream();
+                        byte[] failPackage = new byte[]
+                        {
+                        };
+                        outputStream.write(failPackage, 0, failPackage.length);
+                        Logging.log("Такого запроса не существует. "
+                                + "Возможно, он был удален по причине "
+                                + "длительного застоя в системе"
+                                + "Клиент: "
+                                + socket.getInetAddress(), 2);
+                    }
                 }
+            } catch (IOException | NumberFormatException exception)
+            {
+                Logging.log("Сервер при выполнении запроса "
+                        + "получил неизвестную ошибку: "
+                        + exception.getMessage(), 2);
             }
-        } catch (IOException | NumberFormatException  exception)
-        {
-            Logging.log("Сервер при выполнении запроса "
-                    + "получил неизвестную ошибку: "
-                    + exception.getMessage(), 2);
-        }
-        }   catch (Exception exception)
+        } catch (Exception exception)
         {
             Logging.log("Критическая ошибка: "
                     + exception.getMessage(), 1);
-        } 
+        }
         Logging.log("Thread: submain FTP end", 4);
     }
 
