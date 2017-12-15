@@ -1,4 +1,5 @@
 ﻿<Window x:Class="contact_center_application.graphic_user_interface.form.MainWindow"
+		xmlns:cm="clr-namespace:System.ComponentModel;assembly=System"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -8,6 +9,18 @@
 		xmlns:my="clr-namespace:Spire.DocViewer.Wpf;assembly=Spire.DocViewer.Wpf" WindowStartupLocation="CenterScreen"
 		mc:Ignorable="d"
         Title="Информационный портал ЕЭИСЦ" MinWidth="800" MinHeight="600" SizeChanged="Window_SizeChanged" x:Name="window" Closing="window_Closing">
+
+	<Window.Resources>
+		<cm:BackgroundWorker x:Key="backgroundWorkerDownload" 
+		  WorkerReportsProgress="True" WorkerSupportsCancellation="True"
+		 />
+		<cm:BackgroundWorker x:Key="backgroundWorkerUpload" 
+		  WorkerReportsProgress="True" WorkerSupportsCancellation="True"
+		 />
+		<cm:BackgroundWorker x:Key="backgroundWorkerMessenger" 
+		  WorkerReportsProgress="True" WorkerSupportsCancellation="True"
+		 />
+	</Window.Resources>
 
 	<Grid>
 		<Grid.RowDefinitions>
@@ -191,4 +204,6 @@
 			<TextBlock HorizontalAlignment="Right" VerticalAlignment="Center" DockPanel.Dock="Right" Text="Версия: " x:Name="versionOnTextBlock" FontSize="10"/>
 		</DockPanel>
 	</Grid>
+	
+	
 </Window>

@@ -29,11 +29,12 @@ namespace contact_center_application.graphic_user_interface.form
 		{
 			InitializeComponent();
 			this.messenger.Text = message;
+			this.Show();
 		}
 
 		public void run()
 		{
-			for (double i = 0.0; i < 1.0; i += 0.1)
+			for (double i = 1.0; i >= 0; i -= 0.1)
 			{
 				this.Opacity = i;
 				Thread.Sleep(400);

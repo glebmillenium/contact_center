@@ -1,20 +1,17 @@
-﻿using System.Collections.Generic;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using contact_center_application.core;
 using Newtonsoft.Json;
-using contact_center_application.core.serialization;
 using System;
 using System.IO;
 using System.Diagnostics;
 using System.Threading;
-using System.Reflection;
-using System.Windows.Input;
 using System.Windows.Media;
 using contact_center_application.core.storage_dynamic_data;
 using contact_center_application.graphic_user_interface.manage_graphical_component.tree_view;
 using contact_center_application.graphic_user_interface.manage_graphical_component.viewer;
 using System.Windows.Threading;
+using System.ComponentModel;
 
 namespace contact_center_application.graphic_user_interface.form
 {
@@ -109,7 +106,9 @@ namespace contact_center_application.graphic_user_interface.form
 		{
 			ManagerViewer.callGarbage();
 			CurrentDataFileSystem.getContentFileSystem();
-		}		
+		}
+
+		private BackgroundWorker backgroundWorker;
 
 		/// <summary>
 		/// Запуск загрузки содержимого файла с сервера и открытия в documentViewer либо 
@@ -139,8 +138,10 @@ namespace contact_center_application.graphic_user_interface.form
 					}
 					else
 					{
-						Thread thr = new Thread(startMessage);
-						thr.Start();
+//						LightMessenger lm = new LightMessenger("Вы изменили содержимое файла." +
+//	" Но у вас недостаточно прав для отправки файла на сервер.");
+//						backgroundWorker = ((BackgroundWorker)this.FindResource("backgroundWorker"));
+//						backgroundWorker.RunWorkerAsync(searchTextBox);
 					}
 				}
 			}
@@ -148,20 +149,6 @@ namespace contact_center_application.graphic_user_interface.form
 			{
 				Logger.log(exceptionWithOpenFile.Message);
 			}
-		}
-
-		public void startMessage()
-		{
-			this.Dispatcher.BeginInvoke(DispatcherPriority.ApplicationIdle,
-				(ThreadStart)delegate ()
-				{
-					LightMessenger lm = new LightMessenger("Вы изменили содержимое файла." +
-			" Но у вас недостаточно прав для отправки файла на сервер.");
-					lm.Show();
-					lm.run();
-				}
-			);
-
 		}
 
 		/// <summary>
@@ -269,6 +256,32 @@ namespace contact_center_application.graphic_user_interface.form
 		private void window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
 		{
 			RequestDataFromServer.closeConnection();
+		}
+
+		private void BackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+		{
+
+		}
+
+		private void startMessage(object sender, DoWorkEventArgs e)
+		{
+			TextBox textBox = (TextBox)e.Argument;
+			//LightMessenger lm = (LightMessenger) e.Argument;
+			for (double i = 1.0; i >= 0; i -= 0.1)
+			{
+				backgroundWorker.ReportProgress((int)(i * 100.0));
+				message = (i).ToString() + " ";
+				Thread.Sleep(400);
+			}
+			//this.Close();
+			//lm.run();
+		}
+
+		string message = "";
+
+		private void backgroundWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
+		{
+			this.searchTextBox.Text = message;
 		}
 	}
 }
