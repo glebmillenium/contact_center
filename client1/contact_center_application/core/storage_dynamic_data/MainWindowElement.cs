@@ -1,6 +1,8 @@
-﻿using contact_center_application.graphic_user_interface.form;
+﻿using contact_center_application.core.background_task;
+using contact_center_application.graphic_user_interface.form;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -39,6 +41,9 @@ namespace contact_center_application.core.storage_dynamic_data
 		public static TextBlock textBlockMessenger;
 		public static ProgressBar progressBarMessenger;
 		public static Popup popupMessenger;
+		public static BackgroundWorker backgroundWorkerDownload;
+		public static BackgroundWorker backgroundWorkerUpload;
+		public static BackgroundWorker backgroundWorkerMessenger;
 
 		public static void initialize(MainWindow wnd)
 		{
@@ -69,6 +74,12 @@ namespace contact_center_application.core.storage_dynamic_data
 			MainWindowElement.textBlockMessenger = wnd.textBlockMessenger;
 			MainWindowElement.progressBarMessenger = wnd.progressBarMessenger;
 			MainWindowElement.buttonRefresh = wnd.buttonRefresh;
+			MainWindowElement.backgroundWorkerDownload = ((BackgroundWorker)wnd.FindResource("backgroundWorkerDownload"));
+			MainWindowElement.backgroundWorkerDownload.DoWork += BackgroundDownload.backgroundWorkerDownload_DoWork;
+			MainWindowElement.backgroundWorkerDownload.ProgressChanged += BackgroundDownload.backgroundWorkerDownload_ProgressChanged;
+			MainWindowElement.backgroundWorkerDownload.RunWorkerCompleted += BackgroundDownload.backgroundWorkerDownload_RunWorkerCompleted;
+			MainWindowElement.backgroundWorkerUpload = ((BackgroundWorker)wnd.FindResource("backgroundWorkerUpload"));
+			MainWindowElement.backgroundWorkerMessenger = ((BackgroundWorker)wnd.FindResource("backgroundWorkerMessenger"));
 			if (SettingsData.getRightWrite() == 0)
 			{
 				MainWindowElement.loadFileToServer.Visibility = System.Windows.Visibility.Collapsed;

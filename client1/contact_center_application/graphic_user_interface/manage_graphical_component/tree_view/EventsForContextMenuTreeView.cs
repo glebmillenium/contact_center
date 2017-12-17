@@ -211,55 +211,49 @@ namespace contact_center_application.graphic_user_interface.manage_graphical_com
 
 					string aliance = CurrentDataFileSystem.ComboboxFileSystem.SelectedItem.ToString();
 					string relativeWay = CurrentDataFileSystem.listTreeView[selectedItem.Item2].Item2;
-					string selected = CurrentDataFileSystem.ComboboxFileSystem.SelectedItem.ToString();
+
 					CurrentDataOpenFile.openFile = "tmp" + relativeWay;
-					if (Path.GetExtension(relativeWay).Equals(".link"))
+					int index = Int32.Parse(CurrentDataFileSystem.alianceIdPolicy[
+						CurrentDataFileSystem.ComboboxFileSystem.SelectedItem.ToString()].Item1);
+					MainWindowElement.window.IsEnabled = false;
+
+					TreatmenterExchangeFileWithServer.getContentFileAndWriteToFile(
+						relativeWay, index.ToString());
+					MainWindowElement.window.IsEnabled = true;
+					MainWindowElement.progressConvertation.Visibility = Visibility.Visible;
+					try
 					{
-						openWeb(Path.GetFileNameWithoutExtension(relativeWay));
+						ManagerViewer.LoadToViewer(CurrentDataOpenFile.openFile,
+							ManagerViewer.currentView);
 					}
-					else
+					catch (OutOfMemoryException exceptionMemory)
 					{
-						int index = Int32.Parse(CurrentDataFileSystem.alianceIdPolicy[
-							CurrentDataFileSystem.ComboboxFileSystem.SelectedItem.ToString()].Item1);
-						MainWindowElement.window.IsEnabled = false;
-						TreatmenterExchangeFileWithServer.getContentFileAndWriteToFile(
-							relativeWay);
-						MainWindowElement.window.IsEnabled = true;
-						MainWindowElement.progressConvertation.Visibility = Visibility.Visible;
-						try
-						{
-							ManagerViewer.LoadToViewer(CurrentDataOpenFile.openFile,
-								ManagerViewer.currentView);
-						}
-						catch (OutOfMemoryException exceptionMemory)
-						{
-							MessageBox.Show("Системных ресурсов вашей операционной системы оказалось " +
-								"недостаточно для отображения содержимого файла(" + Path.GetFileName(CurrentDataOpenFile.openFile) +
-								") в данном приложении. " +
-								"Попытайтесь открыть файл во внешнем приложении", "Нехватка системных ресурсов");
-							Logger.log(exceptionMemory.Message);
-						}
-						catch (Exception exp)
-						{
-							MessageBox.Show("Неизвестная ошибка", "UNKNOWN");
-							Logger.log(exp.Message);
-						}
-						finally
-						{
-							if (ManagerViewer.currentView.Equals("view/temp1"))
-							{
-								ManagerViewer.currentView = "view/temp2";
-							}
-							else
-							{
-								ManagerViewer.currentView = "view/temp1";
-							}
-							MainWindowElement.progressConvertation.Visibility = Visibility.Hidden;
-						}
+						MessageBox.Show("Системных ресурсов вашей операционной системы оказалось " +
+							"недостаточно для отображения содержимого файла(" + Path.GetFileName(CurrentDataOpenFile.openFile) +
+							") в данном приложении. " +
+							"Попытайтесь открыть файл во внешнем приложении", "Нехватка системных ресурсов");
+						Logger.log(exceptionMemory.Message);
 					}
-					MainWindowElement.managerPanel.Visibility = Visibility.Visible;
-					MainWindowElement.cursor = Cursors.Arrow;
-					MainWindowElement.stackPanelMessenger.Visibility = Visibility.Hidden;
+					catch (Exception exp)
+					{
+						MessageBox.Show("Неизвестная ошибка", "UNKNOWN");
+						Logger.log(exp.Message);
+					}
+					finally
+					{
+						if (ManagerViewer.currentView.Equals("view/temp1"))
+						{
+							ManagerViewer.currentView = "view/temp2";
+						}
+						else
+						{
+							ManagerViewer.currentView = "view/temp1";
+						}
+						MainWindowElement.progressConvertation.Visibility = Visibility.Hidden;
+						MainWindowElement.managerPanel.Visibility = Visibility.Visible;
+						MainWindowElement.cursor = Cursors.Arrow;
+						MainWindowElement.stackPanelMessenger.Visibility = Visibility.Hidden;
+					}
 				}
 			}
 			catch (Exception exp)

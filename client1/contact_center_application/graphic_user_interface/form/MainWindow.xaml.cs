@@ -20,9 +20,6 @@ namespace contact_center_application.graphic_user_interface.form
 	/// </summary>
 	public partial class MainWindow : Window
 	{
-		private BackgroundWorker backgroundWorkerDownload;
-		private BackgroundWorker backgroundWorkerUpload;
-		private BackgroundWorker backgroundWorkerMessenger;
 
 		/// <summary>
 		/// Конструктор, осуществляет чистку папки временных файлов
@@ -31,9 +28,7 @@ namespace contact_center_application.graphic_user_interface.form
 		{
 			Logger.initialize();
 			InitializeComponent();
-			backgroundWorkerDownload = ((BackgroundWorker)this.FindResource("backgroundWorkerDownload"));
-			backgroundWorkerUpload = ((BackgroundWorker)this.FindResource("backgroundWorkerUpload"));
-			backgroundWorkerMessenger = ((BackgroundWorker)this.FindResource("backgroundWorkerMessenger"));
+
 			MainWindowElement.initialize(this);
 			ManagerViewer.textbox = this.textboxDisplay;
 			ManagerViewer.otherViewer = this.otherOnViewer;
@@ -286,21 +281,6 @@ namespace contact_center_application.graphic_user_interface.form
 		private void backgroundWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
 		{
 			this.searchTextBox.Text = message;
-		}
-
-		private void backgroundWorkerDownload_DoWork(object sender, DoWorkEventArgs e)
-		{
-
-		}
-
-		private void backgroundWorkerDownload_ProgressChanged(object sender, ProgressChangedEventArgs e)
-		{
-
-		}
-
-		private void backgroundWorkerDownload_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-		{
-
 		}
 
 		private void backgroundWorkerUpload_DoWork(object sender, DoWorkEventArgs e)

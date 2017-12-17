@@ -12,30 +12,40 @@ namespace contact_center_application.core
 		static string addressServer = "localhost";
 		static int portFtp = 6502;
 		static int portFast = 6500;
+		private static object block = new object();
 
 		public static void closeConnection()
 		{
-			ConnectWithFastSocket.closeSocket();
+			lock (block)
+			{
+				ConnectWithFastSocket.closeSocket();
+			}
 		}
 
 		public static void rebootFastServer()
 		{
-			closeConnection();
-			primaryExchangeWithSocket();
+			lock (block)
+			{
+				closeConnection();
+				primaryExchangeWithSocket();
+			}
 		}
 
 		public static string[] primaryExchangeWithSocket()
 		{
-			addressServer = SettingsData.getAddress();
-			portFtp = SettingsData.getFtpPort();
-			portFast = SettingsData.getFastPort();
-			try
+			lock (block)
 			{
-				ConnectWithFastSocket.createSocket(addressServer, portFast);
-			}
-			catch (System.Net.Sockets.SocketException socketException)
-			{
-				throw new System.Net.Sockets.SocketException();
+				addressServer = SettingsData.getAddress();
+				portFtp = SettingsData.getFtpPort();
+				portFast = SettingsData.getFastPort();
+				try
+				{
+					ConnectWithFastSocket.createSocket(addressServer, portFast);
+				}
+				catch (System.Net.Sockets.SocketException socketException)
+				{
+					throw new System.Net.Sockets.SocketException();
+				}
 			}
 
 			return getAliance();
@@ -43,36 +53,41 @@ namespace contact_center_application.core
 
 		public static Tuple<String, int, String> getRightAccess(string login, string password)
 		{
+
 			addressServer = SettingsData.getAddress();
 			portFtp = SettingsData.getFtpPort();
 			portFast = SettingsData.getFastPort();
 			try
 			{
-				ConnectWithFastSocket.createSocket(addressServer, portFast);
-
-				ObjectForSerialization objForSendToFastSocket = new ObjectForSerialization
-				{
-					command = "auth",
-					param1 = "",
-					param2 = SettingsData.getVersion(),
-					param3 = "",
-					param4_array = System.Text.Encoding.UTF8.GetBytes(login),
-					param5_array = System.Text.Encoding.UTF8.GetBytes(password)
-				};
-				string resultJson = JsonConvert.SerializeObject(objForSendToFastSocket);
-				string answer = ConnectWithFastSocket.sendMessage(resultJson, 8192);
-				ObjectForSerialization objResponseFromFastSocket =
-					JsonConvert.DeserializeObject<ObjectForSerialization>(answer);
 				Tuple<String, int, String> result;
-				try
+				lock (block)
 				{
-					result = new Tuple<String, int, String>(objResponseFromFastSocket.param2, Int32.Parse(objResponseFromFastSocket.param1),
-						System.Text.Encoding.UTF8.GetString(objResponseFromFastSocket.param4_array));
-				}
-				catch (Exception e)
-				{
-					result = new Tuple<String, int, String>("Неизвестно", -1,
-						"Сервер не находится в рабочем состоянии");
+					ConnectWithFastSocket.createSocket(addressServer, portFast);
+
+					ObjectForSerialization objForSendToFastSocket = new ObjectForSerialization
+					{
+						command = "auth",
+						param1 = "",
+						param2 = SettingsData.getVersion(),
+						param3 = "",
+						param4_array = System.Text.Encoding.UTF8.GetBytes(login),
+						param5_array = System.Text.Encoding.UTF8.GetBytes(password)
+					};
+					string resultJson = JsonConvert.SerializeObject(objForSendToFastSocket);
+					string answer = ConnectWithFastSocket.sendMessage(resultJson, 8192);
+					ObjectForSerialization objResponseFromFastSocket =
+						JsonConvert.DeserializeObject<ObjectForSerialization>(answer);
+
+					try
+					{
+						result = new Tuple<String, int, String>(objResponseFromFastSocket.param2, Int32.Parse(objResponseFromFastSocket.param1),
+							System.Text.Encoding.UTF8.GetString(objResponseFromFastSocket.param4_array));
+					}
+					catch (Exception e)
+					{
+						result = new Tuple<String, int, String>("Неизвестно", -1,
+							"Сервер не находится в рабочем состоянии");
+					}
 				}
 				return result;
 			}
@@ -84,167 +99,171 @@ namespace contact_center_application.core
 
 		private static string[] getAliance()
 		{
-			ObjectForSerialization objForSendToFastSocket = new ObjectForSerialization
-			{
-				command = "get_aliance"
-			};
-			string resultJson = JsonConvert.SerializeObject(objForSendToFastSocket);
-			string answer = ConnectWithFastSocket.sendMessage(resultJson, 8192);
-			ObjectForSerialization objResponseFromFastSocket =
-				JsonConvert.DeserializeObject<ObjectForSerialization>(answer);
-			string[] result = null;
-
-			int expectedSize = Int32.Parse(objResponseFromFastSocket.param1);
-			int index = Int32.Parse(objResponseFromFastSocket.param2);
-			if (!objResponseFromFastSocket.command.Equals("aliance"))
-			{
-				return result;
-			}
-			ObjectForSerialization objForSendToFtpSocket = new ObjectForSerialization
-			{
-				command = "get_aliance",
-				param1 = "",
-				param2 = index.ToString()
-			};
-
-			resultJson = JsonConvert.SerializeObject(objForSendToFtpSocket);
-
-			ConnectWithFtpSocket.createSocket(addressServer, 6502);
-			resultJson = JsonConvert.SerializeObject(objForSendToFtpSocket);
-			string answerSocket = ConnectWithFtpSocket.sendMessage(resultJson, expectedSize);
-			ConnectWithFtpSocket.closeSocket();
-
-			result = JsonConvert.DeserializeObject<string[]>(answerSocket);
-			return result;
-		}
-
-		private static bool sendMessageToRenameFile()
-		{
-			return true;
-		}
-
-		private static bool sendMessageToUploadFile(string aliance, 
-			string relativePathWithExistFileSystem, string pathToUploadFile)
-		{
-			bool notificationToUserInGUI = false;
-			FileInfo fi = new FileInfo(pathToUploadFile);
-			ObjectForSerialization objForSendToFastSocket = new ObjectForSerialization
-			{
-				command = "try_upload",
-				param1 = fi.Length.ToString(),
-				param2 = aliance,
-				param3 = "",
-				param4_array = System.Text.Encoding.UTF8.GetBytes(relativePathWithExistFileSystem)
-			};
-			string resultJson = JsonConvert.SerializeObject(objForSendToFastSocket);
-			string answer = ConnectWithFastSocket.sendMessage(resultJson, 8192);
-			ObjectForSerialization objResponseFromFastSocket =
-				JsonConvert.DeserializeObject<ObjectForSerialization>(answer);
-			if (objResponseFromFastSocket.param2.Equals("1"))
-			{
-				int index = Int32.Parse(objResponseFromFastSocket.param1);
-				ObjectForSerialization objForSendToFtpSocket = new ObjectForSerialization
-				{
-					command = "try_upload",
-					param1 = "",
-					param2 = index.ToString()
-				};
-
-				ConnectWithFtpSocket.createSocket(addressServer, portFtp);
-				resultJson = JsonConvert.SerializeObject(objForSendToFtpSocket);
-				notificationToUserInGUI = ConnectWithFtpSocket.sendFile(resultJson, 
-					pathToUploadFile, fi.Length);
-				ConnectWithFtpSocket.closeSocket();
-				return notificationToUserInGUI;
-			}
-			//answer.param1 - номер запроса
-			//answer.param2 - результат 0/1
-			return notificationToUserInGUI;
-		}
-
-		private static bool sendMessageToDeleteFile()
-		{
-			return true;
-		}
-
-		public static string getCatalog(string aliance)
-		{
-			try
+			lock (block)
 			{
 				ObjectForSerialization objForSendToFastSocket = new ObjectForSerialization
 				{
-					command = "get_catalog",
-					param1 = aliance
+					command = "get_aliance"
 				};
-
 				string resultJson = JsonConvert.SerializeObject(objForSendToFastSocket);
 				string answer = ConnectWithFastSocket.sendMessage(resultJson, 8192);
 				ObjectForSerialization objResponseFromFastSocket =
 					JsonConvert.DeserializeObject<ObjectForSerialization>(answer);
-				string result = null;
+				string[] result = null;
 
 				int expectedSize = Int32.Parse(objResponseFromFastSocket.param1);
-
 				int index = Int32.Parse(objResponseFromFastSocket.param2);
-				if (!objResponseFromFastSocket.command.Equals("catalog"))
+				if (!objResponseFromFastSocket.command.Equals("aliance"))
 				{
 					return result;
 				}
 				ObjectForSerialization objForSendToFtpSocket = new ObjectForSerialization
 				{
-					command = "get_catalog",
+					command = "get_aliance",
 					param1 = "",
 					param2 = index.ToString()
 				};
 
-				ConnectWithFtpSocket.createSocket(addressServer, portFtp);
 				resultJson = JsonConvert.SerializeObject(objForSendToFtpSocket);
-				answer = ConnectWithFtpSocket.sendMessage(resultJson, expectedSize);
+
+				ConnectWithFtpSocket.createSocket(addressServer, 6502);
+				resultJson = JsonConvert.SerializeObject(objForSendToFtpSocket);
+				string answerSocket = ConnectWithFtpSocket.sendMessage(resultJson, expectedSize);
 				ConnectWithFtpSocket.closeSocket();
 
-				return answer;
-			} catch(FormatException excp)
+				result = JsonConvert.DeserializeObject<string[]>(answerSocket);
+				return result;
+			}
+		}
+
+		private static bool sendMessageToUploadFile(string aliance, 
+			string relativePathWithExistFileSystem, string pathToUploadFile)
+		{
+			lock (block)
 			{
-				throw new FormatException();
+				bool notificationToUserInGUI = false;
+				FileInfo fi = new FileInfo(pathToUploadFile);
+				ObjectForSerialization objForSendToFastSocket = new ObjectForSerialization
+				{
+					command = "try_upload",
+					param1 = fi.Length.ToString(),
+					param2 = aliance,
+					param3 = "",
+					param4_array = System.Text.Encoding.UTF8.GetBytes(relativePathWithExistFileSystem)
+				};
+				string resultJson = JsonConvert.SerializeObject(objForSendToFastSocket);
+				string answer = ConnectWithFastSocket.sendMessage(resultJson, 8192);
+				ObjectForSerialization objResponseFromFastSocket =
+					JsonConvert.DeserializeObject<ObjectForSerialization>(answer);
+				if (objResponseFromFastSocket.param2.Equals("1"))
+				{
+					int index = Int32.Parse(objResponseFromFastSocket.param1);
+					ObjectForSerialization objForSendToFtpSocket = new ObjectForSerialization
+					{
+						command = "try_upload",
+						param1 = "",
+						param2 = index.ToString()
+					};
+
+					ConnectWithFtpSocket.createSocket(addressServer, portFtp);
+					resultJson = JsonConvert.SerializeObject(objForSendToFtpSocket);
+					notificationToUserInGUI = ConnectWithFtpSocket.sendFile(resultJson,
+						pathToUploadFile, fi.Length);
+					ConnectWithFtpSocket.closeSocket();
+					return notificationToUserInGUI;
+				}
+				//answer.param1 - номер запроса
+				//answer.param2 - результат 0/1
+				return notificationToUserInGUI;
+			}
+		}
+
+		public static string getCatalog(string aliance)
+		{
+			lock (block)
+			{
+				try
+				{
+					ObjectForSerialization objForSendToFastSocket = new ObjectForSerialization
+					{
+						command = "get_catalog",
+						param1 = aliance
+					};
+
+					string resultJson = JsonConvert.SerializeObject(objForSendToFastSocket);
+					string answer = ConnectWithFastSocket.sendMessage(resultJson, 8192);
+					ObjectForSerialization objResponseFromFastSocket =
+						JsonConvert.DeserializeObject<ObjectForSerialization>(answer);
+					string result = null;
+
+					int expectedSize = Int32.Parse(objResponseFromFastSocket.param1);
+
+					int index = Int32.Parse(objResponseFromFastSocket.param2);
+					if (!objResponseFromFastSocket.command.Equals("catalog"))
+					{
+						return result;
+					}
+					ObjectForSerialization objForSendToFtpSocket = new ObjectForSerialization
+					{
+						command = "get_catalog",
+						param1 = "",
+						param2 = index.ToString()
+					};
+
+					ConnectWithFtpSocket.createSocket(addressServer, portFtp);
+					resultJson = JsonConvert.SerializeObject(objForSendToFtpSocket);
+					answer = ConnectWithFtpSocket.sendMessage(resultJson, expectedSize);
+					ConnectWithFtpSocket.closeSocket();
+
+					return answer;
+				}
+				catch (FormatException excp)
+				{
+					throw new FormatException();
+				}
 			}
 		}
 
 		public static byte[] getContentFile(string aliance, string relativeWay)
 		{
-			ObjectForSerialization objForSendToFastSocket = new ObjectForSerialization {
-				command = "get_content_file",
-				param1 = aliance,
-				param2 = "",
-				param3 = "",
-				param4_array = System.Text.Encoding.UTF8.GetBytes(relativeWay)
-			};
-			string resultJson = JsonConvert.SerializeObject(objForSendToFastSocket);
-			string answer = ConnectWithFastSocket.sendMessage(resultJson, 8192);
-			ObjectForSerialization objResponseFromFastSocket =
-				JsonConvert.DeserializeObject<ObjectForSerialization>(answer);
-
-			int expectedSize = Int32.Parse(objResponseFromFastSocket.param1);
-			int index = Int32.Parse(objResponseFromFastSocket.param2);
-			if (!objResponseFromFastSocket.command.Equals("content_file"))
+			lock (block)
 			{
-				return new byte[] { };
+				ObjectForSerialization objForSendToFastSocket = new ObjectForSerialization
+				{
+					command = "get_content_file",
+					param1 = aliance,
+					param2 = "",
+					param3 = "",
+					param4_array = System.Text.Encoding.UTF8.GetBytes(relativeWay)
+				};
+				string resultJson = JsonConvert.SerializeObject(objForSendToFastSocket);
+				string answer = ConnectWithFastSocket.sendMessage(resultJson, 8192);
+				ObjectForSerialization objResponseFromFastSocket =
+					JsonConvert.DeserializeObject<ObjectForSerialization>(answer);
+
+				int expectedSize = Int32.Parse(objResponseFromFastSocket.param1);
+				int index = Int32.Parse(objResponseFromFastSocket.param2);
+				if (!objResponseFromFastSocket.command.Equals("content_file"))
+				{
+					return new byte[] { };
+				}
+				ObjectForSerialization objForSendToFtpSocket = new ObjectForSerialization
+				{
+					command = "content_file",
+					param1 = "",
+					param2 = index.ToString()
+				};
+
+				string outputSizeFile = getHumanSize(expectedSize);
+				string output = "Получение содержимого файла... Общий размер: " + outputSizeFile;
+
+				ConnectWithFtpSocket.createSocket(addressServer, portFtp);
+				resultJson = JsonConvert.SerializeObject(objForSendToFtpSocket);
+				byte[] answerFromFunction = ConnectWithFtpSocket.sendMessageGetContentFile(resultJson, expectedSize);
+				ConnectWithFtpSocket.closeSocket();
+
+				return answerFromFunction;
 			}
-			ObjectForSerialization objForSendToFtpSocket = new ObjectForSerialization
-			{
-				command = "content_file",
-				param1 = "",
-				param2 = index.ToString()
-			};
-
-			string outputSizeFile = getHumanSize(expectedSize);
-			string output = "Получение содержимого файла... Общий размер: " + outputSizeFile;
-
-			ConnectWithFtpSocket.createSocket(addressServer, portFtp);
-			resultJson = JsonConvert.SerializeObject(objForSendToFtpSocket);
-			byte[] answerFromFunction = ConnectWithFtpSocket.sendMessageGetContentFile(resultJson, expectedSize);
-			ConnectWithFtpSocket.closeSocket();
-
-			return answerFromFunction;
 		}
 
 		private static string getHumanSize(int expectedSize)
@@ -279,63 +298,73 @@ namespace contact_center_application.core
 
 		public static bool sendToRenameObjectFileSystem(string aliance, string relativeWay, string newName)
 		{
-			ObjectForSerialization objForSendToFastSocket = new ObjectForSerialization
+			lock (block)
 			{
-				command = "try_rename",
-				param1 = aliance,
-				param2 = "", param3 = "",
-				param4_array = System.Text.Encoding.UTF8.GetBytes(relativeWay),
-				param5_array = System.Text.Encoding.UTF8.GetBytes(newName)
-			};
-			string resultJson = JsonConvert.SerializeObject(objForSendToFastSocket);
-			string answer = ConnectWithFastSocket.sendMessage(resultJson, 8192);
-			ObjectForSerialization objResponseFromFastSocket =
-				JsonConvert.DeserializeObject<ObjectForSerialization>(answer);
-			if (objResponseFromFastSocket.param1.Equals("1"))
-				return true;
-			else
-				return false;
+				ObjectForSerialization objForSendToFastSocket = new ObjectForSerialization
+				{
+					command = "try_rename",
+					param1 = aliance,
+					param2 = "",
+					param3 = "",
+					param4_array = System.Text.Encoding.UTF8.GetBytes(relativeWay),
+					param5_array = System.Text.Encoding.UTF8.GetBytes(newName)
+				};
+				string resultJson = JsonConvert.SerializeObject(objForSendToFastSocket);
+				string answer = ConnectWithFastSocket.sendMessage(resultJson, 8192);
+				ObjectForSerialization objResponseFromFastSocket =
+					JsonConvert.DeserializeObject<ObjectForSerialization>(answer);
+				if (objResponseFromFastSocket.param1.Equals("1"))
+					return true;
+				else
+					return false;
+			}
 		}
 
 		public static bool sendToCreateCatalogFileSystem(string aliance, string relativeWay, string nameDirectory)
 		{
-			ObjectForSerialization objForSendToFastSocket = new ObjectForSerialization
+			lock (block)
 			{
-				command = "try_create_dir",
-				param1 = aliance,
-				param2 = "",
-				param3 = "",
-				param4_array = System.Text.Encoding.UTF8.GetBytes(relativeWay),
-				param5_array = System.Text.Encoding.UTF8.GetBytes(nameDirectory)
-			};
-			string resultJson = JsonConvert.SerializeObject(objForSendToFastSocket);
-			string answer = ConnectWithFastSocket.sendMessage(resultJson, 8192);
-			ObjectForSerialization objResponseFromFastSocket =
-				JsonConvert.DeserializeObject<ObjectForSerialization>(answer);
-			if (objResponseFromFastSocket.param1.Equals("1"))
-				return true;
-			else
-				return false;
+				ObjectForSerialization objForSendToFastSocket = new ObjectForSerialization
+				{
+					command = "try_create_dir",
+					param1 = aliance,
+					param2 = "",
+					param3 = "",
+					param4_array = System.Text.Encoding.UTF8.GetBytes(relativeWay),
+					param5_array = System.Text.Encoding.UTF8.GetBytes(nameDirectory)
+				};
+				string resultJson = JsonConvert.SerializeObject(objForSendToFastSocket);
+				string answer = ConnectWithFastSocket.sendMessage(resultJson, 8192);
+				ObjectForSerialization objResponseFromFastSocket =
+					JsonConvert.DeserializeObject<ObjectForSerialization>(answer);
+				if (objResponseFromFastSocket.param1.Equals("1"))
+					return true;
+				else
+					return false;
+			}
 		}
 
 		public static bool sendToDeleteObjectFileSystem(string aliance, string relativeWay)
 		{
-			ObjectForSerialization objForSendToFastSocket = new ObjectForSerialization
+			lock (block)
 			{
-				command = "try_remove",
-				param1 = aliance,
-				param2 = "",
-				param3 = "",
-				param4_array = System.Text.Encoding.UTF8.GetBytes(relativeWay),
-			};
-			string resultJson = JsonConvert.SerializeObject(objForSendToFastSocket);
-			string answer = ConnectWithFastSocket.sendMessage(resultJson, 8192);
-			ObjectForSerialization objResponseFromFastSocket =
-				JsonConvert.DeserializeObject<ObjectForSerialization>(answer);
-			if (objResponseFromFastSocket.param1.Equals("1"))
-				return true;
-			else
-				return false;
+				ObjectForSerialization objForSendToFastSocket = new ObjectForSerialization
+				{
+					command = "try_remove",
+					param1 = aliance,
+					param2 = "",
+					param3 = "",
+					param4_array = System.Text.Encoding.UTF8.GetBytes(relativeWay),
+				};
+				string resultJson = JsonConvert.SerializeObject(objForSendToFastSocket);
+				string answer = ConnectWithFastSocket.sendMessage(resultJson, 8192);
+				ObjectForSerialization objResponseFromFastSocket =
+					JsonConvert.DeserializeObject<ObjectForSerialization>(answer);
+				if (objResponseFromFastSocket.param1.Equals("1"))
+					return true;
+				else
+					return false;
+			}
 		}
 	}
 }

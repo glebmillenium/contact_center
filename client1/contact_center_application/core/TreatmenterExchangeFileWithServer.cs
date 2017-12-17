@@ -84,15 +84,14 @@ namespace contact_center_application.core
 			}
 		}
 
-		public static void getContentFileAndWriteToFile(string relativeWay)
+		public static void getContentFileAndWriteToFile(string relativeWay, string aliance)
 		{
 			setData(2, "Сбор сведений о файле");
 			try
 			{
 				clearFilesFromTempDirectory(relativeWay);
 				setData(5, "Сбор сведений о файле");
-				string aliance = CurrentDataFileSystem.alianceIdPolicy[
-					CurrentDataFileSystem.ComboboxFileSystem.SelectedItem.ToString()].Item1;
+
 				setData(7, "Загрузка файла");
 				byte[] result = RequestDataFromServer.getContentFile(aliance, relativeWay);
 				setData(95, "Файл успешно загружен");

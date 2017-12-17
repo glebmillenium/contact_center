@@ -7,7 +7,6 @@ C:\contact_center\client1\contact_center_application\bin\x86\Debug\Spire.License
 C:\contact_center\client1\contact_center_application\bin\x86\Debug\Spire.Pdf.Wpf.dll
 C:\contact_center\client1\contact_center_application\bin\x86\Debug\Spire.PdfViewer.Wpf.dll
 C:\contact_center\client1\contact_center_application\bin\x86\Debug\Spire.XLS.dll
-C:\contact_center\client1\contact_center_application\bin\x86\Debug\Microsoft.mshtml.dll
 C:\contact_center\client1\contact_center_application\bin\x86\Debug\Spire.Pdf.dll
 C:\contact_center\client1\contact_center_application\bin\x86\Debug\Newtonsoft.Json.xml
 C:\contact_center\client1\contact_center_application\bin\x86\Debug\Spire.XLS.xml
@@ -34,7 +33,6 @@ C:\contact_center\client1\contact_center_application\obj\x86\Debug\graphic_user_
 C:\contact_center\client1\contact_center_application\obj\x86\Debug\graphic_user_interface\form\MainWindow.baml
 C:\contact_center\client1\contact_center_application\obj\x86\Debug\contact_center_application.Properties.Resources.resources
 C:\contact_center\client1\contact_center_application\obj\x86\Debug\viewer.csproj.GenerateResource.Cache
-C:\contact_center\client1\contact_center_application\obj\x86\Debug\viewer.csproj.CoreCompileInputs.cache
 C:\contact_center\client1\contact_center_application\obj\x86\Debug\viewer.csprojResolveAssemblyReference.cache
 C:\contact_center\client1\contact_center_application\bin\x86\Debug\АРМ оператора контакт-центра.exe.config
 C:\contact_center\client1\contact_center_application\bin\x86\Debug\АРМ оператора контакт-центра.exe
@@ -49,3 +47,14 @@ C:\contact_center\client1\contact_center_application\obj\x86\Debug\АРМ опе
 C:\contact_center\client1\contact_center_application\obj\x86\Debug\contact_center_application.graphic_user_interface.form.AboutProgram.resources
 C:\contact_center\client1\contact_center_application\obj\x86\Debug\graphic_user_interface\form\LightMessenger.g.cs
 C:\contact_center\client1\contact_center_application\obj\x86\Debug\graphic_user_interface\form\LightMessenger.baml
+C:\contact_center\client1\contact_center_application\bin\x86\Debug\MouseKeyboardActivityMonitor.dll
+C:\contact_center\client1\contact_center_application\bin\x86\Debug\Spire.Email.dll
+C:\contact_center\client1\contact_center_application\bin\x86\Debug\Spire.OfficeViewer.Forms.dll
+C:\contact_center\client1\contact_center_application\bin\x86\Debug\Spire.PdfViewer.Asp.dll
+C:\contact_center\client1\contact_center_application\bin\x86\Debug\Spire.Presentation.dll
+C:\contact_center\client1\contact_center_application\bin\x86\Debug\Spire.Doc.dll
+C:\contact_center\client1\contact_center_application\bin\x86\Debug\Spire.Email.xml
+C:\contact_center\client1\contact_center_application\bin\x86\Debug\Spire.OfficeViewer.Forms.xml
+C:\contact_center\client1\contact_center_application\bin\x86\Debug\Spire.PdfViewer.Asp.xml
+C:\contact_center\client1\contact_center_application\bin\x86\Debug\Spire.Presentation.xml
+C:\contact_center\client1\contact_center_application\bin\x86\Debug\Spire.Doc.xml

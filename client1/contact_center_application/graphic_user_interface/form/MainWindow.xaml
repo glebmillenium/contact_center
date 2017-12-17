@@ -12,7 +12,7 @@
 
 	<Window.Resources>
 		<cm:BackgroundWorker x:Key="backgroundWorkerDownload" 
-		  WorkerReportsProgress="True" WorkerSupportsCancellation="True" DoWork="backgroundWorkerDownload_DoWork" ProgressChanged="backgroundWorkerDownload_ProgressChanged" RunWorkerCompleted="backgroundWorkerDownload_RunWorkerCompleted"
+		  WorkerReportsProgress="True" WorkerSupportsCancellation="True" 
 		 />
 		<cm:BackgroundWorker x:Key="backgroundWorkerUpload" 
 		  WorkerReportsProgress="True" WorkerSupportsCancellation="True" DoWork="backgroundWorkerUpload_DoWork" ProgressChanged="backgroundWorkerUpload_ProgressChanged" RunWorkerCompleted="backgroundWorkerUpload_RunWorkerCompleted"

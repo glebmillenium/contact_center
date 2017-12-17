@@ -1,0 +1,60 @@
+C:\contact_center\client1\contact_center_application\bin\Debug\АРМ оператора контакт-центра.exe.config
+C:\contact_center\client1\contact_center_application\bin\Debug\libmupdf.dll
+C:\contact_center\client1\contact_center_application\bin\Debug\MoonPdfLib.dll
+C:\contact_center\client1\contact_center_application\bin\Debug\MouseKeyboardActivityMonitor.dll
+C:\contact_center\client1\contact_center_application\bin\Debug\Newtonsoft.Json.dll
+C:\contact_center\client1\contact_center_application\bin\Debug\Spire.Doc.Wpf.dll
+C:\contact_center\client1\contact_center_application\bin\Debug\Spire.DocViewer.Wpf.dll
+C:\contact_center\client1\contact_center_application\bin\Debug\Spire.Email.dll
+C:\contact_center\client1\contact_center_application\bin\Debug\Spire.License.dll
+C:\contact_center\client1\contact_center_application\bin\Debug\Spire.OfficeViewer.Forms.dll
+C:\contact_center\client1\contact_center_application\bin\Debug\Spire.Pdf.Wpf.dll
+C:\contact_center\client1\contact_center_application\bin\Debug\Spire.PdfViewer.Asp.dll
+C:\contact_center\client1\contact_center_application\bin\Debug\Spire.PdfViewer.Wpf.dll
+C:\contact_center\client1\contact_center_application\bin\Debug\Spire.Presentation.dll
+C:\contact_center\client1\contact_center_application\bin\Debug\Spire.XLS.dll
+C:\contact_center\client1\contact_center_application\bin\Debug\Spire.Pdf.dll
+C:\contact_center\client1\contact_center_application\bin\Debug\Spire.Doc.dll
+C:\contact_center\client1\contact_center_application\bin\Debug\Newtonsoft.Json.xml
+C:\contact_center\client1\contact_center_application\bin\Debug\Spire.Email.xml
+C:\contact_center\client1\contact_center_application\bin\Debug\Spire.OfficeViewer.Forms.xml
+C:\contact_center\client1\contact_center_application\bin\Debug\Spire.PdfViewer.Asp.xml
+C:\contact_center\client1\contact_center_application\bin\Debug\Spire.Presentation.xml
+C:\contact_center\client1\contact_center_application\bin\Debug\Spire.XLS.xml
+C:\contact_center\client1\contact_center_application\bin\Debug\Spire.Pdf.xml
+C:\contact_center\client1\contact_center_application\bin\Debug\Spire.Doc.xml
+C:\contact_center\client1\contact_center_application\obj\Debug\viewer.csprojResolveAssemblyReference.cache
+C:\contact_center\client1\contact_center_application\obj\Debug\viewer.csproj.АРМ оператора контакт-центра.exe.config
+C:\contact_center\client1\contact_center_application\obj\Debug\ThemesSoft\MoonUICore.baml
+C:\contact_center\client1\contact_center_application\obj\Debug\Themes\Brushes.baml
+C:\contact_center\client1\contact_center_application\obj\Debug\Themes\Core.baml
+C:\contact_center\client1\contact_center_application\obj\Debug\graphic_user_interface\form\Authorization.g.cs
+C:\contact_center\client1\contact_center_application\obj\Debug\graphic_user_interface\form\DownloadWindow.g.cs
+C:\contact_center\client1\contact_center_application\obj\Debug\graphic_user_interface\form\ConfirmationChooseDialog.g.cs
+C:\contact_center\client1\contact_center_application\obj\Debug\graphic_user_interface\form\LightMessenger.g.cs
+C:\contact_center\client1\contact_center_application\obj\Debug\graphic_user_interface\form\RenameUnitFileSystem.g.cs
+C:\contact_center\client1\contact_center_application\obj\Debug\graphic_user_interface\form\Settings.g.cs
+C:\contact_center\client1\contact_center_application\obj\Debug\graphic_user_interface\form\UploadWindow.g.cs
+C:\contact_center\client1\contact_center_application\obj\Debug\graphic_user_interface\form\MainWindow.g.cs
+C:\contact_center\client1\contact_center_application\obj\Debug\Themes\Core.g.cs
+C:\contact_center\client1\contact_center_application\obj\Debug\App.g.cs
+C:\contact_center\client1\contact_center_application\obj\Debug\АРМ оператора контакт-центра_Content.g.cs
+C:\contact_center\client1\contact_center_application\obj\Debug\АРМ оператора контакт-центра_MarkupCompile.cache
+C:\contact_center\client1\contact_center_application\obj\Debug\АРМ оператора контакт-центра_MarkupCompile.lref
+C:\contact_center\client1\contact_center_application\obj\Debug\App.baml
+C:\contact_center\client1\contact_center_application\obj\Debug\graphic_user_interface\form\Authorization.baml
+C:\contact_center\client1\contact_center_application\obj\Debug\graphic_user_interface\form\DownloadWindow.baml
+C:\contact_center\client1\contact_center_application\obj\Debug\graphic_user_interface\form\ConfirmationChooseDialog.baml
+C:\contact_center\client1\contact_center_application\obj\Debug\graphic_user_interface\form\LightMessenger.baml
+C:\contact_center\client1\contact_center_application\obj\Debug\graphic_user_interface\form\RenameUnitFileSystem.baml
+C:\contact_center\client1\contact_center_application\obj\Debug\graphic_user_interface\form\Settings.baml
+C:\contact_center\client1\contact_center_application\obj\Debug\graphic_user_interface\form\UploadWindow.baml
+C:\contact_center\client1\contact_center_application\obj\Debug\graphic_user_interface\form\MainWindow.baml
+C:\contact_center\client1\contact_center_application\obj\Debug\АРМ оператора контакт-центра.g.resources
+C:\contact_center\client1\contact_center_application\obj\Debug\contact_center_application.graphic_user_interface.form.AboutProgram.resources
+C:\contact_center\client1\contact_center_application\obj\Debug\contact_center_application.Properties.Resources.resources
+C:\contact_center\client1\contact_center_application\obj\Debug\viewer.csproj.GenerateResource.Cache
+C:\contact_center\client1\contact_center_application\obj\Debug\АРМ оператора контакт-центра.exe
+C:\contact_center\client1\contact_center_application\obj\Debug\АРМ оператора контакт-центра.pdb
+C:\contact_center\client1\contact_center_application\bin\Debug\АРМ оператора контакт-центра.exe
+C:\contact_center\client1\contact_center_application\bin\Debug\АРМ оператора контакт-центра.pdb
