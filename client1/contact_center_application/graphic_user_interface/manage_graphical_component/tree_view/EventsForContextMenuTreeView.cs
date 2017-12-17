@@ -1,4 +1,5 @@
 ﻿using contact_center_application.core;
+using contact_center_application.core.background_task;
 using contact_center_application.core.storage_dynamic_data;
 using contact_center_application.graphic_user_interface.form;
 using contact_center_application.graphic_user_interface.manage_graphical_component.viewer;
@@ -215,45 +216,9 @@ namespace contact_center_application.graphic_user_interface.manage_graphical_com
 					CurrentDataOpenFile.openFile = "tmp" + relativeWay;
 					int index = Int32.Parse(CurrentDataFileSystem.alianceIdPolicy[
 						CurrentDataFileSystem.ComboboxFileSystem.SelectedItem.ToString()].Item1);
-					MainWindowElement.window.IsEnabled = false;
-
-					TreatmenterExchangeFileWithServer.getContentFileAndWriteToFile(
-						relativeWay, index.ToString());
-					MainWindowElement.window.IsEnabled = true;
 					MainWindowElement.progressConvertation.Visibility = Visibility.Visible;
-					try
-					{
-						ManagerViewer.LoadToViewer(CurrentDataOpenFile.openFile,
-							ManagerViewer.currentView);
-					}
-					catch (OutOfMemoryException exceptionMemory)
-					{
-						MessageBox.Show("Системных ресурсов вашей операционной системы оказалось " +
-							"недостаточно для отображения содержимого файла(" + Path.GetFileName(CurrentDataOpenFile.openFile) +
-							") в данном приложении. " +
-							"Попытайтесь открыть файл во внешнем приложении", "Нехватка системных ресурсов");
-						Logger.log(exceptionMemory.Message);
-					}
-					catch (Exception exp)
-					{
-						MessageBox.Show("Неизвестная ошибка", "UNKNOWN");
-						Logger.log(exp.Message);
-					}
-					finally
-					{
-						if (ManagerViewer.currentView.Equals("view/temp1"))
-						{
-							ManagerViewer.currentView = "view/temp2";
-						}
-						else
-						{
-							ManagerViewer.currentView = "view/temp1";
-						}
-						MainWindowElement.progressConvertation.Visibility = Visibility.Hidden;
-						MainWindowElement.managerPanel.Visibility = Visibility.Visible;
-						MainWindowElement.cursor = Cursors.Arrow;
-						MainWindowElement.stackPanelMessenger.Visibility = Visibility.Hidden;
-					}
+
+					MainWindowElement.backgroundWorkerDownload.RunWorkerAsync(new ArgumentBackgroundDonwload(relativeWay, index.ToString()));
 				}
 			}
 			catch (Exception exp)
@@ -266,7 +231,7 @@ namespace contact_center_application.graphic_user_interface.manage_graphical_com
 				MainWindowElement.stackPanelMessenger.Visibility = Visibility.Hidden;
 				MainWindowElement.window.IsEnabled = true;
 
-				RequestDataFromServer.rebootFastServer();
+				RequestDataFromServer.rebootFastServer_2();
 			}
 		}
 

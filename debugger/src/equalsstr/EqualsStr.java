@@ -33,8 +33,8 @@ public class EqualsStr {
             }
             else 
             {
-                path1 = "C:\\Users\\admin\\Desktop\\log\\client.log";
-                path2 = "C:\\Users\\admin\\Desktop\\log\\server.log";
+                path1 = "C:\\Users\\Глеб\\Desktop\\Новая папка\\1.doc";
+                path2 = "C:\\Users\\Глеб\\Desktop\\Новая папка\\2.doc";;
             }
             fin = new FileInputStream(path1);
             byte[] buffer_server = new byte[fin.available()];

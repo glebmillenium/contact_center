@@ -1,4 +1,5 @@
-﻿using contact_center_application.core.serialization;
+﻿using contact_center_application.core.background_task;
+using contact_center_application.core.serialization;
 using contact_center_application.core.storage_dynamic_data;
 using contact_center_application.graphic_user_interface.form;
 using contact_center_application.graphic_user_interface.manage_graphical_component.viewer;
@@ -151,8 +152,16 @@ namespace contact_center_application.core
 
 		public static void setData(int value, string describe)
 		{
-			MainWindowElement.progressBarMessenger.Value = value;
-			MainWindowElement.textBlockMessenger.Text = describe;
+			Messenger.value = value;
+			Messenger.message = describe;
+			try
+			{
+				MainWindowElement.backgroundWorkerDownload.ReportProgress(value);
+			}
+			catch (Exception edasd)
+			{
+
+			}
 		}
 	}
 }

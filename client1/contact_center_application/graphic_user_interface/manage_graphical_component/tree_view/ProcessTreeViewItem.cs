@@ -434,15 +434,22 @@ namespace contact_center_application.graphic_user_interface.manage_graphical_com
 			}
 			ContextMenuForTreeView.setContextMenuForTreeViewCatalog();
 
-			CurrentDataFileSystem.basisListItems = ProcessTreeViewItem.getItemsCatalogsFromJson(json, "");
-
-			if (CurrentDataFileSystem.basisListItems.Count != 0)
+			try
 			{
-				CurrentDataFileSystem.treeViewCatalog.Items.Clear();
-				foreach (var category in CurrentDataFileSystem.basisListItems)
+				CurrentDataFileSystem.basisListItems = ProcessTreeViewItem.getItemsCatalogsFromJson(json, "");
+				if (CurrentDataFileSystem.basisListItems.Count != 0)
 				{
-					CurrentDataFileSystem.treeViewCatalog.Items.Add(category);
+					CurrentDataFileSystem.treeViewCatalog.Items.Clear();
+					foreach (var category in CurrentDataFileSystem.basisListItems)
+					{
+						CurrentDataFileSystem.treeViewCatalog.Items.Add(category);
+					}
 				}
+			}
+			catch (Exception e)
+			{
+				MessageBox.Show("Перезапуск каталогов", "Ошибка");
+				RequestDataFromServer.rebootFastServer_2();
 			}
 		}
 	}

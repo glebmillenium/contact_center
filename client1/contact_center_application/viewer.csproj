@@ -154,7 +154,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="core\background_task\ArgumentBackgroundDonwload.cs" />
     <Compile Include="core\background_task\BackgroundDownload.cs" />
+    <Compile Include="core\background_task\Messenger.cs" />
     <Compile Include="core\storage_dynamic_data\CurrentDataFileSystem.cs" />
     <Compile Include="core\storage_dynamic_data\CurrentDataOpenFile.cs" />
     <Compile Include="core\Logger.cs" />

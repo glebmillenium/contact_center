@@ -31,6 +31,25 @@ namespace contact_center_application.core
 			}
 		}
 
+		public static void rebootFastServer_2()
+		{
+			lock (block)
+			{
+				closeConnection();
+				addressServer = SettingsData.getAddress();
+				portFtp = SettingsData.getFtpPort();
+				portFast = SettingsData.getFastPort();
+				try
+				{
+					ConnectWithFastSocket.createSocket(addressServer, portFast);
+				}
+				catch (System.Net.Sockets.SocketException socketException)
+				{
+					throw new System.Net.Sockets.SocketException();
+				}
+			}
+		}
+
 		public static string[] primaryExchangeWithSocket()
 		{
 			lock (block)
