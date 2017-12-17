@@ -15,6 +15,8 @@ namespace contact_center_application.core
 		private static bool realization = false;
 		private static String ip;
 		private static int port;
+		private static object block = new object();
+
 		public static void createSocket(String ip, int port)
 		{
 			ConnectWithFastSocket.ip = ip;
@@ -41,34 +43,37 @@ namespace contact_center_application.core
 
 		public static string sendMessage(String message, int expectedSize)
 		{
-			string result;
-			try
+			lock (block)
 			{
-				if (!realization)
+				string result;
+				try
 				{
-					createSocket(ConnectWithFastSocket.ip, ConnectWithFastSocket.port);
-				}
+					if (!realization)
+					{
+						createSocket(ConnectWithFastSocket.ip, ConnectWithFastSocket.port);
+					}
 
 
-				message += "\0";
-				byte[] answerFromServer = new byte[expectedSize + 1];
-				if (realization)
-				{
-					byte[] msg = Encoding.UTF8.GetBytes(message);
-					// Отправляем данные через сокет
-					int bytesSent = sender.Send(msg);
-					// Получаем ответ от сервера
-					int bytesRec = sender.Receive(answerFromServer);
+					message += "\0";
+					byte[] answerFromServer = new byte[expectedSize + 1];
+					if (realization)
+					{
+						byte[] msg = Encoding.UTF8.GetBytes(message);
+						// Отправляем данные через сокет
+						int bytesSent = sender.Send(msg);
+						// Получаем ответ от сервера
+						int bytesRec = sender.Receive(answerFromServer);
+					}
+					result = System.Text.Encoding.UTF8.GetString(answerFromServer);
 				}
-				result = System.Text.Encoding.UTF8.GetString(answerFromServer);
+				catch (SocketException socket)
+				{
+					MessageBox.Show("Сервер не доступен", "Сервер не доступен");
+					result = "";
+					realization = false;
+				}
+				return result;
 			}
-			catch (SocketException socket)
-			{
-				MessageBox.Show("Сервер не доступен", "Сервер не доступен");
-				result = "";
-				realization = false;
-			}
-			return result;
 		}
 
 		public static void releaseSocket()

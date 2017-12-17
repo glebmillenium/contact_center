@@ -11,6 +11,7 @@ namespace contact_center_application.core
     {
 		private static Socket sender;
 		private static bool realization = false;
+		private static object block = new object();
 
 		public static void createSocket(String ip, int port)
 		{
@@ -40,59 +41,62 @@ namespace contact_center_application.core
 		public static byte[] sendMessageGetContentFile(String message, 
 			int expectedSize)
 		{
-			message += "\0";
-			byte[] answerFromServer = null; 
-			byte[] answer = null;
-			int fixedSize = 50 * 1024;
-
-			if (realization)
+			lock (block)
 			{
-				answerFromServer = new byte[expectedSize + 1];
-				if (expectedSize < fixedSize)
+				message += "\0";
+				byte[] answerFromServer = null;
+				byte[] answer = null;
+				int fixedSize = 50 * 1024;
+
+				if (realization)
 				{
-					TreatmenterExchangeFileWithServer.setData(50, "Начало загрузки");
-					byte[] msg = Encoding.UTF8.GetBytes(message);
-					int bytesSent = sender.Send(msg);
-					int bytesRec = sender.Receive(answerFromServer);
-					answer = getRightArrayByte(answerFromServer);
-				}
-				else
-				{
-					TreatmenterExchangeFileWithServer.setData(8, "Начало загрузки");
-					answer = new byte[expectedSize];
-					byte[] sourceArray = new byte[fixedSize];
-					answerFromServer = new byte[fixedSize + 1];
-					byte[] msg;
-					int bytesSent;
-					int bytesRec; 
-					int getBytes = 0;
-					string toSend = message;
-					
-					do
+					answerFromServer = new byte[expectedSize + 1];
+					if (expectedSize < fixedSize)
 					{
+						TreatmenterExchangeFileWithServer.setData(50, "Начало загрузки");
+						byte[] msg = Encoding.UTF8.GetBytes(message);
+						int bytesSent = sender.Send(msg);
+						int bytesRec = sender.Receive(answerFromServer);
+						answer = getRightArrayByte(answerFromServer);
+					}
+					else
+					{
+						TreatmenterExchangeFileWithServer.setData(8, "Начало загрузки");
+						answer = new byte[expectedSize];
+						byte[] sourceArray = new byte[fixedSize];
+						answerFromServer = new byte[fixedSize + 1];
+						byte[] msg;
+						int bytesSent;
+						int bytesRec;
+						int getBytes = 0;
+						string toSend = message;
+
+						do
+						{
+							msg = Encoding.UTF8.GetBytes(toSend);
+							bytesSent = sender.Send(msg);
+							bytesRec = sender.Receive(answerFromServer);
+							sourceArray = getRightArrayByte(answerFromServer);
+							getBytes += fixedSize;
+							Array.ConstrainedCopy(sourceArray, 0, answer,
+								getBytes - fixedSize, sourceArray.Length);
+							toSend = "1";
+							double track = 8.0 + (95.0 - 8.0) * ((double)getBytes / expectedSize);
+							TreatmenterExchangeFileWithServer.setData((int)track, "Загрузка");
+						} while (getBytes + fixedSize < expectedSize);
+
+
+						answerFromServer = new byte[expectedSize - getBytes + 1];
 						msg = Encoding.UTF8.GetBytes(toSend);
 						bytesSent = sender.Send(msg);
 						bytesRec = sender.Receive(answerFromServer);
 						sourceArray = getRightArrayByte(answerFromServer);
-						getBytes += fixedSize;
-						Array.ConstrainedCopy(sourceArray, 0, answer, 
-							getBytes - fixedSize, sourceArray.Length);
-						toSend = "1";
-						double track = 8.0 + (95.0 - 8.0) * ((double) getBytes / expectedSize);
-						TreatmenterExchangeFileWithServer.setData((int) track, "Загрузка");
-					} while (getBytes + fixedSize < expectedSize);
-
-
-					answerFromServer = new byte[expectedSize - getBytes + 1];
-					msg = Encoding.UTF8.GetBytes(toSend);
-					bytesSent = sender.Send(msg);
-					bytesRec = sender.Receive(answerFromServer);
-					sourceArray = getRightArrayByte(answerFromServer);
-					Array.ConstrainedCopy(sourceArray, 0, answer,
-							getBytes, sourceArray.Length);
+						Array.ConstrainedCopy(sourceArray, 0, answer,
+								getBytes, sourceArray.Length);
+					}
 				}
+				return answer;
 			}
-			return answer;
 		}
 
 		public static byte[] getRightArrayByte(byte[] answerFromServer)
