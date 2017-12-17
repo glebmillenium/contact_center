@@ -51,7 +51,7 @@ namespace contact_center_application.graphic_user_interface.form
 							"Требуется обновление", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
 						{
 							Process.Start("Patcher.exe");
-							this.Close();
+							Environment.Exit(0);
 						}
 						else
 						{
