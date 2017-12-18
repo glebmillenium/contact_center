@@ -58,3 +58,4 @@ C:\contact_center\client1\contact_center_application\bin\x86\Debug\Spire.OfficeV
 C:\contact_center\client1\contact_center_application\bin\x86\Debug\Spire.PdfViewer.Asp.xml
 C:\contact_center\client1\contact_center_application\bin\x86\Debug\Spire.Presentation.xml
 C:\contact_center\client1\contact_center_application\bin\x86\Debug\Spire.Doc.xml
+C:\contact_center\client1\contact_center_application\obj\x86\Debug\viewer.csproj.CoreCompileInputs.cache

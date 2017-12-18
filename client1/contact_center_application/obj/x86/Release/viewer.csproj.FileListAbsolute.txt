@@ -19,7 +19,6 @@ C:\contact_center\client1\contact_center_application\bin\x86\Release\Spire.Licen
 C:\contact_center\client1\contact_center_application\bin\x86\Release\Spire.Pdf.Wpf.dll
 C:\contact_center\client1\contact_center_application\bin\x86\Release\Spire.PdfViewer.Wpf.dll
 C:\contact_center\client1\contact_center_application\bin\x86\Release\Spire.XLS.dll
-C:\contact_center\client1\contact_center_application\bin\x86\Release\Microsoft.mshtml.dll
 C:\contact_center\client1\contact_center_application\bin\x86\Release\Spire.Pdf.dll
 C:\contact_center\client1\contact_center_application\bin\x86\Release\Newtonsoft.Json.xml
 C:\contact_center\client1\contact_center_application\bin\x86\Release\Spire.XLS.xml
@@ -47,3 +46,14 @@ C:\contact_center\client1\contact_center_application\obj\x86\Release\АРМ оп
 C:\contact_center\client1\contact_center_application\obj\x86\Release\contact_center_application.graphic_user_interface.form.AboutProgram.resources
 C:\contact_center\client1\contact_center_application\obj\x86\Release\graphic_user_interface\form\LightMessenger.g.cs
 C:\contact_center\client1\contact_center_application\obj\x86\Release\graphic_user_interface\form\LightMessenger.baml
+C:\contact_center\client1\contact_center_application\bin\x86\Release\MouseKeyboardActivityMonitor.dll
+C:\contact_center\client1\contact_center_application\bin\x86\Release\Spire.Email.dll
+C:\contact_center\client1\contact_center_application\bin\x86\Release\Spire.OfficeViewer.Forms.dll
+C:\contact_center\client1\contact_center_application\bin\x86\Release\Spire.PdfViewer.Asp.dll
+C:\contact_center\client1\contact_center_application\bin\x86\Release\Spire.Presentation.dll
+C:\contact_center\client1\contact_center_application\bin\x86\Release\Spire.Doc.dll
+C:\contact_center\client1\contact_center_application\bin\x86\Release\Spire.Email.xml
+C:\contact_center\client1\contact_center_application\bin\x86\Release\Spire.OfficeViewer.Forms.xml
+C:\contact_center\client1\contact_center_application\bin\x86\Release\Spire.PdfViewer.Asp.xml
+C:\contact_center\client1\contact_center_application\bin\x86\Release\Spire.Presentation.xml
+C:\contact_center\client1\contact_center_application\bin\x86\Release\Spire.Doc.xml

@@ -7,7 +7,7 @@ namespace Patcher
 {
     public class RequestDataFromServer
     {
-		static string addressServer = "localhost";
+		static string addressServer = "128.0.0.1";
 		static int portFtp = 6502;
 		static int portFast = 6500;
 
@@ -138,6 +138,9 @@ namespace Patcher
 
 		public static void createConnection()
 		{
+			addressServer = SettingsData.getAddress();
+			portFtp = SettingsData.getFtpPort();
+			portFast = SettingsData.getFastPort();
 			ConnectWithFastSocket.createSocket(addressServer, portFast);
 		}
 

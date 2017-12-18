@@ -14,3 +14,4 @@ C:\contact_center\client1\Patcher\obj\Debug\Patcher.exe
 C:\contact_center\client1\Patcher\obj\Debug\Patcher.pdb
 C:\contact_center\client1\Patcher\bin\Debug\Newtonsoft.Json.dll
 C:\contact_center\client1\Patcher\bin\Debug\Newtonsoft.Json.xml
+C:\contact_center\client1\Patcher\obj\Debug\Patcher.csprojResolveAssemblyReference.cache
