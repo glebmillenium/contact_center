@@ -18,6 +18,9 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.codec.DelimiterBasedFrameDecoder;
+import io.netty.handler.codec.Delimiters;
+import io.netty.handler.timeout.ReadTimeoutHandler;
 import io.netty.util.concurrent.DefaultEventExecutorGroup;
 import io.netty.util.concurrent.EventExecutorGroup;
 
@@ -57,15 +60,13 @@ public class FastServer {
             protected void initChannel(SocketChannel ch) throws Exception
             {
                 ChannelPipeline pipeline = ch.pipeline();
-
-                //===========================================================
-                // 2. run handler with slow business logic 
-                //    in separate thread from I/O thread
-                //===========================================================
+                pipeline.addLast("frameDecoder", new DelimiterBasedFrameDecoder(
+                        8096, Delimiters.nulDelimiter()));
                 pipeline.addLast(group, "serverHandler", new FastServerHandler());
+                pipeline.addLast("readTimeoutHandler", 
+                        new ReadTimeoutHandler(5000));
             }
         });
-
         bootstrap.childOption(ChannelOption.SO_KEEPALIVE, true);
         bootstrap.bind(this.port).sync();
     }

@@ -287,7 +287,7 @@ public class SenderSmallData {
         } catch (Exception e)
         {
             Logging.log("Критическая ошибка обработки командного запроса"
-                    + e.toString(), 1);
+                    + e.getMessage(), 1);
             result = "";
         }
         return result;
@@ -452,19 +452,27 @@ public class SenderSmallData {
      */
     private String getContentFile(ObjectForSerialization obj) throws IOException
     {
-        String path = this.aliance.get(obj.param1).param2
-                + (new String(obj.param4_array, "UTF-8"));
-        Logging.log("Обработка запроса на получение файла по пути: " + path
-                + " Канал " + ctx.channel().toString() + ") Номер запроса: "
-                + this.numberConnect, 1);
-        byte[] resultInFtp = getFileInArrayByte(path);
-        String expectedSize = Integer.toString(resultInFtp.length);
-        return this.mapper.writeValueAsString(
-                new ObjectForSerialization("content_file",
-                        expectedSize, Storage.sendToStorageInFtpServer(false,
-                                obj.command, resultInFtp, new byte[]
-                                {
-                })));
+        String result = "";
+        try
+        {
+            String path = this.aliance.get(obj.param1).param2
+                    + (new String(obj.param4_array, "UTF-8"));
+            Logging.log("Обработка запроса на получение файла по пути: " + path
+                    + " Канал " + ctx.channel().toString() + ") Номер запроса: "
+                    + this.numberConnect, 1);
+            byte[] resultInFtp = getFileInArrayByte(path);
+            String expectedSize = Integer.toString(resultInFtp.length);
+            result = this.mapper.writeValueAsString(
+                    new ObjectForSerialization("content_file",
+                            expectedSize, Storage.sendToStorageInFtpServer(false,
+                                    obj.command, resultInFtp, new byte[]
+                                    {
+                    })));
+        } catch (Exception e)
+        {
+            throw new IOException();
+        }
+        return result;
     }
 
     /**

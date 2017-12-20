@@ -92,9 +92,10 @@ namespace contact_center_application.core
 			{
 				clearFilesFromTempDirectory(relativeWay);
 				setData(5, "Сбор сведений о файле");
-
+				byte[] result;
 				setData(7, "Загрузка файла");
-				byte[] result = RequestDataFromServer.getContentFile(aliance, relativeWay);
+				result = RequestDataFromServer.getContentFile(aliance, relativeWay);
+
 				setData(95, "Файл успешно загружен");
 				writeToFile("tmp\\" + relativeWay, result);
 			}

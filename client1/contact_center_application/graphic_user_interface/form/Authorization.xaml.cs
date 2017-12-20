@@ -98,5 +98,11 @@ namespace contact_center_application.graphic_user_interface.form
 		{
 			new AboutProgram().Show();
 		}
+
+		private void passwordTextBox_KeyDown(object sender, KeyEventArgs e)
+		{
+			if(e.Key.Equals(Key.Enter))
+				Button_Click(null, null);
+		}
 	}
 }

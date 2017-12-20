@@ -20,6 +20,7 @@ namespace contact_center_application.graphic_user_interface.form
 	/// </summary>
 	public partial class MainWindow : Window
 	{
+		System.Windows.Threading.DispatcherTimer dispatcherTimer;
 
 		/// <summary>
 		/// Конструктор, осуществляет чистку папки временных файлов
@@ -36,7 +37,7 @@ namespace contact_center_application.graphic_user_interface.form
 			CurrentDataFileSystem.treeViewCatalog = treeViewCatalogFileSystem;
 			MainWindowElement.versionTextBlock.Text += SettingsData.getVersion();
 			//  DispatcherTimer setup
-			System.Windows.Threading.DispatcherTimer dispatcherTimer = new System.Windows.Threading.DispatcherTimer();
+			dispatcherTimer = new System.Windows.Threading.DispatcherTimer();
 			dispatcherTimer.Tick += new EventHandler(dispatcherTimer_Tick);
 			dispatcherTimer.Interval = new TimeSpan(0, 0, 2);
 			dispatcherTimer.Start();
@@ -254,6 +255,7 @@ namespace contact_center_application.graphic_user_interface.form
 
 		private void window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
 		{
+			dispatcherTimer.Stop();
 			RequestDataFromServer.closeConnection();
 		}
 

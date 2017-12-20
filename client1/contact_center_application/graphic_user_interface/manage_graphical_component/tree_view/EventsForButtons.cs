@@ -18,7 +18,7 @@ namespace contact_center_application.graphic_user_interface.manage_graphical_com
 			TreeViewItem selectedItem = CurrentDataFileSystem.searchSelectedItem().Item2;
 			FilterTreeViewItem.resetFlagsInTreeViewItem();
 			CurrentDataFileSystem.getContentFileSystem();
-			CurrentDataFileSystem.deleteNotNeedItemsInTreeViewItem(selectedItem);
+			CurrentDataFileSystem.deleteNotNeedItemsInTreeViewItem();
 			selectedItem.IsSelected = true;
 			ManagerViewer.updateCatalog = false;
 		}

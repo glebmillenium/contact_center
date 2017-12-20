@@ -138,6 +138,7 @@ namespace Patcher
 
 		public static void createConnection()
 		{
+			closeConnection();
 			addressServer = SettingsData.getAddress();
 			portFtp = SettingsData.getFtpPort();
 			portFast = SettingsData.getFastPort();

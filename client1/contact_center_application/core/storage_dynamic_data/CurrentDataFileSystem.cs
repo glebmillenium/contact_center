@@ -51,7 +51,7 @@ namespace contact_center_application.core.storage_dynamic_data
 			return new Tuple<bool, TreeViewItem>(false, new TreeViewItem());
 		}
 
-		public static void deleteNotNeedItemsInTreeViewItem(TreeViewItem equalItem)
+		public static void deleteNotNeedItemsInTreeViewItem()
 		{
 			var temporaryListTreeView = new Dictionary<TreeViewItem, Tuple<bool, string, bool>>();
 
