@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace contact_center_application.core.background_task
 {
-	class ArgumentBackgroundDonwload
+	class ArgumentBackgroundDownload
 	{
 		string relativeWay;
 		string index;
-		public ArgumentBackgroundDonwload(string relativeWay, string index)
+		public ArgumentBackgroundDownload(string relativeWay, string index)
 		{
 			this.relativeWay = relativeWay;
 			this.index = index;

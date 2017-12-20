@@ -51,14 +51,13 @@ namespace contact_center_application.graphic_user_interface.manage_graphical_com
 				try
 				{
 					upload.sendFileToServer();
-
+					ButtonUpdateCatalogs_Click(null, null);
 				}
 				catch (Exception exp)
 				{
 					Logger.log(exp.Message);
 
 				}
-				ButtonUpdateCatalogs_Click(null, null);
 			}
 		}
 
@@ -218,7 +217,7 @@ namespace contact_center_application.graphic_user_interface.manage_graphical_com
 						CurrentDataFileSystem.ComboboxFileSystem.SelectedItem.ToString()].Item1);
 					MainWindowElement.progressConvertation.Visibility = Visibility.Visible;
 
-					MainWindowElement.backgroundWorkerDownload.RunWorkerAsync(new ArgumentBackgroundDonwload(relativeWay, index.ToString()));
+					MainWindowElement.backgroundWorkerDownload.RunWorkerAsync(new ArgumentBackgroundDownload(relativeWay, index.ToString()));
 				}
 			}
 			catch (Exception exp)

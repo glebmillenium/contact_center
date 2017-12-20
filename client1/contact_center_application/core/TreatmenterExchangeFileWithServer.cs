@@ -105,6 +105,8 @@ namespace contact_center_application.core
 			}
 		}
 
+
+
 		private static void clearFilesFromTempDirectory(string relativeWay)
 		{
 			string directoryWay = System.IO.Path.GetDirectoryName(relativeWay);

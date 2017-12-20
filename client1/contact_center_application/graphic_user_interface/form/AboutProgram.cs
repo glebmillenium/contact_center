@@ -105,7 +105,7 @@ namespace contact_center_application.graphic_user_interface.form
 
 		private void okButton_Click(object sender, EventArgs e)
 		{
-
+			this.Close();
 		}
 	}
 }

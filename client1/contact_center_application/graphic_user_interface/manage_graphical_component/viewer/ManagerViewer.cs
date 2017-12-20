@@ -1,5 +1,6 @@
 ﻿using contact_center_application.core;
 using contact_center_application.core.storage_dynamic_data;
+using contact_center_application.graphic_user_interface.manage_graphical_component.tree_view;
 using MoonPdfLib;
 using MoonPdfLib.MuPdf;
 using Spire.Doc;
@@ -41,8 +42,13 @@ namespace contact_center_application.graphic_user_interface.manage_graphical_com
 		/// <param name="viewWay"></param>
 		public static void LoadToViewer(string way, string viewWay)
 		{
+			if (SettingsData.isOpenNow())
+			{
+				EventsForButtons.openFile();
+			}
 			CurrentDataOpenFile.dateOpenFile = File.GetLastWriteTime(way);
 			CurrentDataOpenFile.relationWayOpenFile = CurrentDataFileSystem.listTreeView[CurrentDataFileSystem.searchSelectedItem().Item2].Item2;
+			MainWindowElement.nameLoadFile.Text = Path.GetFileName(CurrentDataOpenFile.openFile);
 			Logger.log(new DateTime() + " Обработка файла: " + way);
 
 			if (!Directory.Exists(Path.GetDirectoryName(viewWay)))

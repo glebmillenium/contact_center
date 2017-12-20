@@ -12,23 +12,16 @@ using System.Windows.Input;
 
 namespace contact_center_application.core.background_task
 {
-	class BackgroundDownload
+	class BackgroundUpload
 	{
-		public static void backgroundWorkerDownload_DoWork(object sender, DoWorkEventArgs e)
+		public static void backgroundWorkerUpload_DoWork(object sender, DoWorkEventArgs e)
 		{
-			ArgumentBackgroundDownload obj = (ArgumentBackgroundDownload) e.Argument;
+			ArgumentBackgroundDownload obj = (ArgumentBackgroundDownload)e.Argument;
 			TreatmenterExchangeFileWithServer.getContentFileAndWriteToFile(
 					obj.getRelativeWay(), obj.getIndex());
-
 		}
 
-		public static void backgroundWorkerDownload_ProgressChanged(object sender, ProgressChangedEventArgs e)
-		{
-			MainWindowElement.progressBarMessenger.Value = Messenger.value;
-			MainWindowElement.textBlockMessenger.Text = Messenger.message;
-		}
-
-		public static void backgroundWorkerDownload_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+		public static void backgroundWorkerUpload_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
 		{
 			try
 			{
@@ -61,6 +54,12 @@ namespace contact_center_application.core.background_task
 			MainWindowElement.managerPanel.Visibility = Visibility.Visible;
 			MainWindowElement.cursor = Cursors.Arrow;
 			MainWindowElement.stackPanelMessenger.Visibility = Visibility.Hidden;
+		}
+
+		public static void backgroundWorkerUploadProgressChanged(object sender, ProgressChangedEventArgs e)
+		{
+			MainWindowElement.progressBarMessenger.Value = Messenger.value;
+			MainWindowElement.textBlockMessenger.Text = Messenger.message;
 		}
 	}
 }

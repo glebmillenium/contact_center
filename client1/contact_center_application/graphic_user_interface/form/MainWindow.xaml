@@ -151,6 +151,7 @@
 						</ToggleButton.ToolTip>
 						<Image Source="pack://siteoforigin:,,,/resources/xps.png"/>
 					</ToggleButton>
+					<TextBlock x:Name="nameLoadFile" />
 					<StackPanel x:Name="progressOnConvertation" Visibility="Hidden">
 						<TextBlock x:Name="progressConvertationText" Height="15" FontSize="10"/>
 						<ProgressBar Height="15" IsIndeterminate="True"/>

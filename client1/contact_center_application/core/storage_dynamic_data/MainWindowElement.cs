@@ -44,6 +44,7 @@ namespace contact_center_application.core.storage_dynamic_data
 		public static BackgroundWorker backgroundWorkerDownload;
 		public static BackgroundWorker backgroundWorkerUpload;
 		public static BackgroundWorker backgroundWorkerMessenger;
+		public static TextBlock nameLoadFile;
 
 		public static void initialize(MainWindow wnd)
 		{
@@ -79,7 +80,12 @@ namespace contact_center_application.core.storage_dynamic_data
 			MainWindowElement.backgroundWorkerDownload.ProgressChanged += BackgroundDownload.backgroundWorkerDownload_ProgressChanged;
 			MainWindowElement.backgroundWorkerDownload.RunWorkerCompleted += BackgroundDownload.backgroundWorkerDownload_RunWorkerCompleted;
 			MainWindowElement.backgroundWorkerUpload = ((BackgroundWorker)wnd.FindResource("backgroundWorkerUpload"));
+			MainWindowElement.backgroundWorkerUpload.DoWork += BackgroundUpload.backgroundWorkerUpload_DoWork;
+			MainWindowElement.backgroundWorkerUpload.ProgressChanged += BackgroundUpload.backgroundWorkerUploadProgressChanged;
+			MainWindowElement.backgroundWorkerUpload.RunWorkerCompleted += BackgroundUpload.backgroundWorkerUpload_RunWorkerCompleted;
 			MainWindowElement.backgroundWorkerMessenger = ((BackgroundWorker)wnd.FindResource("backgroundWorkerMessenger"));
+			MainWindowElement.nameLoadFile = wnd.nameLoadFile;
+
 			if (SettingsData.getRightWrite() == 0)
 			{
 				MainWindowElement.loadFileToServer.Visibility = System.Windows.Visibility.Collapsed;

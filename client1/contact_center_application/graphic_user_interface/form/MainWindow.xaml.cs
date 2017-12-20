@@ -119,36 +119,7 @@ namespace contact_center_application.graphic_user_interface.form
 		/// <param name="e"></param>
 		private void Button_Click(object sender, RoutedEventArgs e)
 		{
-			try
-			{
-				DateTime oldTime = File.GetLastWriteTime(CurrentDataOpenFile.openFile);
-				Process currProc = Process.Start(CurrentDataOpenFile.openFile);
-				currProc.WaitForExit();
-				currProc.Close();
-				if (!oldTime.Equals(File.GetLastWriteTime(CurrentDataOpenFile.openFile)))
-				{
-					if (SettingsData.getRightWrite() == 1)
-					{
-
-						if (MessageBox.Show("Отправить измененный файл на сервер?", "Файл был изменен",
-							MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
-						{
-							TreatmenterExchangeFileWithServer.sendFileToServer();
-						}
-					}
-					else
-					{
-//						LightMessenger lm = new LightMessenger("Вы изменили содержимое файла." +
-//	" Но у вас недостаточно прав для отправки файла на сервер.");
-//						backgroundWorker = ((BackgroundWorker)this.FindResource("backgroundWorker"));
-//						backgroundWorker.RunWorkerAsync(searchTextBox);
-					}
-				}
-			}
-			catch (System.NullReferenceException exceptionWithOpenFile)
-			{
-				Logger.log(exceptionWithOpenFile.Message);
-			}
+			EventsForButtons.openFile();
 		}
 
 		/// <summary>
@@ -259,11 +230,6 @@ namespace contact_center_application.graphic_user_interface.form
 			RequestDataFromServer.closeConnection();
 		}
 
-		private void BackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-		{
-
-		}
-
 		private void startMessage(object sender, DoWorkEventArgs e)
 		{
 			TextBox textBox = (TextBox)e.Argument;
@@ -316,6 +282,11 @@ namespace contact_center_application.graphic_user_interface.form
 		}
 
 		private void backgroundWorkerMessenger_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+		{
+
+		}
+
+		private void BackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
 		{
 
 		}

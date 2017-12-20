@@ -53,7 +53,6 @@ namespace contact_center_application.core
 						createSocket(ConnectWithFastSocket.ip, ConnectWithFastSocket.port);
 					}
 
-
 					message += "\0";
 					byte[] answerFromServer = new byte[expectedSize + 1];
 					if (realization)
