@@ -19,7 +19,7 @@ import org.codehaus.jackson.map.ObjectMapper;
  *
  * @author admin
  */
-public class PrimaryQueryTreatmenter implements Runnable {
+public class PrimaryQueryTreatmenter extends Thread {
 
     Socket socket;
 
@@ -35,6 +35,7 @@ public class PrimaryQueryTreatmenter implements Runnable {
      */
     private static ObjectMapper mapper = new ObjectMapper();
 
+    @Override
     public void run()
     {
         Logging.log("Thread: submain FTP start", 4);

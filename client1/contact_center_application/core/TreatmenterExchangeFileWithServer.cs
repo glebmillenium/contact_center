@@ -101,6 +101,8 @@ namespace contact_center_application.core
 			}
 			catch (Exception e)
 			{
+				Logger.log("Ошибка в модуле TreatmenterExchangeFileWithServer: " 
+					+ e.StackTrace.ToString());
 				throw e;
 			}
 		}

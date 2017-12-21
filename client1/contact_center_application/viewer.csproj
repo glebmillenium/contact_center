@@ -335,7 +335,16 @@
     <None Include="resources\load.png" />
     <None Include="resources\open.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\callback_fast_server\callback_fast_server.csproj">
+      <Project>{10be5dd4-435d-40fb-993a-b0d9018833ce}</Project>
+      <Name>callback_fast_server</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\callback_ftp_server\callback_ftp_server.csproj">
+      <Project>{647b371d-f2b4-4064-9089-254b5bace62a}</Project>
+      <Name>callback_ftp_server</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>rmdir /s resources 

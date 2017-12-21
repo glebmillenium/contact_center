@@ -35,6 +35,7 @@ namespace contact_center_application.core
 		{
 			string result = System.Text.Encoding.UTF8.GetString(sendMessageGetContentFile(message,
 			expectedSize));
+			closeSocket();
 			return result;
 		}
 

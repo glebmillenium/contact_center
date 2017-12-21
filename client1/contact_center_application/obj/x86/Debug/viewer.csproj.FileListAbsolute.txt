@@ -59,3 +59,9 @@ C:\contact_center\client1\contact_center_application\bin\x86\Debug\Spire.PdfView
 C:\contact_center\client1\contact_center_application\bin\x86\Debug\Spire.Presentation.xml
 C:\contact_center\client1\contact_center_application\bin\x86\Debug\Spire.Doc.xml
 C:\contact_center\client1\contact_center_application\obj\x86\Debug\viewer.csproj.CoreCompileInputs.cache
+C:\contact_center\client1\contact_center_application\bin\x86\Debug\callback_fast_server.exe
+C:\contact_center\client1\contact_center_application\bin\x86\Debug\callback_ftp_server.exe
+C:\contact_center\client1\contact_center_application\bin\x86\Debug\callback_fast_server.pdb
+C:\contact_center\client1\contact_center_application\bin\x86\Debug\callback_fast_server.exe.config
+C:\contact_center\client1\contact_center_application\bin\x86\Debug\callback_ftp_server.pdb
+C:\contact_center\client1\contact_center_application\bin\x86\Debug\callback_ftp_server.exe.config

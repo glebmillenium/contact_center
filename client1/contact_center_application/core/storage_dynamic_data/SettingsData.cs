@@ -6,6 +6,7 @@ namespace contact_center_application.core.storage_dynamic_data
 {
 	class SettingsData
 	{
+		private static string directorySettings = @"settings";
 		private static string directoryVersion = @"settings/version";
 		private static string directoryView = @"settings/view";
 		private static string directoryNetwork = @"settings/network";
@@ -13,8 +14,10 @@ namespace contact_center_application.core.storage_dynamic_data
 		private static int rightWrite = 0;
 		private static int rightExecute = 0;
 
-		public static void setDirectorySettings(string directoryVersion,
-			string directoryView, string directoryNetwork)
+		public static void setDirectorySettings(string directorySettings = @"settings", 
+			string directoryVersion = @"settings/version",
+			string directoryView = @"settings/view", 
+			string directoryNetwork = @"settings/network")
 		{
 			SettingsData.directoryView = directoryView;
 			SettingsData.directoryNetwork = directoryNetwork;
@@ -27,6 +30,21 @@ namespace contact_center_application.core.storage_dynamic_data
 			rightRead = result[0] == false ? 0 : 1;
 			rightWrite = result[1] == false ? 0 : 1;
 			rightExecute = result[2] == false ? 0 : 1;
+		}
+
+		public static bool isAutoAuth()
+		{
+			bool result;
+			try
+			{
+				result = bool.Parse(getContentFile(directorySettings + @"/auto_auth"));
+			}
+			catch (Exception e)
+			{
+				result = false;
+				Logger.log(e.Message);
+			}
+			return result;
 		}
 
 		public static int getRightRead()
@@ -47,6 +65,11 @@ namespace contact_center_application.core.storage_dynamic_data
 		public static void setVersion(string version)
 		{
 			File.WriteAllText(directoryVersion, version);
+		}
+
+		public static void setAutoAuth(bool auto_auth)
+		{
+			File.WriteAllText(directorySettings + @"/auto_auth", auto_auth.ToString());
 		}
 
 		public static string getVersion()
@@ -179,7 +202,7 @@ namespace contact_center_application.core.storage_dynamic_data
 			bool result;
 			try
 			{
-				result = bool.Parse(getContentFile(directoryView + @"/jpeg_tiff_jpg_png"));
+				result = bool.Parse(getContentFile(directoryView + @"/jpeg_tiff_jpf_png"));
 			}
 			catch (Exception e)
 			{

@@ -1,6 +1,7 @@
 package es.irkutskenergo.main;
 
 import es.irkutskenergo.other.Logging;
+import es.irkutskenergo.server.fast.FastServer2;
 import es.irkutskenergo.server.netty.fast.FastServer;
 import es.irkutskenergo.server.ftp.FtpServer;
 import java.nio.file.Files;
@@ -32,8 +33,10 @@ public class Main {
                     + "\r\nПорт обмена сообщений - " + portFast
                     + "\r\nПорт файлового обмена - " + portFtp + "\r\n", 0);
             fs.start();
-            FastServer NT = new FastServer(portFast);
-            NT.run();
+//            FastServer NT = new FastServer(portFast);
+//            NT.run();
+            FastServer2 fs2 = new FastServer2(portFast);
+            fs2.start();
         } catch (Exception ex)
         {
             System.out.println("Сервер не удалось запустить " + ex.getMessage());

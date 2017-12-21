@@ -57,3 +57,9 @@ C:\contact_center\client1\contact_center_application\bin\x86\Release\Spire.Offic
 C:\contact_center\client1\contact_center_application\bin\x86\Release\Spire.PdfViewer.Asp.xml
 C:\contact_center\client1\contact_center_application\bin\x86\Release\Spire.Presentation.xml
 C:\contact_center\client1\contact_center_application\bin\x86\Release\Spire.Doc.xml
+C:\contact_center\client1\contact_center_application\bin\x86\Release\callback_fast_server.exe
+C:\contact_center\client1\contact_center_application\bin\x86\Release\callback_ftp_server.exe
+C:\contact_center\client1\contact_center_application\bin\x86\Release\callback_fast_server.pdb
+C:\contact_center\client1\contact_center_application\bin\x86\Release\callback_fast_server.exe.config
+C:\contact_center\client1\contact_center_application\bin\x86\Release\callback_ftp_server.pdb
+C:\contact_center\client1\contact_center_application\bin\x86\Release\callback_ftp_server.exe.config

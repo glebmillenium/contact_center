@@ -71,6 +71,9 @@ namespace contact_center_application.core
 					result = "";
 					realization = false;
 				}
+				//для fast(ftp)
+				sender.Close();
+				realization = false;
 				return result;
 			}
 		}

@@ -50,9 +50,9 @@ public class FtpServer extends Thread {
                     while (this.canWork)
                     {
                         Socket socket = server.accept();
-                        Runnable answer = new PrimaryQueryTreatmenter(socket);
+                        PrimaryQueryTreatmenter answer = new PrimaryQueryTreatmenter(socket);
                         Logging.log("Thread: Main FTP", 4);
-                        new Thread(answer).start();
+                        answer.start();
                     }
                 }
             } catch (IOException ex)

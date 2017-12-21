@@ -26,13 +26,26 @@ namespace contact_center_application.graphic_user_interface.form
 		public Authorization()
 		{
 			InitializeComponent();
+			this.checkAuthoInputLogin.IsChecked = SettingsData.isAutoAuth();
+			checkAuthoInputLogin_Click(null, null);
 		}
 
 		private void Button_Click(object sender, RoutedEventArgs e)
 		{
+
+			string login;
+			if ((bool)checkAuthoInputLogin.IsChecked)
+			{
+				login = ((ComboBoxItem)loginListBox.SelectedValue).Content.ToString();
+			}
+			else
+			{
+				login = loginTextBox.Text;
+			}
+
 			try
 			{
-				Tuple<String, int, String> result = RequestDataFromServer.getRightAccess(loginTextBox.Text, passwordTextBox.Password);
+				Tuple<String, int, String> result = RequestDataFromServer.getRightAccess(login, passwordTextBox.Password);
 				string version = SettingsData.getVersion();
 				if (result.Item2 == -1)
 				{
@@ -66,6 +79,7 @@ namespace contact_center_application.graphic_user_interface.form
 					{
 						MainWindow mw = new MainWindow();
 						SettingsData.setRightAccess(result.Item2);
+						SettingsData.setAutoAuth((bool)checkAuthoInputLogin.IsChecked);
 						mw.Show();
 						this.Close();
 					}
@@ -103,6 +117,20 @@ namespace contact_center_application.graphic_user_interface.form
 		{
 			if(e.Key.Equals(Key.Enter))
 				Button_Click(null, null);
+		}
+
+		private void checkAuthoInputLogin_Click(object sender, RoutedEventArgs e)
+		{
+			if ((bool) checkAuthoInputLogin.IsChecked)
+			{
+				loginTextBox.Visibility = Visibility.Collapsed;
+				loginListBox.Visibility = Visibility.Visible;
+			}
+			else
+			{
+				loginTextBox.Visibility = Visibility.Visible;
+				loginListBox.Visibility = Visibility.Collapsed;
+			}
 		}
 	}
 }

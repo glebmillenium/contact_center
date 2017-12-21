@@ -370,8 +370,8 @@ namespace contact_center_application.graphic_user_interface.manage_graphical_com
 
 		public static void ChangeSizeViewer()
 		{
-			if (MainWindowElement.window.ActualHeight - 165 <= 0) return;
-			ManagerViewer.viewer.Height = MainWindowElement.window.ActualHeight - 165;
+			if (MainWindowElement.window.ActualHeight - 182 <= 0) return;
+			ManagerViewer.viewer.Height = MainWindowElement.window.ActualHeight - 182;
 			ManagerViewer.textbox.Height = ManagerViewer.viewer.Height;
 			ManagerViewer.textbox.Width = ManagerViewer.viewer.Width;
 			ManagerViewer.image.Height = ManagerViewer.viewer.Height;

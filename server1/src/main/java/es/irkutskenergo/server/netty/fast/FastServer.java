@@ -48,13 +48,13 @@ public class FastServer {
 
     public void run() throws Exception
     {
-        NioEventLoopGroup boosGroup = new NioEventLoopGroup();
+        /*NioEventLoopGroup boosGroup = new NioEventLoopGroup();
         NioEventLoopGroup workerGroup = new NioEventLoopGroup();
         ServerBootstrap bootstrap = new ServerBootstrap();
         bootstrap.group(boosGroup, workerGroup);
         bootstrap.channel(NioServerSocketChannel.class);
         EventExecutorGroup group = new DefaultEventExecutorGroup(1500);
-
+        EventLoopGroup group = new NioEventLoopGroup();
         bootstrap.childHandler(new ChannelInitializer<SocketChannel>() {
             @Override
             protected void initChannel(SocketChannel ch) throws Exception
@@ -63,12 +63,33 @@ public class FastServer {
                 pipeline.addLast("frameDecoder", new DelimiterBasedFrameDecoder(
                         8096, Delimiters.nulDelimiter()));
                 pipeline.addLast(group, "serverHandler", new FastServerHandler());
-                pipeline.addLast("readTimeoutHandler", 
-                        new ReadTimeoutHandler(5000));
+                //pipeline.addLast("readTimeoutHandler", 
+                //        new ReadTimeoutHandler(5000));
             }
         });
+        bootstrap.option(ChannelOption.TCP_NODELAY, true);
         bootstrap.childOption(ChannelOption.SO_KEEPALIVE, true);
-        bootstrap.bind(this.port).sync();
+        bootstrap.bind(this.port).sync();*/
+
+        NioEventLoopGroup boosGroup = new NioEventLoopGroup(1);
+        NioEventLoopGroup workerGroup = new NioEventLoopGroup(50);
+        ServerBootstrap bootstrap = new ServerBootstrap();
+        bootstrap.group(boosGroup, workerGroup);
+        bootstrap.channel(NioServerSocketChannel.class);
+
+        //bootstrap.localAddress(this.port);
+
+        bootstrap.childHandler(new ChannelInitializer<SocketChannel>() {
+            protected void initChannel(SocketChannel socketChannel) throws Exception
+            {
+                socketChannel.pipeline().addLast("frameDecoder", new DelimiterBasedFrameDecoder(
+                        8096, Delimiters.nulDelimiter()));
+                socketChannel.pipeline().addLast(new FastServerHandler());
+            }
+        });
+        ChannelFuture channelFuture = bootstrap
+                .bind(new InetSocketAddress(port)).sync();
+        channelFuture.channel().closeFuture().sync();
     }
 
 //    ExecutorService bossExec = new OrderedMemoryAwareThreadPoolExecutor(1,
