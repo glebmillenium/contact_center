@@ -33,10 +33,10 @@ public class Main {
                     + "\r\nПорт обмена сообщений - " + portFast
                     + "\r\nПорт файлового обмена - " + portFtp + "\r\n", 0);
             fs.start();
-//            FastServer NT = new FastServer(portFast);
-//            NT.run();
-            FastServer2 fs2 = new FastServer2(portFast);
-            fs2.start();
+            FastServer NT = new FastServer(portFast);
+            NT.run();
+            //FastServer2 fs2 = new FastServer2(portFast);
+            //fs2.start();
         } catch (Exception ex)
         {
             System.out.println("Сервер не удалось запустить " + ex.getMessage());

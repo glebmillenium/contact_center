@@ -13,6 +13,6 @@ namespace contact_center_application
 	/// </summary>
 	public partial class App : Application
 	{
-
+		
 	}
 }

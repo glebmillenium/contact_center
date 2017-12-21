@@ -3,11 +3,13 @@ package es.irkutskenergo.server.fast;
 import es.irkutskenergo.server.ftp.*;
 import es.irkutskenergo.other.ExceptionServer;
 import es.irkutskenergo.other.Logging;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.util.Arrays;
+import java.util.logging.Logger;
 
 /**
  * ReceiveData Класс, осуществляющий отправку/прием большого объема данных
@@ -40,7 +42,6 @@ public class ReceiveData2 {
         numberConnect = query;
     }
 
-
     public void process()
     {
         try
@@ -53,6 +54,7 @@ public class ReceiveData2 {
                             + socket.getInetAddress() + " Номер сеанса: " + numberConnect, 2);
                     OutputStream outputStream;
                     outputStream = socket.getOutputStream();
+                    
                     try
                     {
                         if (this.message.length < 50 * 1024)
@@ -123,7 +125,7 @@ public class ReceiveData2 {
                 } catch (IOException ex)
                 {
                     Logging.log("Сокет для файлового приема закрыт: код ошибки "
-                            + error_num + " Номер сеанса: " + numberConnect + " "  + ex.getMessage(), 2);
+                            + error_num + " Номер сеанса: " + numberConnect + " " + ex.getMessage(), 2);
                 }
             }
         } catch (IOException ioe)

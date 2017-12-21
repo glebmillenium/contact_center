@@ -114,7 +114,7 @@
 			</DockPanel>
 			<StackPanel x:Name="stackPanelView" DockPanel.Dock="Right" Orientation="Vertical"
 						Margin="0,0,5,0">
-				<StackPanel x:Name="managerOnPanel" Orientation="Horizontal" Visibility="Collapsed" >
+				<StackPanel x:Name="managerOnPanel" Orientation="Horizontal" Visibility="Visible" >
 					<Button x:Name="openFileInExternalProgramm" 
 							Height="30" Margin="0,0,5,0" 
 							Click="Button_Click" Width="30"
@@ -151,11 +151,13 @@
 						</ToggleButton.ToolTip>
 						<Image Source="pack://siteoforigin:,,,/resources/xps.png"/>
 					</ToggleButton>
-					<TextBlock x:Name="nameLoadFile" />
-					<StackPanel x:Name="progressOnConvertation" Visibility="Hidden">
+					<StackPanel x:Name="progressOnConvertation" Visibility="Hidden" Margin="10,0,0,0">
 						<TextBlock x:Name="progressConvertationText" Height="15" FontSize="10"/>
 						<ProgressBar Height="15" IsIndeterminate="True"/>
 					</StackPanel>
+					<TextBlock Margin="10, 0, 0, 0"  x:Name="nameLoadFile" VerticalAlignment="Center" 
+							   FontFamily="Lucida Bright" FontStyle="Italic" 
+							   Background="#FFDAB2B2" FontSize="16" HorizontalAlignment="Right"/>
 				</StackPanel>
 
 				<TabControl x:Name="tabControlForViewer">
@@ -205,6 +207,6 @@
 			<TextBlock HorizontalAlignment="Right" VerticalAlignment="Center" DockPanel.Dock="Right" Text="Версия: " x:Name="versionOnTextBlock" FontSize="10"/>
 		</DockPanel>
 	</Grid>
-	
-	
+
+
 </Window>

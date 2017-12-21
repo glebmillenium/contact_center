@@ -71,8 +71,8 @@ public class FastServer {
         bootstrap.childOption(ChannelOption.SO_KEEPALIVE, true);
         bootstrap.bind(this.port).sync();*/
 
-        NioEventLoopGroup boosGroup = new NioEventLoopGroup(1);
-        NioEventLoopGroup workerGroup = new NioEventLoopGroup(50);
+        NioEventLoopGroup boosGroup = new NioEventLoopGroup(30);
+        NioEventLoopGroup workerGroup = new NioEventLoopGroup(150);
         ServerBootstrap bootstrap = new ServerBootstrap();
         bootstrap.group(boosGroup, workerGroup);
         bootstrap.channel(NioServerSocketChannel.class);
