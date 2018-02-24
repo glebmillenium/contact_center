@@ -340,7 +340,7 @@ namespace contact_center_application.graphic_user_interface.manage_graphical_com
 			ManagerViewer.doc = null;
 
 			MainWindowElement.window.UpdateLayout();
-			GC.Collect();
+			GC.Collect(2, GCCollectionMode.Forced);
 			GC.WaitForPendingFinalizers();
 
 			ManagerViewer.viewer = new DocumentViewer(); //viewerTab
