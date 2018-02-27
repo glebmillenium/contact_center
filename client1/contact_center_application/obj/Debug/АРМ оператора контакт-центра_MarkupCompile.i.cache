@@ -1,0 +1,20 @@
+﻿АРМ оператора контакт-центра
+
+
+winexe
+C#
+.cs
+C:\contact_center\client1\contact_center_application\obj\Debug\
+contact_center_application
+none
+false
+DEBUG;TRACE
+C:\contact_center\client1\contact_center_application\App.xaml
+11-818462368
+11277229570
+36-846033764
+33867833211
+graphic_user_interface\form\Authorization.xaml;graphic_user_interface\form\DownloadWindow.xaml;graphic_user_interface\form\ConfirmationChooseDialog.xaml;graphic_user_interface\form\LightMessenger.xaml;graphic_user_interface\form\RenameUnitFileSystem.xaml;graphic_user_interface\form\Settings.xaml;graphic_user_interface\form\UploadWindow.xaml;graphic_user_interface\form\MainWindow.xaml;ThemesSoft\MoonUICore.xaml;Themes\Brushes.xaml;Themes\Core.xaml;
+
+False
+

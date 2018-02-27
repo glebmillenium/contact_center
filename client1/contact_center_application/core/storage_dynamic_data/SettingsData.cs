@@ -202,7 +202,7 @@ namespace contact_center_application.core.storage_dynamic_data
 			bool result;
 			try
 			{
-				result = bool.Parse(getContentFile(directoryView + @"/jpeg_tiff_jpf_png"));
+				result = bool.Parse(getContentFile(directoryView + @"/jpeg_tiff_jpg_png"));
 			}
 			catch (Exception e)
 			{

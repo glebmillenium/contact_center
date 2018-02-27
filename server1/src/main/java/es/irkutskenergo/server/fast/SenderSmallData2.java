@@ -53,12 +53,14 @@ public class SenderSmallData2 {
      * @param String
      */
     private String commandFromClient;
+    
     /**
      * Объект типа ObjectMapper, необходим для сериализации в json строку
      *
      * @param ObjectMapper
      */
     ObjectMapper mapper;
+    
     /**
      * Объект, содержащий данные о текущих файловых системах, которые доступны
      * для просмотра пользователям. Состоит из следующих элементов: param1 -
